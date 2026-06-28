@@ -588,34 +588,54 @@
         }
     }
 
-    function changeVal(accId, charId, field, amount) {
-        const acc = gameData.find(a => a.id === accId);
-        if (charId === null) {
-            acc[field] = Math.max(0, acc[field] + amount);
-        } else {
-            const char = acc.characters.find(c => c.id === charId);
-            if (field === 'ode') {
-                char.ode = Math.max(0, Math.min(840, char.ode + amount));
-            } else if (field === 'extraOde') {
-                char.extraOde = Math.max(0, Math.min(2000, char.extraOde + amount));
-            }
-        }
-        saveData();
+    // 1. +/- 버튼으로 값을 변경할 때
+function changeVal(accId, charId, key, diff) {
+    const acc = gameData.find(a => a.id === accId);
+    
+    if (charId === null) {
+        // 계정 공통 자원 처리 영역
+        let newVal = (acc[key] || 0) + diff;
+        if (newVal < 0) newVal = 0; // 음수 방지
+
+        // 🔍 슈고 열쇠 및 차원침공 열쇠 최댓값 체크 추가
+        if (key === 'shugo' && newVal > 14) newVal = 14;
+        if (key === 'dimension' && newVal > 7) newVal = 7;
+
+        acc[key] = newVal;
+    } else {
+        // 캐릭터별 자원 처리 영역 (기존 코드 유지)
+        const char = acc.characters.find(c => c.id === charId);
+        let newVal = (char[key] || 0) + diff;
+        if (newVal < 0) newVal = 0;
+        char[key] = newVal;
     }
+    
+    render();
+    saveData();
+}
 
     // [중요 수정] 수동 값 제어 시 화면 렌더링 오작동을 피하기 위해 로컬데이터 변환 후 로직 처리
-    function setDirectVal(accId, charId, field, value) {
-        const acc = gameData.find(a => a.id === accId);
-        let num = parseInt(value) || 0;
-        if (num < 0) num = 0;
-        if (charId === null) { acc[field] = num; } 
-        else {
-            const char = acc.characters.find(c => c.id === charId);
-            if (field === 'ode') char.ode = Math.min(840, num);
-            else if (field === 'extraOde') char.extraOde = Math.min(2000, num);
-        }
-        localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
+    // 2. 인풋 박스에 숫자를 직접 타이핑해 변경할 때
+function setDirectVal(accId, charId, key, val) {
+    const acc = gameData.find(a => a.id === accId);
+    let numVal = parseInt(val) || 0;
+    if (numVal < 0) numVal = 0; // 음수 방지
+
+    if (charId === null) {
+        // 🔍 슈고 열쇠 및 차원침공 열쇠 최댓값 체크 추가
+        if (key === 'shugo' && numVal > 14) numVal = 14;
+        if (key === 'dimension' && numVal > 7) numVal = 7;
+
+        acc[key] = numVal;
+    } else {
+        // 캐릭터별 자원 처리 영역 (기존 코드 유지)
+        const char = acc.characters.find(c => c.id === charId);
+        char[key] = numVal;
     }
+
+    render();
+    saveData();
+}
 
     function toggleCheckbox(accId, charId, field, index = null) {
         const acc = gameData.find(a => a.id === accId);
