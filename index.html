@@ -715,7 +715,7 @@
                                     <span class="resource-name">🎉 슈고 열쇠</span>
                                     <div class="counter-controls">
                                         <button class="btn btn-sm" onclick="changeVal(${acc.id}, null, 'shugo', -1)">-</button>
-                                        <input type="number" class="counter-input" value="${acc.shugo}" onchange="setDirectVal(${acc.id}, null, 'shugo', this.value)">
+                                        <input type="number" class="counter-input" value="${acc.shugo}" max="14" onchange="setDirectVal(${acc.id}, null, 'shugo', this.value)">
                                         <button class="btn btn-sm" onclick="changeVal(${acc.id}, null, 'shugo', 1)">+</button>
                                     </div>
                                 </div>
@@ -723,7 +723,7 @@
                                     <span class="resource-name">⚔️ 차원침공 열쇠</span>
                                     <div class="counter-controls">
                                         <button class="btn btn-sm" onclick="changeVal(${acc.id}, null, 'dimension', -1)">-</button>
-                                        <input type="number" class="counter-input" value="${acc.dimension}" onchange="setDirectVal(${acc.id}, null, 'dimension', this.value)">
+                                        <input type="number" class="counter-input" value="${acc.dimension}" max="7" onchange="setDirectVal(${acc.id}, null, 'dimension', this.value)">
                                         <button class="btn btn-sm" onclick="changeVal(${acc.id}, null, 'dimension', 1)">+</button>
                                     </div>
                                 </div>
