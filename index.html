@@ -434,36 +434,34 @@
 
     // 🌟 [신규 추가] 2. 커스텀 주간 숙제 및 오드구매 초기화 연산 시스템 (매주 수요일 오전 5시 기점)
     function checkWeeklyReset() {
-        const now = new Date();
-        let targetReset = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
-        if (now.getTime() < targetReset.getTime()) targetReset.setDate(targetReset.getDate() - 1);
-        
-        // 지난 수요일을 찾아 이동하는 루프
-        while (targetReset.getDay() !== 3) { 
-            targetReset.setDate(targetReset.getDate() - 1); 
-        }
-        const currentTargetReset = targetReset.getTime();
+    const now = new Date();
+    let targetReset = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
+    if (now.getTime() < targetReset.getTime()) targetReset.setDate(targetReset.getDate() - 1);
+    
+    while (targetReset.getDay() !== 3) { 
+        targetReset.setDate(targetReset.getDate() - 1); 
+    }
+    const currentTargetReset = targetReset.getTime();
 
-        if (parseInt(lastWeeklyReset) < currentTargetReset) {
-            gameData.forEach(acc => {
-                // 계정 공통: 오드구매,제작 체크 해제
-                acc.odeBuyChecked = false;
+    if (parseInt(lastWeeklyReset) < currentTargetReset) {
+        gameData.forEach(acc => {
+            acc.odeBuyChecked = false;
 
-                acc.characters.forEach(char => {
-                    // 고정 콘텐츠: 오드구매,제작(4) 체크 해제
-                    char.charBuyChecked = false;
-                    
-                    // 커스텀 숙제 중 '주간(weekly)' 숙제만 찾아 체크 해제
-                    char.homeworks.forEach(hw => {
-                        if (hw.type === 'weekly') hw.checked = false;
-                    });
+            acc.characters.forEach(char => {
+                char.charBuyChecked = false;
+                char.nightmareChecked = false; // 🧼 수요일 오전 5시 악몽 초기화
+                char.awakeningChecked = false; // 🧼 수요일 오전 5시 각성 초기화
+                
+                char.homeworks.forEach(hw => {
+                    if (hw.type === 'weekly') hw.checked = false;
                 });
             });
-            localStorage.setItem('lastWeeklyResetTime_v15', currentTargetReset.toString());
-            lastWeeklyReset = currentTargetReset.toString();
-            saveData();
-        }
+        });
+        localStorage.setItem('lastWeeklyResetTime_v15', currentTargetReset.toString());
+        lastWeeklyReset = currentTargetReset.toString();
+        saveData();
     }
+}
 
     function saveData() {
         localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
@@ -516,9 +514,15 @@
         charBuyChecked: false, 
         charCraftChecked: false, 
         abyssChecked: false,     
-        nightmareChecked: false,  // 고정 콘텐츠로 이동된 악몽 상태 변수
-        awakeningChecked: false,  // 고정 콘텐츠로 이동된 각성 상태 변수
-        homeworks: []             // ✨ 커스텀 숙제 리스트를 빈 상태로 시작
+        nightmareChecked: false,  // 🔍 악몽 상태 변수 추가
+        awakeningChecked: false,  // 🔍 각성 상태 변수 추가
+        homeworks: [
+            { name: '시즌미션', type: 'weekly', checked: false },
+            { name: '투기장', type: 'weekly', checked: false },
+            { name: '루드라', type: 'weekly', checked: false },
+            { name: '침식', type: 'weekly', checked: false },
+            { name: '무스펠', type: 'weekly', checked: false }
+        ]
     });
     closeCharModal();
     saveData();
