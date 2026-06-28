@@ -123,73 +123,64 @@
     let lastAbyssReset = localStorage.getItem('lastAbyssResetTime_v15') || "0";
     let accordionStatus = JSON.parse(localStorage.getItem('accordionStatus_v15')) || {};
     
+    // ⏰ [추가] 커스텀 일일/주간 숙제 초기화 시간 저장을 위한 타임스탬프 변수
+    let lastDailyReset = localStorage.getItem('lastDailyResetTime_v15') || "0";
+    let lastWeeklyReset = localStorage.getItem('lastWeeklyResetTime_v15') || "0";
+
     let alarmSettings = JSON.parse(localStorage.getItem('alarmSettings_v15')) || { festa: true, invasion: true, space: true };
 
     const jobIcons = {
         '치유성': '💚', '호법성': '⚜️', '수호성': '🛡️', '검성': '🗡️', '궁성': '🏹', '살성': '⚔️', '마도성': '🔮', '정령성': '🌪️', '권성': '🥊', '미지정': '👤'
     };
 
-    // --- [ 🔊 부드러운 오디오 알림음 재생 시스템 ("띵띠이이이띵" 리듬 버전) ] ---
-function playBeepSound() {
-    try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        
-        // 볼륨 조절을 위한 GainNode 생성 및 기본 마스터 볼륨 설정
-        const mainGain = audioCtx.createGain();
-        mainGain.connect(audioCtx.destination);
-        mainGain.gain.setValueAtTime(0.2, audioCtx.currentTime); // 볼륨 조절
+    // --- [ 🔊 부드러운 오디오 알림음 재생 시스템 ] ---
+    function playBeepSound() {
+        try {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const mainGain = audioCtx.createGain();
+            mainGain.connect(audioCtx.destination);
+            mainGain.gain.setValueAtTime(0.2, audioCtx.currentTime);
 
-        // 🎵 [1번째 음] 경쾌한 높은 "띵" (도 - C5, 0.15초 동안 유지)
-        const osc1 = audioCtx.createOscillator();
-        const gain1 = audioCtx.createGain();
-        osc1.type = 'sine';
-        osc1.frequency.setValueAtTime(523.25, audioCtx.currentTime); 
-        
-        gain1.gain.setValueAtTime(1, audioCtx.currentTime);
-        gain1.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-        
-        osc1.connect(gain1);
-        gain1.connect(mainGain);
-        osc1.start(audioCtx.currentTime);
-        osc1.stop(audioCtx.currentTime + 0.18);
+            const osc1 = audioCtx.createOscillator();
+            const gain1 = audioCtx.createGain();
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(523.25, audioCtx.currentTime); 
+            gain1.gain.setValueAtTime(1, audioCtx.currentTime);
+            gain1.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+            osc1.connect(gain1);
+            gain1.connect(mainGain);
+            osc1.start(audioCtx.currentTime);
+            osc1.stop(audioCtx.currentTime + 0.18);
 
-        // 🎵 [2번째 음] 약간 길게 빼주는 "띠이이이" (레 - D5, 0.2초 뒤 시작해서 0.4초 동안 유지)
-        setTimeout(() => {
-            const osc2 = audioCtx.createOscillator();
-            const gain2 = audioCtx.createGain();
-            osc2.type = 'sine';
-            osc2.frequency.setValueAtTime(587.33, audioCtx.currentTime);
-            
-            gain2.gain.setValueAtTime(1, audioCtx.currentTime);
-            // 0.4초 동안 부드럽게 감쇠하여 여운을 줍니다
-            gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-            
-            osc2.connect(gain2);
-            gain2.connect(mainGain);
-            osc2.start(audioCtx.currentTime);
-            osc2.stop(audioCtx.currentTime + 0.45);
-        }, 200); // 0.2초 딜레이
+            setTimeout(() => {
+                const osc2 = audioCtx.createOscillator();
+                const gain2 = audioCtx.createGain();
+                osc2.type = 'sine';
+                osc2.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+                gain2.gain.setValueAtTime(1, audioCtx.currentTime);
+                gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc2.connect(gain2);
+                gain2.connect(mainGain);
+                osc2.start(audioCtx.currentTime);
+                osc2.stop(audioCtx.currentTime + 0.45);
+            }, 200);
 
-        // 🎵 [3번째 음] 마무리 짓는 맑은 "띵!" (미 - E5, 0.65초 뒤 시작해서 경쾌하게 종료)
-        setTimeout(() => {
-            const osc3 = audioCtx.createOscillator();
-            const gain3 = audioCtx.createGain();
-            osc3.type = 'sine';
-            osc3.frequency.setValueAtTime(659.25, audioCtx.currentTime);
-            
-            gain3.gain.setValueAtTime(1, audioCtx.currentTime);
-            gain3.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-            
-            osc3.connect(gain3);
-            gain3.connect(mainGain);
-            osc3.start(audioCtx.currentTime);
-            osc3.stop(audioCtx.currentTime + 0.23);
-        }, 650); // 0.65초 딜레이
-
-    } catch(e) {
-        console.log("오디오 재생 실패 (브라우저 정책 상 사용자의 첫 화면 클릭이 필요합니다)");
+            setTimeout(() => {
+                const osc3 = audioCtx.createOscillator();
+                const gain3 = audioCtx.createGain();
+                osc3.type = 'sine';
+                osc3.frequency.setValueAtTime(659.25, audioCtx.currentTime);
+                gain3.gain.setValueAtTime(1, audioCtx.currentTime);
+                gain3.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                osc3.connect(gain3);
+                gain3.connect(mainGain);
+                osc3.start(audioCtx.currentTime);
+                osc3.stop(audioCtx.currentTime + 0.23);
+            }, 650);
+        } catch(e) {
+            console.log("오디오 재생 실패");
+        }
     }
-}
 
     function toggleAlarmSetting(type) {
         alarmSettings[type] = document.getElementById(`toggle-${type}`).checked;
@@ -209,7 +200,7 @@ function playBeepSound() {
             alert("백업할 데이터가 없습니다. 먼저 계정을 생성해 주세요.");
             return;
         }
-        const backupData = { gameData, lastChecked, lastAbyssReset, accordionStatus, alarmSettings };
+        const backupData = { gameData, lastChecked, lastAbyssReset, lastDailyReset, lastWeeklyReset, accordionStatus, alarmSettings };
         const jsonString = JSON.stringify(backupData, null, 2);
         const blob = new Blob([jsonString], { type: "application/json" });
         const url = URL.createObjectURL(blob);
@@ -238,12 +229,16 @@ function playBeepSound() {
                     gameData = parsed.gameData;
                     lastChecked = parsed.lastChecked || Date.now().toString();
                     lastAbyssReset = parsed.lastAbyssReset || "0";
+                    lastDailyReset = parsed.lastDailyReset || "0";
+                    lastWeeklyReset = parsed.lastWeeklyReset || "0";
                     accordionStatus = parsed.accordionStatus || {};
                     alarmSettings = parsed.alarmSettings || { festa: true, invasion: true, space: true };
                     
                     localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
                     localStorage.setItem('lastOdeUpdateTime_v15', lastChecked);
                     localStorage.setItem('lastAbyssResetTime_v15', lastAbyssReset);
+                    localStorage.setItem('lastDailyResetTime_v15', lastDailyReset);
+                    localStorage.setItem('lastWeeklyResetTime_v15', lastWeeklyReset);
                     localStorage.setItem('accordionStatus_v15', JSON.stringify(accordionStatus));
                     localStorage.setItem('alarmSettings_v15', JSON.stringify(alarmSettings));
                     
@@ -411,6 +406,65 @@ function playBeepSound() {
         }
     }
 
+    // 🌟 [신규 추가] 1. 커스텀 일일 숙제 자동 초기화 연산 시스템 (매일 오전 5시 기점)
+    function checkDailyReset() {
+        const now = new Date();
+        let targetReset = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
+        // 만약 현재 시간이 오전 5시 전이라면, 이전 차수의 초기화 기준점은 어제 오전 5시입니다.
+        if (now.getTime() < targetReset.getTime()) {
+            targetReset.setDate(targetReset.getDate() - 1);
+        }
+        const currentTargetReset = targetReset.getTime();
+
+        if (parseInt(lastDailyReset) < currentTargetReset) {
+            gameData.forEach(acc => {
+                // 계정 공통 체크항목 초기화가 필요하다면 여기에 추가 가능
+                acc.characters.forEach(char => {
+                    // 커스텀 숙제 중 '일일(daily)' 숙제만 찾아 체크 해제
+                    char.homeworks.forEach(hw => {
+                        if (hw.type === 'daily') hw.checked = false;
+                    });
+                });
+            });
+            localStorage.setItem('lastDailyResetTime_v15', currentTargetReset.toString());
+            lastDailyReset = currentTargetReset.toString();
+            saveData();
+        }
+    }
+
+    // 🌟 [신규 추가] 2. 커스텀 주간 숙제 및 오드구매 초기화 연산 시스템 (매주 수요일 오전 5시 기점)
+    function checkWeeklyReset() {
+        const now = new Date();
+        let targetReset = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
+        if (now.getTime() < targetReset.getTime()) targetReset.setDate(targetReset.getDate() - 1);
+        
+        // 지난 수요일을 찾아 이동하는 루프
+        while (targetReset.getDay() !== 3) { 
+            targetReset.setDate(targetReset.getDate() - 1); 
+        }
+        const currentTargetReset = targetReset.getTime();
+
+        if (parseInt(lastWeeklyReset) < currentTargetReset) {
+            gameData.forEach(acc => {
+                // 계정 공통: 오드구매,제작 체크 해제
+                acc.odeBuyChecked = false;
+
+                acc.characters.forEach(char => {
+                    // 고정 콘텐츠: 오드구매,제작(4) 체크 해제
+                    char.charBuyChecked = false;
+                    
+                    // 커스텀 숙제 중 '주간(weekly)' 숙제만 찾아 체크 해제
+                    char.homeworks.forEach(hw => {
+                        if (hw.type === 'weekly') hw.checked = false;
+                    });
+                });
+            });
+            localStorage.setItem('lastWeeklyResetTime_v15', currentTargetReset.toString());
+            lastWeeklyReset = currentTargetReset.toString();
+            saveData();
+        }
+    }
+
     function saveData() {
         localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
         render();
@@ -492,6 +546,38 @@ function playBeepSound() {
         }
     }
 
+    // [기존 피드백 반영 완료] 오드사용 클릭 시 소리 재생 연동 구역 비활성화됨
+    function useSmartOde(accId, charId) {
+        const odeInput = document.getElementById(`input-ode-${charId}`);
+        const extraOdeInput = document.getElementById(`input-extraOde-${charId}`);
+        if (!odeInput || !extraOdeInput) return;
+
+        let baseOde = parseInt(odeInput.value) || 0;
+        let extraOde = parseInt(extraOdeInput.value) || 0;
+        const amountToUse = 80;
+
+        if ((baseOde + extraOde) < amountToUse) {
+            alert("❌ 오드에너지가 부족합니다!");
+            return;
+        }
+
+        if (baseOde >= amountToUse) {
+            baseOde -= amountToUse;
+        } else {
+            let remainder = amountToUse - baseOde;
+            baseOde = 0;
+            extraOde -= remainder;
+        }
+
+        odeInput.value = baseOde;
+        extraOdeInput.value = extraOde;
+
+        if (typeof setDirectVal === 'function') {
+            setDirectVal(accId, charId, 'ode', baseOde);
+            setDirectVal(accId, charId, 'extraOde', extraOde);
+        }
+    }
+
     function changeVal(accId, charId, field, amount) {
         const acc = gameData.find(a => a.id === accId);
         if (charId === null) {
@@ -507,6 +593,7 @@ function playBeepSound() {
         saveData();
     }
 
+    // [중요 수정] 수동 값 제어 시 화면 렌더링 오작동을 피하기 위해 로컬데이터 변환 후 로직 처리
     function setDirectVal(accId, charId, field, value) {
         const acc = gameData.find(a => a.id === accId);
         let num = parseInt(value) || 0;
@@ -517,53 +604,8 @@ function playBeepSound() {
             if (field === 'ode') char.ode = Math.min(840, num);
             else if (field === 'extraOde') char.extraOde = Math.min(2000, num);
         }
-        saveData();
+        localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
     }
-
-    function useSmartOde(accId, charId) {
-    // 1. DOM에서 현재 캐릭터의 기본/추가 오드에너지 입력창 가져오기
-    const odeInput = document.getElementById(`input-ode-${charId}`);
-    const extraOdeInput = document.getElementById(`input-extraOde-${charId}`);
-    
-    if (!odeInput || !extraOdeInput) return;
-
-    let baseOde = parseInt(odeInput.value) || 0;
-    let extraOde = parseInt(extraOdeInput.value) || 0;
-    const amountToUse = 80;
-
-    // 2. 총 보유량이 80 미만이면 실행 차단
-    if ((baseOde + extraOde) < amountToUse) {
-        alert("❌ 오드에너지가 부족합니다!");
-        return;
-    }
-
-    // 3. 선차감 및 후차감 알고리즘 적용
-    if (baseOde >= amountToUse) {
-        // 기본 오드가 충분한 경우
-        baseOde -= amountToUse;
-    } else {
-        // 기본 오드가 부족하여 추가 오드까지 써야 하는 경우
-        let remainder = amountToUse - baseOde; // 모자란 잔여 요구량 계산
-        baseOde = 0; // 기본 오드는 전부 소모되어 0
-        extraOde -= remainder; // 추가 오드에서 남은 만큼 차감
-    }
-
-    // 4. 변경된 값을 화면의 Input 엘리먼트에 즉시 반영
-    odeInput.value = baseOde;
-    extraOdeInput.value = extraOde;
-
-    // 5. [중요] 기존 대시보드의 데이터 저장 및 갱신 시스템 호출
-    // 기존에 구현되어 있던 실제 데이터 배열 상태 업데이트 로직과 연동해 줍니다.
-    if (typeof setDirectVal === 'function') {
-        setDirectVal(accId, charId, 'ode', baseOde);
-        setDirectVal(accId, charId, 'extraOde', extraOde);
-    }
-    
-    // 알림음 시스템 재생 연동
-    if (typeof playBeepSound === 'function') {
-        playBeepSound();
-    }
-}
 
     function toggleCheckbox(accId, charId, field, index = null) {
         const acc = gameData.find(a => a.id === accId);
@@ -782,6 +824,8 @@ function playBeepSound() {
     // --- [ 초기 구동 및 인터벌 세팅 ] ---
     updateOdeAutomatically();
     checkAbyssReset();
+    checkDailyReset();   // 🌟 [추가] 로드 시 일일 숙제 리셋 확인
+    checkWeeklyReset();  // 🌟 [추가] 로드 시 주간 숙제 및 오드구매 리셋 확인
     render();
     initAlarmToggles();
     
@@ -789,6 +833,8 @@ function playBeepSound() {
     setInterval(() => {
         updateOdeAutomatically();
         checkAbyssReset();
+        checkDailyReset();   // 🌟 [추가] 1분 주기로 일일 리셋 검사
+        checkWeeklyReset();  // 🌟 [추가] 1분 주기로 주간 리셋 검사
     }, 60000);
 </script>
 
