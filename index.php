@@ -1,0 +1,727 @@
+<?php include("header.php");?>
+
+<!DOCTYPE html>
+<html lang="ko">
+
+<body>
+
+<div class="container" id="app">
+    <!-- 동적 대시보드 구조 생성 영역 -->
+</div>
+
+<!-- 캐릭터 추가 모달 팝업 -->
+<div class="modal-overlay" id="charModal">
+    <div class="modal-content">
+        <h3>🛡️ 새 캐릭터 추가</h3>
+        <form id="charForm" onsubmit="submitCharacterForm(event)">
+            <input type="hidden" id="modalAccId">
+            <div class="modal-field">
+                <label for="modalCharName">캐릭터 이름</label>
+                <input type="text" id="modalCharName" required placeholder="예: 홍길동">
+            </div>
+            <div class="modal-field">
+                <label for="modalCharJob">직업 선택</label>
+                <select id="modalCharJob" required>
+                    <option value="치유성">치유성</option>
+                    <option value="호법성">호법성</option>
+                    <option value="수호성">수호성</option>
+                    <option value="검성">검성</option>
+                    <option value="궁성">궁성</option>
+                    <option value="살성">살성</option>
+                    <option value="마도성">마도성</option>
+                    <option value="정령성">정령성</option>
+                    <option value="권성">권성</option>
+                </select>
+            </div>
+            <div class="modal-field">
+                <label for="modalCharPower">전투력</label>
+                <input type="number" id="modalCharPower" required placeholder="숫자만 입력">
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-danger" onclick="closeCharModal()">취소</button>
+                <button type="submit" class="btn">추가하기</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // --- [ 데이터 구조 및 초기화 ] ---
+    let gameData = JSON.parse(localStorage.getItem('gameHomeworkData_v15')) || [];
+    let lastChecked = localStorage.getItem('lastOdeUpdateTime_v15') || Date.now();
+    localStorage.setItem('lastOdeUpdateTime_v15', lastChecked);
+    let lastAbyssReset = localStorage.getItem('lastAbyssResetTime_v15') || "0";
+    let accordionStatus = JSON.parse(localStorage.getItem('accordionStatus_v15')) || {};
+    
+    let alarmSettings = JSON.parse(localStorage.getItem('alarmSettings_v15')) || { festa: true, invasion: true, space: true };
+
+    const jobIcons = {
+        '치유성': '💚', '호법성': '⚜️', '수호성': '🛡️', '검성': '🗡️', '궁성': '🏹', '살성': '⚔️', '마도성': '🔮', '정령성': '🌪️', '권성': '🥊', '미지정': '👤'
+    };
+
+    // --- [ 🔊 부드러운 오디오 알림음 재생 시스템 ("띵띠이이이띵" 리듬 버전) ] ---
+function playBeepSound() {
+    try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // 볼륨 조절을 위한 GainNode 생성 및 기본 마스터 볼륨 설정
+        const mainGain = audioCtx.createGain();
+        mainGain.connect(audioCtx.destination);
+        mainGain.gain.setValueAtTime(0.2, audioCtx.currentTime); // 볼륨 조절
+
+        // 🎵 [1번째 음] 경쾌한 높은 "띵" (도 - C5, 0.15초 동안 유지)
+        const osc1 = audioCtx.createOscillator();
+        const gain1 = audioCtx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(523.25, audioCtx.currentTime); 
+        
+        gain1.gain.setValueAtTime(1, audioCtx.currentTime);
+        gain1.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+        
+        osc1.connect(gain1);
+        gain1.connect(mainGain);
+        osc1.start(audioCtx.currentTime);
+        osc1.stop(audioCtx.currentTime + 0.18);
+
+        // 🎵 [2번째 음] 약간 길게 빼주는 "띠이이이" (레 - D5, 0.2초 뒤 시작해서 0.4초 동안 유지)
+        setTimeout(() => {
+            const osc2 = audioCtx.createOscillator();
+            const gain2 = audioCtx.createGain();
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+            
+            gain2.gain.setValueAtTime(1, audioCtx.currentTime);
+            // 0.4초 동안 부드럽게 감쇠하여 여운을 줍니다
+            gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+            
+            osc2.connect(gain2);
+            gain2.connect(mainGain);
+            osc2.start(audioCtx.currentTime);
+            osc2.stop(audioCtx.currentTime + 0.45);
+        }, 200); // 0.2초 딜레이
+
+        // 🎵 [3번째 음] 마무리 짓는 맑은 "띵!" (미 - E5, 0.65초 뒤 시작해서 경쾌하게 종료)
+        setTimeout(() => {
+            const osc3 = audioCtx.createOscillator();
+            const gain3 = audioCtx.createGain();
+            osc3.type = 'sine';
+            osc3.frequency.setValueAtTime(659.25, audioCtx.currentTime);
+            
+            gain3.gain.setValueAtTime(1, audioCtx.currentTime);
+            gain3.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+            
+            osc3.connect(gain3);
+            gain3.connect(mainGain);
+            osc3.start(audioCtx.currentTime);
+            osc3.stop(audioCtx.currentTime + 0.23);
+        }, 650); // 0.65초 딜레이
+
+    } catch(e) {
+        console.log("오디오 재생 실패 (브라우저 정책 상 사용자의 첫 화면 클릭이 필요합니다)");
+    }
+}
+
+    function toggleAlarmSetting(type) {
+        alarmSettings[type] = document.getElementById(`toggle-${type}`).checked;
+        localStorage.setItem('alarmSettings_v15', JSON.stringify(alarmSettings));
+        updateTopAlertTimers();
+    }
+
+    function initAlarmToggles() {
+        document.getElementById('toggle-festa').checked = alarmSettings.festa;
+        document.getElementById('toggle-invasion').checked = alarmSettings.invasion;
+        document.getElementById('toggle-space').checked = alarmSettings.space;
+    }
+
+    // --- [ 백업 & 불러오기 로직 ] ---
+    function exportBackup() {
+        if (gameData.length === 0) {
+            alert("백업할 데이터가 없습니다. 먼저 계정을 생성해 주세요.");
+            return;
+        }
+        const backupData = { gameData, lastChecked, lastAbyssReset, accordionStatus, alarmSettings };
+        const jsonString = JSON.stringify(backupData, null, 2);
+        const blob = new Blob([jsonString], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        const dateStr = new Date().toISOString().slice(0, 10);
+        a.href = url;
+        a.download = `homework_backup_${dateStr}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    function importBackup(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        if (!confirm("⚠️ 주의: 파일을 불러오면 현재 모든 데이터가 덮어씌워집니다. 진행하시겠습니까?")) {
+            event.target.value = '';
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const parsed = JSON.parse(e.target.result);
+                if (parsed.gameData && Array.isArray(parsed.gameData)) {
+                    gameData = parsed.gameData;
+                    lastChecked = parsed.lastChecked || Date.now().toString();
+                    lastAbyssReset = parsed.lastAbyssReset || "0";
+                    accordionStatus = parsed.accordionStatus || {};
+                    alarmSettings = parsed.alarmSettings || { festa: true, invasion: true, space: true };
+                    
+                    localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
+                    localStorage.setItem('lastOdeUpdateTime_v15', lastChecked);
+                    localStorage.setItem('lastAbyssResetTime_v15', lastAbyssReset);
+                    localStorage.setItem('accordionStatus_v15', JSON.stringify(accordionStatus));
+                    localStorage.setItem('alarmSettings_v15', JSON.stringify(alarmSettings));
+                    
+                    alert("✅ 성공: 데이터를 안정적으로 불러왔습니다!");
+                    initAlarmToggles();
+                    render();
+                } else { alert("❌ 실패: 올바른 백업 파일 형식이 아닙니다."); }
+            } catch (err) { alert("❌ 오류: 파일 해석 중 문제가 발생했습니다."); }
+            event.target.value = '';
+        };
+        reader.readAsText(file);
+    }
+
+    // --- [ 🚨 상단 최상단 멀티 타이머 및 알람 연산 시스템 ] ---
+    function updateTopAlertTimers() {
+        const now = new Date();
+        const currentMin = now.getMinutes();
+        const currentSec = now.getSeconds();
+
+        const festaEl = document.getElementById('timer-festa');
+        if(festaEl) {
+            if (!alarmSettings.festa) {
+                festaEl.innerText = "OFF";
+                festaEl.className = "alarm-timer disabled";
+            } else {
+                let festaMin = 59 - currentMin;
+                let festaSec = 59 - currentSec;
+                if (festaMin === 0 && festaSec === 0) playBeepSound();
+                
+                const festaStr = `${String(festaMin).padStart(2, '0')}:${String(festaSec).padStart(2, '0')} 남음`;
+                festaEl.innerText = festaMin < 5 ? `⚠️ 임박 (${festaStr})` : festaStr;
+                festaEl.className = "alarm-timer" + (festaMin < 5 ? " alarm-urgent" : "");
+            }
+        }
+
+        const invEl = document.getElementById('timer-invasion');
+        if(invEl) {
+            if (!alarmSettings.invasion) {
+                invEl.innerText = "OFF";
+                invEl.className = "alarm-timer disabled";
+            } else {
+                let invInMin = (currentMin < 30) ? (29 - currentMin) : (59 - currentMin + 30);
+                let invSec = 59 - currentSec;
+                if (invInMin === 0 && invSec === 0) playBeepSound();
+
+                const invStr = `${String(invInMin).padStart(2, '0')}:${String(invSec).padStart(2, '0')} 남음`;
+                invEl.innerText = invInMin < 5 ? `⚠️ 임박 (${invStr})` : invStr;
+                invEl.className = "alarm-timer" + (invInMin < 5 ? " alarm-urgent" : "");
+            }
+        }
+
+        const spaceEl = document.getElementById('timer-space');
+        if(spaceEl) {
+            if (!alarmSettings.space) {
+                spaceEl.innerText = "OFF";
+                spaceEl.className = "alarm-timer disabled";
+            } else {
+                const targetHours = [2, 5, 8, 11, 14, 17, 20, 23];
+                let nextTarget = null;
+                for (let h of targetHours) {
+                    let t = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, 0, 0, 0);
+                    if (t.getTime() > now.getTime()) { nextTarget = t; break; }
+                }
+                if (!nextTarget) {
+                    nextTarget = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 2, 0, 0, 0);
+                }
+
+                const spaceDiffMs = nextTarget.getTime() - now.getTime();
+                const sHours = Math.floor(spaceDiffMs / (1000 * 60 * 60));
+                const sMinutes = Math.floor((spaceDiffMs % (1000 * 60 * 60)) / (1000 * 60));
+                const sSeconds = Math.floor((spaceDiffMs % (1000 * 60)) / 1000);
+                
+                if (sHours === 0 && sMinutes === 0 && sSeconds === 0) playBeepSound();
+
+                const spaceStr = `${String(sHours).padStart(2, '0')}:${String(sMinutes).padStart(2, '0')}:${String(sSeconds).padStart(2, '0')} 남음`;
+                if (sHours === 0 && sMinutes < 10) {
+                    spaceEl.innerText = `⚠️ 임박 (${spaceStr})`;
+                    spaceEl.className = "alarm-timer alarm-urgent";
+                } else {
+                    spaceEl.innerText = spaceStr;
+                    spaceEl.className = "alarm-timer";
+                }
+            }
+        }
+    }
+
+    function getNextOdeResetTime() {
+        const now = new Date();
+        let baseTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
+        if (now.getTime() < baseTime.getTime()) baseTime.setDate(baseTime.getDate() - 1);
+        let nextReset = baseTime.getTime();
+        const threeHoursMs = 3 * 60 * 60 * 1000;
+        while (nextReset <= now.getTime()) { nextReset += threeHoursMs; }
+        return nextReset;
+    }
+
+    function updateOdeAutomatically() {
+        const now = Date.now();
+        const nextReset = getNextOdeResetTime();
+        const lastExpectedReset = nextReset - (3 * 60 * 60 * 1000);
+        
+        if (parseInt(lastChecked) < lastExpectedReset) {
+            const timeDiff = lastExpectedReset - parseInt(lastChecked);
+            const threeHoursMs = 3 * 60 * 60 * 1000;
+            const chargeCycles = Math.floor(timeDiff / threeHoursMs) + 1;
+            const totalAddOde = chargeCycles * 15;
+            
+            gameData.forEach(acc => {
+                acc.characters.forEach(char => {
+                    char.ode = Math.min(840, char.ode + totalAddOde);
+                });
+            });
+            
+            lastChecked = lastExpectedReset;
+            localStorage.setItem('lastOdeUpdateTime_v15', lastChecked.toString());
+            saveData();
+        }
+    }
+
+    function updateTimerDisplay() {
+        const now = Date.now();
+        const nextReset = getNextOdeResetTime();
+        const diffMs = nextReset - now;
+        
+        const hours = String(Math.floor(diffMs / (1000 * 60 * 60))).padStart(2, '0');
+        const minutes = String(Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+        const seconds = String(Math.floor((diffMs % (1000 * 60)) / 1000)).padStart(2, '0');
+        const timeString = `${hours}:${minutes}:${seconds} 남음`;
+        
+        gameData.forEach(acc => {
+            acc.characters.forEach(char => {
+                const timerEl = document.getElementById(`timer-${char.id}`);
+                if (timerEl) {
+                    if (char.ode >= 840) {
+                        timerEl.innerText = "[MAX]";
+                        timerEl.style.color = "var(--text-muted)";
+                    } else {
+                        timerEl.innerText = `[${timeString}]`;
+                        timerEl.style.color = "var(--timer-color)";
+                    }
+                }
+            });
+        });
+        
+        updateTopAlertTimers();
+    }
+
+    function checkAbyssReset() {
+        const now = new Date();
+        function getPreviousResetTime(d) {
+            let target = new Date(d.getTime());
+            target.setHours(22, 0, 0, 0);
+            if (d.getTime() < target.getTime()) target.setDate(target.getDate() - 1);
+            while (target.getDay() !== 3 && target.getDay() !== 6) { target.setDate(target.getDate() - 1); }
+            return target.getTime();
+        }
+        const currentTargetReset = getPreviousResetTime(now);
+        if (parseInt(lastAbyssReset) < currentTargetReset) {
+            gameData.forEach(acc => {
+                acc.characters.forEach(char => { char.abyssChecked = false; });
+            });
+            localStorage.setItem('lastAbyssResetTime_v15', currentTargetReset.toString());
+            lastAbyssReset = currentTargetReset.toString();
+            saveData();
+        }
+    }
+
+    function saveData() {
+        localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
+        render();
+    }
+
+    // --- [ 제어 기능 함수들 ] ---
+    function toggleAccordion(accId) {
+        if (accordionStatus[accId] === undefined) accordionStatus[accId] = true;
+        accordionStatus[accId] = !accordionStatus[accId];
+        localStorage.setItem('accordionStatus_v15', JSON.stringify(accordionStatus));
+        
+        const bodyEl = document.getElementById(`acc-body-${accId}`);
+        const iconEl = document.getElementById(`acc-icon-${accId}`);
+        if (bodyEl && iconEl) {
+            if (accordionStatus[accId]) {
+                bodyEl.classList.remove('collapsed');
+                iconEl.innerText = '▲';
+            } else {
+                bodyEl.classList.add('collapsed');
+                iconEl.innerText = '▼';
+            }
+        }
+    }
+
+    function openCharModal(accId, event) {
+        event.stopPropagation();
+        document.getElementById('modalAccId').value = accId;
+        document.getElementById('charForm').reset();
+        document.getElementById('charModal').style.display = 'flex';
+    }
+
+    function closeCharModal() { document.getElementById('charModal').style.display = 'none'; }
+
+    function submitCharacterForm(e) {
+        e.preventDefault();
+        const accId = parseInt(document.getElementById('modalAccId').value);
+        const name = document.getElementById('modalCharName').value.trim();
+        const job = document.getElementById('modalCharJob').value;
+        const power = document.getElementById('modalCharPower').value;
+
+        const acc = gameData.find(a => a.id === accId);
+        acc.characters.push({
+            id: Date.now(), name: name, job: job, power: power, ode: 0, extraOde: 0,
+            charBuyChecked: false, charCraftChecked: false, abyssChecked: false,     
+            homeworks: [
+                { name: '악몽', type: 'weekly', checked: false },
+                { name: '각성', type: 'weekly', checked: false }
+            ]
+        });
+        closeCharModal();
+        saveData();
+    }
+
+    function addAccount() {
+        const name = prompt("계정 이름을 입력하세요:");
+        if (!name) return;
+        const newId = Date.now();
+        gameData.push({ id: newId, name: name, shugo: 2, dimension: 1, odeBuyChecked: false, odeCraftChecked: false, characters: [] });
+        accordionStatus[newId] = true;
+        localStorage.setItem('accordionStatus_v15', JSON.stringify(accordionStatus));
+        saveData();
+    }
+
+    function removeAccount(accId, event) {
+        event.stopPropagation();
+        if(confirm("이 계정과 포함된 모든 데이터가 삭제됩니다. 진행하시겠습니까?")) {
+            gameData = gameData.filter(acc => acc.id !== accId);
+            delete accordionStatus[accId];
+            localStorage.setItem('accordionStatus_v15', JSON.stringify(accordionStatus));
+            saveData();
+        }
+    }
+
+    function removeCharacter(accId, charId) {
+        if(confirm("캐릭터를 삭제하시겠습니까?")) {
+            const acc = gameData.find(a => a.id === accId);
+            acc.characters = acc.characters.filter(c => c.id !== charId);
+            saveData();
+        }
+    }
+
+    function changeVal(accId, charId, field, amount) {
+        const acc = gameData.find(a => a.id === accId);
+        if (charId === null) {
+            acc[field] = Math.max(0, acc[field] + amount);
+        } else {
+            const char = acc.characters.find(c => c.id === charId);
+            if (field === 'ode') {
+                char.ode = Math.max(0, Math.min(840, char.ode + amount));
+            } else if (field === 'extraOde') {
+                char.extraOde = Math.max(0, Math.min(2000, char.extraOde + amount));
+            }
+        }
+        saveData();
+    }
+
+    function setDirectVal(accId, charId, field, value) {
+        const acc = gameData.find(a => a.id === accId);
+        let num = parseInt(value) || 0;
+        if (num < 0) num = 0;
+        if (charId === null) { acc[field] = num; } 
+        else {
+            const char = acc.characters.find(c => c.id === charId);
+            if (field === 'ode') char.ode = Math.min(840, num);
+            else if (field === 'extraOde') char.extraOde = Math.min(2000, num);
+        }
+        saveData();
+    }
+
+    function useSmartOde(accId, charId) {
+    // 1. DOM에서 현재 캐릭터의 기본/추가 오드에너지 입력창 가져오기
+    const odeInput = document.getElementById(`input-ode-${charId}`);
+    const extraOdeInput = document.getElementById(`input-extraOde-${charId}`);
+    
+    if (!odeInput || !extraOdeInput) return;
+
+    let baseOde = parseInt(odeInput.value) || 0;
+    let extraOde = parseInt(extraOdeInput.value) || 0;
+    const amountToUse = 80;
+
+    // 2. 총 보유량이 80 미만이면 실행 차단
+    if ((baseOde + extraOde) < amountToUse) {
+        alert("❌ 오드에너지가 부족합니다!");
+        return;
+    }
+
+    // 3. 선차감 및 후차감 알고리즘 적용
+    if (baseOde >= amountToUse) {
+        // 기본 오드가 충분한 경우
+        baseOde -= amountToUse;
+    } else {
+        // 기본 오드가 부족하여 추가 오드까지 써야 하는 경우
+        let remainder = amountToUse - baseOde; // 모자란 잔여 요구량 계산
+        baseOde = 0; // 기본 오드는 전부 소모되어 0
+        extraOde -= remainder; // 추가 오드에서 남은 만큼 차감
+    }
+
+    // 4. 변경된 값을 화면의 Input 엘리먼트에 즉시 반영
+    odeInput.value = baseOde;
+    extraOdeInput.value = extraOde;
+
+    // 5. [중요] 기존 대시보드의 데이터 저장 및 갱신 시스템 호출
+    // 기존에 구현되어 있던 실제 데이터 배열 상태 업데이트 로직과 연동해 줍니다.
+    if (typeof setDirectVal === 'function') {
+        setDirectVal(accId, charId, 'ode', baseOde);
+        setDirectVal(accId, charId, 'extraOde', extraOde);
+    }
+    
+    // 알림음 시스템 재생 연동
+    if (typeof playBeepSound === 'function') {
+        playBeepSound();
+    }
+}
+
+    function toggleCheckbox(accId, charId, field, index = null) {
+        const acc = gameData.find(a => a.id === accId);
+        if (charId === null) { acc[field] = !acc[field]; } 
+        else {
+            const char = acc.characters.find(c => c.id === charId);
+            if (index !== null) char.homeworks[index].checked = !char.homeworks[index].checked;
+            else char[field] = !char[field];
+        }
+        saveData();
+    }
+
+    function createCustomHomework(e, accId, charId) {
+        e.preventDefault();
+        const form = e.target;
+        const name = form.hwName.value.trim();
+        const type = form.hwType.value;
+        if(!name) return;
+        const acc = gameData.find(a => a.id === accId);
+        const char = acc.characters.find(c => c.id === charId);
+        char.homeworks.push({ name, type, checked: false });
+        saveData();
+    }
+
+    function createBatchHomework(e, accId) {
+        e.preventDefault();
+        const form = e.target;
+        const name = form.batchHwName.value.trim();
+        const type = form.batchHwType.value;
+        if (!name) return;
+
+        const acc = gameData.find(a => a.id === accId);
+        if (!acc.characters || acc.characters.length === 0) {
+            alert("이 계정에는 생성된 캐릭터가 없습니다. 캐릭터를 먼저 생성해 주세요.");
+            return;
+        }
+
+        acc.characters.forEach(char => {
+            char.homeworks.push({ name, type, checked: false });
+        });
+
+        alert(`✅ [${type === 'daily' ? '일일' : '주간'}] "${name}" 숙제가 이 계정의 모든 캐릭터(${acc.characters.length}명)에게 일괄 추가되었습니다.`);
+        saveData();
+    }
+
+    function deleteCustomHomework(accId, charId, index) {
+        if (confirm("이 커스텀 숙제를 삭제하시겠습니까?")) {
+            const acc = gameData.find(a => a.id === accId);
+            const char = acc.characters.find(c => c.id === charId);
+            char.homeworks.splice(index, 1);
+            saveData();
+        }
+    }
+
+    // --- [ 화면 렌더링 ] ---
+    function render() {
+        const app = document.getElementById('app');
+        if (gameData.length === 0) {
+            app.innerHTML = `<p style="text-align:center; color:var(--text-muted); margin-top: 50px;">계정을 먼저 추가하여 숙제 관리를 시작해보세요!</p>`;
+            return;
+        }
+
+        let html = '';
+        gameData.forEach(acc => {
+            if (accordionStatus[acc.id] === undefined) accordionStatus[acc.id] = true;
+            const isCollapsed = !accordionStatus[acc.id];
+
+            html += `
+                <div class="account-section">
+                    <div class="account-header" onclick="toggleAccordion(${acc.id})">
+                        <div class="account-title-area">
+                            <span class="accordion-icon" id="acc-icon-${acc.id}">${isCollapsed ? '▼' : '▲'}</span>
+                            <h2>${acc.name}</h2>
+                        </div>
+                        <div>
+                            <button class="btn btn-sm" onclick="openCharModal(${acc.id}, event)">+ 캐릭터 추가</button>
+                            <button class="btn btn-sm btn-danger" onclick="removeAccount(${acc.id}, event)">계정 삭제</button>
+                        </div>
+                    </div>
+                    
+                    <div class="account-body ${isCollapsed ? 'collapsed' : ''}" id="acc-body-${acc.id}">
+                        <div class="account-contents">
+                            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom: 10px;">
+                                <span class="account-contents-title" style="margin-bottom:0;">계정 공통 콘텐츠 및 상점 체크</span>
+                                <form class="batch-add-form" onclick="event.stopPropagation();" onsubmit="createBatchHomework(event, ${acc.id})">
+                                    <span style="font-size:12px; color:var(--accent); font-weight:bold;">캐릭터 전체 일괄 숙제 추가 : </span>
+                                    <input type="text" name="batchHwName" placeholder="일괄 숙제 이름" required>
+                                    <select name="batchHwType">
+                                        <option value="daily">일일</option>
+                                        <option value="weekly">주간</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-xs btn-success" style="padding:4px 8px;">일괄 추가</button>
+                                </form>
+                            </div>
+                            <div class="account-resource-grid">
+                                <div class="resource-item">
+                                    <span class="resource-name">🎉 슈고 열쇠</span>
+                                    <div class="counter-controls">
+                                        <button class="btn btn-sm" onclick="changeVal(${acc.id}, null, 'shugo', -1)">-</button>
+                                        <input type="number" class="counter-input" value="${acc.shugo}" onchange="setDirectVal(${acc.id}, null, 'shugo', this.value)">
+                                        <button class="btn btn-sm" onclick="changeVal(${acc.id}, null, 'shugo', 1)">+</button>
+                                    </div>
+                                </div>
+                                <div class="resource-item">
+                                    <span class="resource-name">⚔️ 차원침공 열쇠</span>
+                                    <div class="counter-controls">
+                                        <button class="btn btn-sm" onclick="changeVal(${acc.id}, null, 'dimension', -1)">-</button>
+                                        <input type="number" class="counter-input" value="${acc.dimension}" onchange="setDirectVal(${acc.id}, null, 'dimension', this.value)">
+                                        <button class="btn btn-sm" onclick="changeVal(${acc.id}, null, 'dimension', 1)">+</button>
+                                    </div>
+                                </div>
+                                <div class="resource-item">
+                                    <label class="hw-label">
+                                        <input type="checkbox" ${acc.odeBuyChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'odeBuyChecked')">
+                                        <span class="${acc.odeBuyChecked ? 'checked-text' : ''}">⚡ 오드구매,제작 (16)</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="char-grid">
+            `;
+
+            acc.characters.forEach(char => {
+                const matchedIcon = jobIcons[char.job] || '👤';
+
+                html += `
+                    <div class="char-card">
+                        <div class="char-header">
+                            <div class="char-info">
+                                <span class="char-name">${matchedIcon} ${char.name}</span>
+                                <span class="char-sub-info">직업: ${char.job} | 투력: <span class="char-power">${Number(char.power).toLocaleString()}</span></span>
+                            </div>
+                            <button class="btn btn-xs btn-danger" onclick="removeCharacter(${acc.id}, ${char.id})">삭제</button>
+                        </div>
+                        
+                        <div class="resource-group">
+                            <div class="ode-title-row" style="display: flex; justify-content: space-between; align-items: center;">
+                                <div style="display:flex; flex-direction:column;">
+                                    <span>⚡ 오드에너지</span>
+                                    <span class="ode-timer" id="timer-${char.id}" style="margin-left:18px;">[로딩중...]</span>
+                                </div>
+                                
+                                <div class="tooltip">
+                                    <button class="btn-use-total" onclick="useSmartOde(${acc.id}, ${char.id})">오드사용</button>
+                                    <span class="tooltip-text">💡 클릭 시 80씩 자동 차감됩니다!</span>
+                                </div>
+                            </div>
+                            
+                            <div class="ode-row">
+                                <span class="ode-label">기본 [ <input type="number" id="input-ode-${char.id}" class="counter-input" value="${char.ode}" onchange="setDirectVal(${acc.id}, ${char.id}, 'ode', this.value)"> ] / 840</span>
+                            </div>
+                            
+                            <div class="ode-row">
+                                <span class="ode-label">추가 [ <input type="number" id="input-extraOde-${char.id}" class="counter-input" value="${char.extraOde}" onchange="setDirectVal(${acc.id}, ${char.id}, 'extraOde', this.value)"> ] / 2000</span>
+                            </div>
+                        </div>
+
+                        <div class="homework-group">
+                            <strong style="font-size:11px; display:block; margin-bottom:4px; color:#ffffff;">📌 고정 콘텐츠 숙제</strong>
+                            <div class="hw-item">
+                                <label class="hw-label">
+                                    <input type="checkbox" ${char.charBuyChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'charBuyChecked')">
+                                    <span class="hw-text ${char.charBuyChecked ? 'checked-text' : ''}">오드구매,제작 (4)</span>
+                                </label>
+                            </div>
+                            <div class="hw-item">
+                                <label class="hw-label">
+                                    <input type="checkbox" ${char.abyssChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'abyssChecked')">
+                                    <span class="hw-text ${char.abyssChecked ? 'checked-text' : ''}" >
+                                        어비스회랑 [수/토]
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="homework-group" style="border-bottom: none; padding-bottom: 0;">
+                            <strong style="font-size:11px; display:block; margin-bottom:4px; color:#ffffff;">📝 커스텀 숙제 리스트</strong>
+                            ${char.homeworks.length === 0 ? '<span style="font-size:11px; color:var(--text-muted);">추가된 숙제 없음</span>' : ''}
+                            ${char.homeworks.map((hw, idx) => `
+                                <div class="hw-item">
+                                    <label class="hw-label">
+                                        <input type="checkbox" ${hw.checked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, null, ${idx})">
+                                        <span class="hw-text ${hw.checked ? 'checked-text' : ''}">
+                                            [${hw.type === 'daily' ? '일' : '주'}] ${hw.name}
+                                        </span>
+                                    </label>
+                                    <button class="btn btn-xs btn-danger2" style="padding: 1px 4px; font-size: 10px;" onclick="deleteCustomHomework(${acc.id}, ${char.id}, ${idx})">❌</button>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <form class="add-form" onsubmit="createCustomHomework(event, ${acc.id}, ${char.id})">
+                            <input type="text" name="hwName" placeholder="숙제 명" required>
+                            <select name="hwType">
+                                <option value="daily">일일</option>
+                                <option value="weekly">주간</option>
+                            </select>
+                            <button type="submit" class="btn btn-xs">+</button>
+                        </form>
+                    </div>
+                `;
+            });
+
+            html += `
+                    </div>
+                </div>
+            </div>
+            `;
+        });
+
+        app.innerHTML = html;
+        updateTimerDisplay();
+    }
+
+    // --- [ 초기 구동 및 인터벌 세팅 ] ---
+    updateOdeAutomatically();
+    checkAbyssReset();
+    render();
+    initAlarmToggles();
+    
+    setInterval(updateTimerDisplay, 1000);
+    setInterval(() => {
+        updateOdeAutomatically();
+        checkAbyssReset();
+    }, 60000);
+</script>
+
+<?php include("footer.php");?>
+</body>
+</html>
