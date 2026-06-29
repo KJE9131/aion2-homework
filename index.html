@@ -440,8 +440,8 @@ function updateTopAlertTimers() {
         if (parseInt(lastChecked) < lastExpectedReset) {
             const timeDiff = lastExpectedReset - parseInt(lastChecked);
             
-            // 💡 [수식 교정 완료] 정각 기준 그리드가 정렬되었으므로 +1 없이 정확한 배수 주기만 계산합니다.
-            const chargeCycles = Math.floor(timeDiff / threeHoursMs); 
+            // 💡 [수정 완료] 미세한 밀리초 차이로 충전이 안 되는 현상을 막기 위해 반올림(Math.round)으로 유연하게 판정합니다.
+            const chargeCycles = Math.round(timeDiff / threeHoursMs); 
             if (chargeCycles < 1) {
                 isOdeUpdating = false;
                 return;
@@ -468,6 +468,9 @@ function updateTopAlertTimers() {
             localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
             render();
         }
+
+        setTimeout(() => { isOdeUpdating = false; }, 1000);
+    }
 
         setTimeout(() => { isOdeUpdating = false; }, 1000);
     }
