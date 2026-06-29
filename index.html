@@ -30,7 +30,12 @@
     </div>
 </header>
     <header>
-    <h1>아이온2 숙제 관리 대시보드 </h1>
+    <h1>
+        아이온2 숙제 관리 대시보드 
+        <span id="server-clock" style="font-size: 0.5em; color: #888; margin-left: 15px; font-weight: normal;">
+        [서버 시각: 로딩 중...]
+        </span>
+    </h1>
 
     <div class="top_box">
         <div class="info-box">
@@ -169,6 +174,41 @@
     const jobIcons = {
         '치유성': '💚', '호법성': '⚜️', '수호성': '🛡️', '검성': '🗡️', '궁성': '🏹', '살성': '⚔️', '마도성': '🧙‍♀️', '정령성': '🦊', '권성': '🥊', '미지정': '👤'
     };
+
+
+    // --- [ 현재 서버 시간 표시 ] ---
+    function updateServerClock() {
+    const now = new Date();
+    
+    // 연, 월, 일, 요일 계산
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const date = String(now.getDate()).padStart(2, '0');
+    const weekDays = ['일', '월', '화', '수', '목', '금', '토'];
+    const dayOfWeek = weekDays[now.getDay()];
+    
+    // 시, 분, 초 계산 (2자리 형식 고정)
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    
+    // 출력 포맷 (예: 2026-06-29(월) 16:30:45)
+    const timeString = `⏱️ 서버 시각: ${year}-${month}-${date}(${dayOfWeek}) ${hours}:${minutes}:${seconds}`;
+    
+    // HTML 화면에 반영
+    const clockElement = document.getElementById('server-clock');
+    if (clockElement) {
+            clockElement.innerText = timeString;
+        }
+    }
+    
+    // 페이지 로드가 끝나면 시계 작동 시작
+    window.addEventListener('DOMContentLoaded', () => {
+        updateServerClock(); // 첫 로딩 시 1초 지연 방지용 즉시 실행
+        setInterval(updateServerClock, 1000); // 1초(1000ms)마다 무한 반복
+    });
+
+    
 
     // --- [ 🔊 부드러운 오디오 알림음 재생 시스템 ] ---
     function playBeepSound() {
