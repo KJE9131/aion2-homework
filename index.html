@@ -419,7 +419,7 @@
         }
     }
 
-    // 🌟 [신규 추가] 1. 커스텀 일일 숙제 자동 초기화 연산 시스템 (매일 오전 5시 기점)
+    // 🌟 [수정 완료] 1. 커스텀 일일 숙제 자동 초기화 및 열쇠 자동 충전 시스템 (매일 오전 5시 기점)
     function checkDailyReset() {
         const now = new Date();
         let targetReset = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
@@ -431,7 +431,17 @@
 
         if (parseInt(lastDailyReset) < currentTargetReset) {
             gameData.forEach(acc => {
-                // 계정 공통 체크항목 초기화가 필요하다면 여기에 추가 가능
+                // 🔑 [열쇠 자동 충전 로직 추가] 
+                // 슈고 열쇠 기본 +2개 추가 (최대 14개 제한)
+                let newShugo = (acc.shugo || 0) + 2;
+                if (newShugo > 14) newShugo = 14;
+                acc.shugo = newShugo;
+
+                // 차원침공 열쇠 기본 +1개 추가 (최대 7개 제한)
+                let newDimension = (acc.dimension || 0) + 1;
+                if (newDimension > 7) newDimension = 7;
+                acc.dimension = newDimension;
+
                 acc.characters.forEach(char => {
                     // 커스텀 숙제 중 '일일(daily)' 숙제만 찾아 체크 해제
                     char.homeworks.forEach(hw => {
