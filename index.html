@@ -129,6 +129,30 @@
     </div>
 </div>
 
+    <!--캐릭별 메모추-->
+<div id="memoModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>📝 캐릭터 메모 관리</h2>
+            <button class="close-btn" onclick="closeMemoModal()">&times;</button>
+        </div>
+        <form id="memoForm" onsubmit="submitMemoForm(event)">
+            <input type="hidden" id="memoAccId">
+            <input type="hidden" id="memoCharId">
+            
+            <div class="form-group">
+                <label for="modalMemoText" style="display:block; margin-bottom:8px; font-size:13px; color:var(--text-muted);">이 캐릭터에 기록할 메모를 입력하세요 (줄바꿈 지원)</label>
+                <textarea id="modalMemoText" rows="6" placeholder="기록할 내용을 입력해 주세요." style="width:100%; background:#1e293b; border:1px solid rgba(255,255,255,0.08); border-radius:6px; color:#fff; padding:10px; box-sizing:border-box; resize:none; font-family:inherit; font-size:14px; line-height:1.5;"></textarea>
+            </div>
+            
+            <div class="modal-footer" style="display:flex; gap:10px; margin-top:15px;">
+                <button type="submit" class="btn btn-success" style="flex:1; padding:10px 0;">완료</button>
+                <button type="button" class="btn" onclick="closeMemoModal()" style="background:#334155; color:#fff; padding:10px 15px;">취소</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
     // --- [ 데이터 구조 및 초기화 ] ---
     let gameData = JSON.parse(localStorage.getItem('gameHomeworkData_v15')) || [];
@@ -609,6 +633,7 @@ function submitCharacterForm(e) {
             power: power, 
             ode: 0, 
             extraOde: 0,
+            memo: '', // 💡 신규 메모 데이터 필드 추가!
             charBuyChecked: false, 
             charCraftChecked: false, 
             abyssChecked: false,     
@@ -628,7 +653,53 @@ function submitCharacterForm(e) {
     saveData();       // 로컬 스토리지 저장 및 갱신된 데이터로 render() 호출
 }
 
+// 💡 메모 관리를 위한 전역 타겟 변수
+let memoAccId = null;
+let memoCharId = null;
 
+// 💡 메모 모달 열기 함수
+function openMemoModal(accId, charId, event) {
+    if (event) event.stopPropagation();
+    
+    memoAccId = accId;
+    memoCharId = charId;
+    
+    const acc = gameData.find(a => a.id === accId);
+    const char = acc.characters.find(c => c.id === charId);
+    
+    document.getElementById('memoAccId').value = accId;
+    document.getElementById('memoCharId').value = charId;
+    // 기존에 저장된 메모가 있으면 가져오고, 없으면 빈값 처리
+    document.getElementById('modalMemoText').value = char.memo || '';
+    
+    // 기존 추가창 모달 열기 방식(flex)과 통일
+    document.getElementById('memoModal').style.display = 'flex';
+}
+
+// 💡 메모 모달 닫기 함수
+function closeMemoModal() {
+    document.getElementById('memoModal').style.display = 'none';
+    memoAccId = null;
+    memoCharId = null;
+}
+
+// 💡 메모 저장 처리 함수
+function submitMemoForm(e) {
+    e.preventDefault();
+    const accId = parseInt(document.getElementById('memoAccId').value);
+    const charId = parseInt(document.getElementById('memoCharId').value);
+    const memoText = document.getElementById('modalMemoText').value;
+
+    const acc = gameData.find(a => a.id === accId);
+    const char = acc.characters.find(c => c.id === charId);
+    
+    if (char) {
+        char.memo = memoText; // 해당 캐릭터 데이터에 메모 저장
+    }
+    
+    closeMemoModal();
+    saveData(); // 로컬스토리지 저장 및 화면 자동 render() 호출
+}
 
 
     
@@ -959,8 +1030,9 @@ function render() {
                             </form>
                 
                             <div class="char-control-footer">
+                                <button class="btn btn-xs btn-char-memo" onclick="openMemoModal(${acc.id}, ${char.id}, event)">📝 메모</button>
                                 <button class="btn btn-xs btn-char-edit" onclick="openEditCharModal(${acc.id}, ${char.id}, event)">⚙️ 설정</button>
-                                <button class="btn btn-xs btn-char-del" onclick="removeCharacter(${acc.id}, ${char.id})">🗑️ 캐릭터 삭제</button>
+                                <button class="btn btn-xs btn-char-del" onclick="removeCharacter(${acc.id}, ${char.id})">🗑️ 삭제</button>
                             </div>
                         </div>
                     `;
