@@ -218,7 +218,7 @@
         .account-resource-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px 30px;
+            gap: 8px 20px;
             align-items: center;
         }
         .account-resource-grid .resource-item { 
@@ -227,7 +227,7 @@
             align-items: center; 
             gap: 12px;
             margin: 6px 0; 
-            font-size: 14px; 
+            font-size: 12px; 
             width: auto;
         }
 
