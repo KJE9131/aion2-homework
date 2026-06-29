@@ -372,6 +372,43 @@
         return nextReset;
     }
 
+    // 💡 함수 바깥(전역 변수 구역)에 디바운스용 플래그 선언
+let isOdeUpdating = false;
+
+function updateOdeAutomatically() {
+    // 🎯 [안전장치] 이미 함수가 실행 중이거나 연속 호출된 경우 0.5초간 실행을 차단합니다.
+    if (isOdeUpdating) return;
+    isOdeUpdating = true;
+    setTimeout(() => { isOdeUpdating = false; }, 500); 
+
+    const now = Date.now();
+    const nextReset = getNextOdeResetTime();
+    const lastExpectedReset = nextReset - (3 * 60 * 60 * 1000);
+    
+    if (parseInt(lastChecked) < lastExpectedReset) {
+        const timeDiff = lastExpectedReset - parseInt(lastChecked);
+        const threeHoursMs = 3 * 60 * 60 * 1000;
+        const chargeCycles = Math.floor(timeDiff / threeHoursMs) + 1;
+        
+        // 3시간 주기에 맞춘 정상 15 충전
+        const totalAddOde = chargeCycles * 15; 
+        
+        gameData.forEach(acc => {
+            acc.characters.forEach(char => {
+                if ((char.ode || 0) >= 840) return;
+                let newBaseOde = (char.ode || 0) + totalAddOde;
+                if (newBaseOde > 840) newBaseOde = 840;
+                char.ode = newBaseOde;
+            });
+        });
+        
+        // 🔑 중요: 스토리지에 시간 기록을 먼저 확실하게 밀어 넣기
+        lastChecked = lastExpectedReset;
+        localStorage.setItem('lastOdeUpdateTime_v15', lastChecked.toString());
+        saveData();
+    }
+}
+
     function updateOdeAutomatically() {
         const now = Date.now();
         const nextReset = getNextOdeResetTime();
