@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="favicon.png">
-    <title>아이온2 숙제 관리 대시보드2</title>
+    <title>아이온2 숙제 관리 대시보드3</title>
 
     <!-- <link rel="stylesheet" href="css/reset.css"> -->
     <link rel="stylesheet" href="css/layout.css?ver=<?php echo time()?>">
@@ -439,11 +439,15 @@ function updateTopAlertTimers() {
         
         if (parseInt(lastChecked) < lastExpectedReset) {
             const timeDiff = lastExpectedReset - parseInt(lastChecked);
-            const chargeCycles = Math.floor(timeDiff / fiveMinutesMs) + 1;
+            
+            // 💡 [버그 수정] 정각 그리드가 맞기 때문에 +1을 하지 않아야 정확히 1주기(15)만 계산됩니다.
+            const chargeCycles = Math.floor(timeDiff / fiveMinutesMs); 
+            if (chargeCycles < 1) {
+                isOdeUpdating = false;
+                return;
+            }
             const totalAddOde = chargeCycles * 15;
             
-            // 💡 [버그 원천 차단: 목표값 고정 수식]
-            // 누적된 시간(lastChecked)을 먼저 강제로 정점 처리합니다.
             lastChecked = lastExpectedReset;
             localStorage.setItem('lastOdeUpdateTime_v15', lastChecked.toString());
             
@@ -451,12 +455,7 @@ function updateTopAlertTimers() {
                 acc.characters.forEach(char => {
                     if ((char.ode || 0) >= 840) return;
 
-                    // 변수나 화면 값을 신뢰하지 않고, 스토리지에 최종 저장될 순수 데이터 기준으로
-                    // 정확히 이번 주기에 도달했어야 하는 '딱 하나의 결과값'을 계산합니다.
                     let targetOde = (char.ode || 0) + totalAddOde;
-                    
-                    // 만약 이 함수가 0.001초 만에 중복 실행되어 이미 값이 더해진 상태라면,
-                    // 중복 증가하는 것을 막기 위해 강제로 원래 더해졌어야 할 targetOde 값으로 고정시킵니다.
                     if (char.ode < targetOde) {
                         if (targetOde > 840) targetOde = 840;
                         char.ode = targetOde;
@@ -464,13 +463,11 @@ function updateTopAlertTimers() {
                 });
             });
             
-            // 다른 타이머와의 비동기 충돌을 막기 위해 
-            // saveData() 대신 로컬스토리지 직접 저장 후 render()를 단 한번 동기 실행합니다.
             localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
             render();
         }
 
-        setTimeout(() => { isOdeUpdating = false; }, 1000); // 안전 잠금 1초로 연장
+        setTimeout(() => { isOdeUpdating = false; }, 1000);
     }
     
 
