@@ -568,7 +568,7 @@ box-sizing:border-box;
 /* 반응형 모바일 대응: 화면이 작아지면 여백 조절 */
 @media (max-width: 768px) {
     .header-container {
-        padding: 0 15px;
+        padding: 0;
     }
     .gnb ul {
         gap: 15px;
@@ -576,6 +576,25 @@ box-sizing:border-box;
     .gnb-link {
         font-size: 0.85rem;
     }
+.top_box {
+          flex-direction:column;
+            gap:8px;
+}
+            .alarm-container {
+                        max-width:100%;
+                        margin:0;
+            }
+            .alarm-container {
+                        align-items:center;
+                        gap:4px;
+            }
+            .modal-content {
+                        max-width:96%;
+                        box-sizing:border-box;
+            }
+                        
+
+            
 }
 
 
