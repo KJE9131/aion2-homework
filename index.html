@@ -800,7 +800,7 @@ function render() {
         // 💡 [수정 구역] 캐릭터가 한 개도 없는 새 계정일 때 가이드 문구를 주입합니다.
         if (!acc.characters || acc.characters.length === 0) {
             html += `
-                <div class="empty-character-guide" style="grid-column: 1 / -1; width: 100%;">
+                <div class="empty-character-guide" style="grid-column: 1 / -1;">
                     <p class="guide-text">💡 우측 상단의 <strong>[캐릭터 추가]</strong> 버튼을 클릭하여 캐릭터를 추가해주세요!</p>
                 </div>
             `;
