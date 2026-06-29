@@ -666,20 +666,3 @@ box-sizing:border-box;
     color: #fff;
 }
 
-/* 🎯 캐릭터 모달을 화면 정중앙으로 고정 */
-#charModal {
-    position: fixed;            /* 스크롤을 내려도 화면 기준으로 고정 */
-    top: 50% !important;        /* 위에서 50% */
-    left: 50% !important;       /* 왼쪽에서 50% */
-    transform: translate(-50%, -50%) !important; /* 자신의 크기 절반만큼 역이동하여 완벽한 중앙 배치 */
-    
-    /* 기존 스타일 유지용 기본값 (상황에 맞게 조절 가능) */
-    z-index: 1000;              /* 다른 요소들보다 무조건 위에 배치 */
-    background-color: #1e293b;  /* 대시보드 다크 테마 배경색 */
-    border-radius: 12px;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-    max-width: 400px;
-    width: 90%;
-    padding: 24px;
-    box-sizing: border-box;
-}
