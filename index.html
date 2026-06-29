@@ -728,74 +728,84 @@ function setDirectVal(accId, charId, key, val) {
     }
 
     // --- [ 화면 렌더링 ] ---
-    function render() {
-        const app = document.getElementById('app');
-        if (gameData.length === 0) {
-            app.innerHTML = `<p style="text-align:center; color:var(--text-muted); margin-top: 50px;">계정을 먼저 추가하여 숙제 관리를 시작해보세요!</p>`;
-            return;
-        }
+    // --- [ 화면 렌더링 ] ---
+function render() {
+    const app = document.getElementById('app');
+    if (gameData.length === 0) {
+        app.innerHTML = `<p style="text-align:center; color:var(--text-muted); margin-top: 50px;">계정을 먼저 추가하여 숙제 관리를 시작해보세요!</p>`;
+        return;
+    }
 
-        let html = '';
-        gameData.forEach(acc => {
-            if (accordionStatus[acc.id] === undefined) accordionStatus[acc.id] = true;
-            const isCollapsed = !accordionStatus[acc.id];
+    let html = '';
+    gameData.forEach(acc => {
+        if (accordionStatus[acc.id] === undefined) accordionStatus[acc.id] = true;
+        const isCollapsed = !accordionStatus[acc.id];
 
-            html += `
-                <div class="account-section">
-                    <div class="account-header" onclick="toggleAccordion(${acc.id})">
-                        <div class="account-title-area">
-                            <span class="accordion-icon" id="acc-icon-${acc.id}">${isCollapsed ? '▼' : '▲'}</span>
-                            <h2>${acc.name}</h2>
+        html += `
+            <div class="account-section">
+                <div class="account-header" onclick="toggleAccordion(${acc.id})">
+                    <div class="account-title-area">
+                        <span class="accordion-icon" id="acc-icon-${acc.id}">${isCollapsed ? '▼' : '▲'}</span>
+                        <h2>${acc.name}</h2>
+                    </div>
+                    <div>
+                        <button class="btn btn-sm" onclick="openCharModal(${acc.id}, event)">+ 캐릭터 추가</button>
+                        <button class="btn btn-sm btn-danger" onclick="removeAccount(${acc.id}, event)">계정 삭제</button>
+                    </div>
+                </div>
+                
+                <div class="account-body ${isCollapsed ? 'collapsed' : ''}" id="acc-body-${acc.id}">
+                    <div class="account-contents">
+                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom: 10px;">
+                            <span class="account-contents-title" style="margin-bottom:0;">계정 공통 콘텐츠 및 상점 체크</span>
+                            <form class="batch-add-form" onclick="event.stopPropagation();" onsubmit="createBatchHomework(event, ${acc.id})">
+                                <span style="font-size:12px; color:var(--accent); font-weight:bold;">캐릭터 전체 일괄 숙제 추가 : </span>
+                                <input type="text" name="batchHwName" placeholder="일괄 숙제 이름" required>
+                                <select name="batchHwType">
+                                    <option value="daily">일일</option>
+                                    <option value="weekly">주간</option>
+                                </select>
+                                <button type="submit" class="btn btn-xs btn-success" style="padding:4px 8px;">일괄 추가</button>
+                            </form>
                         </div>
-                        <div>
-                            <button class="btn btn-sm" onclick="openCharModal(${acc.id}, event)">+ 캐릭터 추가</button>
-                            <button class="btn btn-sm btn-danger" onclick="removeAccount(${acc.id}, event)">계정 삭제</button>
+                        <div class="account-resource-grid">
+                            <div class="resource-item">
+                                <span class="resource-name">🎉 슈고 열쇠</span>
+                                <div class="counter-controls">
+                                    <button class="btn btn-sm" onclick="changeVal(${acc.id}, null, 'shugo', -1)">-</button>
+                                    <input type="number" class="counter-input" value="${acc.shugo}" max="14" onchange="setDirectVal(${acc.id}, null, 'shugo', this.value)">
+                                    <button class="btn btn-sm" onclick="changeVal(${acc.id}, null, 'shugo', 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="resource-item">
+                                <span class="resource-name">⚔️ 차원침공 열쇠</span>
+                                <div class="counter-controls">
+                                    <button class="btn btn-sm" onclick="changeVal(${acc.id}, null, 'dimension', -1)">-</button>
+                                    <input type="number" class="counter-input" value="${acc.dimension}" max="7" onchange="setDirectVal(${acc.id}, null, 'dimension', this.value)">
+                                    <button class="btn btn-sm" onclick="changeVal(${acc.id}, null, 'dimension', 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="resource-item">
+                                <label class="hw-label">
+                                    <input type="checkbox" ${acc.odeBuyChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'odeBuyChecked')">
+                                    <span class="${acc.odeBuyChecked ? 'checked-text' : ''}">⚡ 오드구매,제작 (16)</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="account-body ${isCollapsed ? 'collapsed' : ''}" id="acc-body-${acc.id}">
-                        <div class="account-contents">
-                            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom: 10px;">
-                                <span class="account-contents-title" style="margin-bottom:0;">계정 공통 콘텐츠 및 상점 체크</span>
-                                <form class="batch-add-form" onclick="event.stopPropagation();" onsubmit="createBatchHomework(event, ${acc.id})">
-                                    <span style="font-size:12px; color:var(--accent); font-weight:bold;">캐릭터 전체 일괄 숙제 추가 : </span>
-                                    <input type="text" name="batchHwName" placeholder="일괄 숙제 이름" required>
-                                    <select name="batchHwType">
-                                        <option value="daily">일일</option>
-                                        <option value="weekly">주간</option>
-                                    </select>
-                                    <button type="submit" class="btn btn-xs btn-success" style="padding:4px 8px;">일괄 추가</button>
-                                </form>
-                            </div>
-                            <div class="account-resource-grid">
-                                <div class="resource-item">
-                                    <span class="resource-name">🎉 슈고 열쇠</span>
-                                    <div class="counter-controls">
-                                        <button class="btn btn-sm" onclick="changeVal(${acc.id}, null, 'shugo', -1)">-</button>
-                                        <input type="number" class="counter-input" value="${acc.shugo}" max="14" onchange="setDirectVal(${acc.id}, null, 'shugo', this.value)">
-                                        <button class="btn btn-sm" onclick="changeVal(${acc.id}, null, 'shugo', 1)">+</button>
-                                    </div>
-                                </div>
-                                <div class="resource-item">
-                                    <span class="resource-name">⚔️ 차원침공 열쇠</span>
-                                    <div class="counter-controls">
-                                        <button class="btn btn-sm" onclick="changeVal(${acc.id}, null, 'dimension', -1)">-</button>
-                                        <input type="number" class="counter-input" value="${acc.dimension}" max="7" onchange="setDirectVal(${acc.id}, null, 'dimension', this.value)">
-                                        <button class="btn btn-sm" onclick="changeVal(${acc.id}, null, 'dimension', 1)">+</button>
-                                    </div>
-                                </div>
-                                <div class="resource-item">
-                                    <label class="hw-label">
-                                        <input type="checkbox" ${acc.odeBuyChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'odeBuyChecked')">
-                                        <span class="${acc.odeBuyChecked ? 'checked-text' : ''}">⚡ 오드구매,제작 (16)</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="char-grid">
+                    <div class="char-grid">
+        `;
+
+        // 💡 [수정 구역] 캐릭터가 한 개도 없는 새 계정일 때 가이드 문구를 주입합니다.
+        if (!acc.characters || acc.characters.length === 0) {
+            html += `
+                <div class="empty-character-guide" style="grid-column: 1 / -1; width: 100%;">
+                    <p class="guide-text">💡 슈고 열쇠 밑쪽에 우측 상단의 <strong>[캐릭터 추가]</strong> 버튼을 클릭하여 캐릭터를 추가해주세요!</p>
+                </div>
             `;
-
+        } else {
+            // 기존 캐릭터 반복 렌더링 코드
             acc.characters.forEach(char => {
                 const matchedIcon = jobIcons[char.job] || '👤';
 
@@ -845,7 +855,6 @@ function setDirectVal(accId, charId, key, val) {
                                     <span class="hw-text ${char.abyssChecked ? 'checked-text' : ''}">회랑 [수/토초기화]</span>
                                 </label>
                             </div>
-                            <!-- 🔄 커스텀에서 고정 콘텐츠로 이관된 항목 (주간 리셋 연동) -->
                             <div class="hw-item">
                                 <label class="hw-label">
                                     <input type="checkbox" ${char.nightmareChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'nightmareChecked')">
@@ -887,17 +896,18 @@ function setDirectVal(accId, charId, key, val) {
                     </div>
                 `;
             });
+        }
 
-            html += `
+        html += `
                     </div>
                 </div>
             </div>
-            `;
-        });
+        `;
+    });
 
-        app.innerHTML = html;
-        updateTimerDisplay();
-    }
+    app.innerHTML = html;
+    updateTimerDisplay();
+}
 
     // --- [ 초기 구동 및 인터벌 세팅 ] ---
     updateOdeAutomatically();
