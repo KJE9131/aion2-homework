@@ -906,3 +906,48 @@ left:0;
         align-self: flex-start;
     }
 }
+
+
+/* 👁️ 완료된 숙제 숨기기 토글 관련 스타일 */
+.global-action-bar {
+    max-width: 1200px;
+    margin: 10px auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: flex-end; /* 오른쪽 정렬 */
+}
+
+.btn-toggle-hide {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background-color: var(--bg-card, #fff);
+    border: 1px solid var(--border-color, #ddd);
+    border-radius: 20px; /* 둥근 캡슐 모양 */
+    color: var(--text-color, #333);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: all 0.2s ease;
+}
+
+.btn-toggle-hide:hover {
+    border-color: var(--primary-color, #ff7e36);
+    background-color: #fff9f5;
+}
+
+/* 활성화되었을 때 버튼 스타일 변화 */
+.btn-toggle-hide.active {
+    background-color: var(--primary-color, #ff7e36);
+    color: #fff;
+    border-color: var(--primary-color, #ff7e36);
+}
+
+/* 💡 핵심: body에 클래스가 붙으면 체크된 숙제와 회랑 행을 부드럽게 숨김 */
+body.hide-completed-mode .homework-item:has(input:checked),
+body.hide-completed-mode .weekly-row-static label:has(input:checked),
+body.hide-completed-mode .abyss-row:has(input:checked) {
+    display: none !important;
+}
