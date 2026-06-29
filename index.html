@@ -123,7 +123,7 @@
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn btn-danger" onclick="closeCharModal()">취소</button>
-                <button type="submit" class="btn">추가하기</button>
+                <button type="submit" class="btn">완료</button>
             </div>
         </form>
     </div>
@@ -562,7 +562,7 @@ function openEditCharModal(accId, charId, event) {
     document.getElementById('charModal').style.display = 'block'; 
 
     const modalBtn = document.querySelector('#charModal button[type="submit"]');
-    if (modalBtn) modalBtn.innerText = "수정 완료";
+    if (modalBtn) modalBtn.innerText = "완료";
 }
 
 // 📑 [교체] 캐릭터 모달 닫기 및 상태 리셋 함수
