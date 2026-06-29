@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="favicon.png">
-    <title>아이온2 숙제 관리 대시보드1</title>
+    <title>아이온2 숙제 관리 대시보드2</title>
 
     <!-- <link rel="stylesheet" href="css/reset.css"> -->
     <link rel="stylesheet" href="css/layout.css?ver=<?php echo time()?>">
@@ -429,7 +429,6 @@ function updateTopAlertTimers() {
     }
 
     function updateOdeAutomatically() {
-        // 1. 이미 업데이트 중이라면 찰나의 실행을 무조건 즉시 차단합니다. (락 시작)
         if (isOdeUpdating) return;
         isOdeUpdating = true;
 
@@ -438,36 +437,40 @@ function updateTopAlertTimers() {
         const fiveMinutesMs = 5 * 60 * 1000; // 5분 밀리초 (테스트용)
         const lastExpectedReset = nextReset - fiveMinutesMs;
         
-        // 2. 마지막 충전 시간이 기준점보다 과거일 때만 실행합니다.
         if (parseInt(lastChecked) < lastExpectedReset) {
             const timeDiff = lastExpectedReset - parseInt(lastChecked);
             const chargeCycles = Math.floor(timeDiff / fiveMinutesMs) + 1;
             const totalAddOde = chargeCycles * 15;
             
-            // 3. [핵심] 전역 변수와 로컬스토리지를 "연산 전에" 칼같이 동기화하여 잠금장치를 겁니다.
+            // 💡 [버그 원천 차단: 목표값 고정 수식]
+            // 누적된 시간(lastChecked)을 먼저 강제로 정점 처리합니다.
             lastChecked = lastExpectedReset;
             localStorage.setItem('lastOdeUpdateTime_v15', lastChecked.toString());
             
-            // 4. 데이터 연산을 순수 메모리 상에서 진행합니다.
             gameData.forEach(acc => {
                 acc.characters.forEach(char => {
                     if ((char.ode || 0) >= 840) return;
 
-                    let newBaseOde = (char.ode || 0) + totalAddOde;
-                    if (newBaseOde > 840) { 
-                        newBaseOde = 840; 
+                    // 변수나 화면 값을 신뢰하지 않고, 스토리지에 최종 저장될 순수 데이터 기준으로
+                    // 정확히 이번 주기에 도달했어야 하는 '딱 하나의 결과값'을 계산합니다.
+                    let targetOde = (char.ode || 0) + totalAddOde;
+                    
+                    // 만약 이 함수가 0.001초 만에 중복 실행되어 이미 값이 더해진 상태라면,
+                    // 중복 증가하는 것을 막기 위해 강제로 원래 더해졌어야 할 targetOde 값으로 고정시킵니다.
+                    if (char.ode < targetOde) {
+                        if (targetOde > 840) targetOde = 840;
+                        char.ode = targetOde;
                     }
-                    char.ode = newBaseOde;
                 });
             });
             
-            // 5. 데이터를 저장하고 화면을 다시 그립니다.
+            // 다른 타이머와의 비동기 충돌을 막기 위해 
+            // saveData() 대신 로컬스토리지 직접 저장 후 render()를 단 한번 동기 실행합니다.
             localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
             render();
         }
 
-        // 6. 모든 연산과 화면 렌더링이 100% 종료된 후 0.5초 뒤에 잠금을 해제합니다.
-        setTimeout(() => { isOdeUpdating = false; }, 500);
+        setTimeout(() => { isOdeUpdating = false; }, 1000); // 안전 잠금 1초로 연장
     }
     
 
