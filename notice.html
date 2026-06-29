@@ -1,16 +1,90 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="favicon.png">
-    <title>아이온2 숙제 관리 대시보드</title>
+    <title>안내사항 - 아이온2 숙제 관리</title>
 
-    <!-- <link rel="stylesheet" href="css/reset.css"> -->
-    <link rel="stylesheet" href="css/layout.css?ver=<?php echo time()?>">
+    <!-- 스타일시트 연동 -->
+    <link rel="stylesheet" href="css/layout.css?ver=1.5">
     <link rel="stylesheet" href="css/PretendardVariable.ttf">
     <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+    
+    <!-- 안내사항 페이지 전용 스타일 추가 -->
+    <style>
+        .notice-wrapper {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .notice-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .notice-desc {
+            color: var(--text-muted, #94a3b8);
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+        }
+        .notice-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .notice-item {
+            background-color: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        .notice-item.alert-card {
+            border-color: rgba(239, 68, 68, 0.2);
+            background-color: rgba(239, 68, 68, 0.02);
+        }
+        .notice-icon {
+            font-size: 1.3rem;
+            margin-top: 2px;
+        }
+        .notice-content {
+            flex: 1;
+        }
+        .notice-content h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #fff;
+            margin: 0 0 6px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .notice-content p {
+            color: var(--text-muted, #94a3b8);
+            font-size: 0.92rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+        .badge {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .badge-danger { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+        .badge-info { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+        .badge-success { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+        
+        .highlight { color: #fff; font-weight: 600; }
+        .danger-text { color: #f87171; font-weight: 600; }
+    </style>
 </head>
 
 <body>
@@ -23,19 +97,73 @@
         <nav class="gnb">
             <ul>
                 <li><a href="guide.html" class="gnb-link">사용방법</a></li>
-                <li><a href="index.html" class="gnb-link ">대시보드</a></li>
+                <li><a href="index.html" class="gnb-link">대시보드</a></li>
                 <li><a href="notice.html" class="gnb-link active">안내사항</a></li>
             </ul>
         </nav>
     </div>
 </header>
-    <header>
-    <h1>안내사항</h1>
 
-    
-</header>
+<main class="notice-wrapper">
+    <h1 class="notice-title">📢 이용 안내 및 유의사항</h1>
+    <p class="notice-desc">아이온2 숙제 관리 대시보드 이용에 관한 고정 기준 및 필수 안내사항입니다.</p>
 
+    <div class="notice-list">
+        <!-- 1. 데이터 저장 방식 (강조형) -->
+        <div class="notice-item alert-card">
+            <div class="notice-icon">⚠️</div>
+            <div class="notice-content">
+                <h3>데이터 저장 및 유실 안내 <span class="badge badge-danger">필독</span></h3>
+                <p>모든 데이터는 사용자의 브라우저(<span class="highlight">LocalStorage</span>)에 저장되며, 별도의 서버에 저장되지 않습니다. 내 숙제 데이터는 소중하니까! <span class="danger-text">브라우저 방문 기록이나 캐시/쿠키를 삭제하면 모든 설정 내역이 날아갈 수 있으니</span> 주의해 주세요.</p>
+            </div>
+        </div>
 
+        <!-- 2. 초기화 기준 -->
+        <div class="notice-item">
+            <div class="notice-icon">⏰</div>
+            <div class="notice-content">
+                <h3>일일 콘텐츠 및 오드 연산 기준 <span class="badge badge-info">시스템</span></h3>
+                <p>일일 커스텀 숙제 및 자원(슈고/침공 열쇠)은 <span class="highlight">매일 아침 오전 5시</span>를 기준으로 자동 초기화 및 충전됩니다. 또한 오드 에너지는 해당 시점부터 <span class="highlight">3시간 단위</span>로 충전 연산이 진행됩니다.</p>
+            </div>
+        </div>
+
+        <!-- 3. 멤버십 기준 -->
+        <div class="notice-item">
+            <div class="notice-icon">💎</div>
+            <div class="notice-content">
+                <h3>자원 충전 밸런스 기준 <span class="badge badge-info">멤버십</span></h3>
+                <p>대시보드 내의 콘텐츠 열쇠 충전량 및 오드 에너지 충전 효율 계산 방식은 기본적으로 <span class="highlight">시즌 멤버십 이용자</span>의 혜택 수치를 기준으로 정밀하게 계산됩니다.</p>
+            </div>
+        </div>
+
+        <!-- 4. 회랑 초기화 -->
+        <div class="notice-item">
+            <div class="notice-icon">⚔️</div>
+            <div class="notice-content">
+                <h3>어비스 회랑 초기화 스케줄 <span class="badge badge-info">콘텐츠</span></h3>
+                <p>어비스 회랑의 경우 게임 내 일정과 동일하게 <span class="highlight">매주 수요일 및 토요일 오후 10시(22시)</span>에 체크 상태가 시스템적으로 자동 초기화됩니다.</p>
+            </div>
+        </div>
+
+        <!-- 5. 일괄 추가 기능 -->
+        <div class="notice-item">
+            <div class="notice-icon">⚡</div>
+            <div class="notice-content">
+                <h3>숙제 일괄 추가 시스템 기능 <span class="badge badge-success">편의성</span></h3>
+                <p>계정 설정 내의 <span class="highlight">숙제 계정 일괄 추가</span> 기능을 활용하면, 개별적으로 하나씩 등록할 필요 없이 해당 계정에 소속된 모든 부캐릭터 및 본캐릭터에게 한 번에 동일한 커스텀 숙제가 주입됩니다.</p>
+            </div>
+        </div>
+
+        <!-- 6. 브라우저 호환성 (추가 제안 사항) -->
+        <div class="notice-item">
+            <div class="notice-icon">🌐</div>
+            <div class="notice-content">
+                <h3>권장 브라우저 환경 및 시크릿 모드 안내 <span class="badge badge-success">기타</span></h3>
+                <p>본 사이트는 로컬 저장소를 적극 활용하므로 브라우저의 <span class="highlight">시크릿 모드(InPrivate)</span>에서는 데이터가 유지되지 않습니다. 가급적 구글 크롬(Chrome)이나 삼성 인터넷, 네이버 웨일 등의 일반 모드 브라우저 이용을 권장합니다.</p>
+            </div>
+        </div>
+    </div>
+</main>
 
 <footer>
     © 당근. All rights reserved. (팬메이드 툴)<br>
