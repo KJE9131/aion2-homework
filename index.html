@@ -32,8 +32,8 @@
     <header>
     <h1>
         아이온2 숙제 관리 대시보드 
-        <span id="server-clock" style="font-size: 0.5em; color: #888; margin-left: 15px; font-weight: normal;">
-        [서버 시각: 로딩 중...]
+        <span id="server-clock" style="font-size: 14px; color: #b3b3b3; margin-left: 15px; font-weight: normal;">
+        [서버 시간: 로딩 중...]
         </span>
     </h1>
 
@@ -193,7 +193,7 @@
     const seconds = String(now.getSeconds()).padStart(2, '0');
     
     // 출력 포맷 (예: 2026-06-29(월) 16:30:45)
-    const timeString = `⏱️ 서버 시각: ${year}-${month}-${date}(${dayOfWeek}) ${hours}:${minutes}:${seconds}`;
+    const timeString = `⏰ 현재 시간: ${year}-${month}-${date}(${dayOfWeek}) ${hours}:${minutes}:${seconds}`;
     
     // HTML 화면에 반영
     const clockElement = document.getElementById('server-clock');
