@@ -60,13 +60,18 @@
             flex-wrap: wrap;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
+            .alarm-container > p {
+            font-size:14px;
+            font-weight:600;
+            margin:0;
+            }
         .alarm-item {
             display: flex;
             align-items: center;
             gap: 12px;
             font-size: 12px;
         }
-        .alarm-title { color: #ffffff; }
+        .alarm-title { color: #ffffff; min-width:40px; }
         .alarm-timer-wrapper {
             display: flex;
             align-items: center;
