@@ -36,8 +36,7 @@
         .made-by {
           font-size: 13px;
           font-weight: 500;
-          color: #757575; /* 은은한 회색 */
-          background-color: #f1f3f5; /* 귀여운 뱃지 느낌의 연한 배경 */
+          color: #dd950d; 
           padding: 3px 8px;
           border-radius: 20px;
           letter-spacing: -0.3px;
@@ -516,10 +515,6 @@
     color: #fff;
     text-decoration: none;
     letter-spacing: 0.5px;
-}
-
-.site-logo span {
-    color: #3b82f6; /* 아이온2 로고 포인트 컬러 (블루 계열 예시) */
 }
 
 .gnb ul {
