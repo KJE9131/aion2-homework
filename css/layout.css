@@ -489,3 +489,91 @@
     visibility: visible;
     opacity: 1;
 }
+
+
+/* --- 상단 헤더 & GNB 스타일 --- */
+.site-header {
+    width: 100%;
+    background-color: rgba(21, 23, 30, 0.8); /* 기존 배경색에 투명도 부여 */
+    backdrop-filter: blur(10px); /* 뒤 배경이 부드럽게 흐려지는 효과 */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* 스크롤 시 최상단에 고정 */
+}
+
+.header-container {
+    max-width: 1200px; /* 대시보드 레이아웃 최대폭과 맞춤 */
+    margin: 0 auto;
+    padding: 0 20px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.site-logo {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+}
+
+.site-logo span {
+    color: #3b82f6; /* 아이온2 로고 포인트 컬러 (블루 계열 예시) */
+}
+
+.gnb ul {
+    list-style: none;
+    display: flex;
+    gap: 30px; /* 메뉴 간격 */
+    margin: 0;
+    padding: 0;
+}
+
+.gnb-link {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #94a3b8; /* 기본 흐린 텍스트 색상 */
+    text-decoration: none;
+    padding: 8px 4px;
+    position: relative;
+    transition: color 0.2s ease;
+}
+
+/* 마우스 올렸을 때 효과 */
+.gnb-link:hover {
+    color: #fff;
+}
+
+/* 현재 활성화된 메뉴(Active) 스타일 */
+.gnb-link.active {
+    color: #fff;
+    font-weight: 600;
+}
+
+/* 현재 활성화된 메뉴 하단에 언더라인 포인트 효과 */
+.gnb-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #3b82f6; /* 포인트 언더라인 색상 */
+    border-radius: 2px;
+}
+
+/* 반응형 모바일 대응: 화면이 작아지면 여백 조절 */
+@media (max-width: 768px) {
+    .header-container {
+        padding: 0 15px;
+    }
+    .gnb ul {
+        gap: 15px;
+    }
+    .gnb-link {
+        font-size: 0.85rem;
+    }
+}
