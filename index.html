@@ -435,31 +435,36 @@ function updateTopAlertTimers() {
 
         const now = Date.now();
         const nextReset = getNextOdeResetTime();
-        const fiveMinutesMs = 5 * 60 * 1000; // 5분 밀리초
+        const fiveMinutesMs = 5 * 60 * 1000; // 5분 밀리초 (테스트용)
         const lastExpectedReset = nextReset - fiveMinutesMs;
         
+        // 마지막 충전 시간이 기준점보다 과거일 때만 단 한 번 실행
         if (parseInt(lastChecked) < lastExpectedReset) {
             const timeDiff = lastExpectedReset - parseInt(lastChecked);
             
-            // 5분 주기로 몇 번 지나갔는지 계산
+            // 몇 주기가 흘러갔는지 정확한 배수 계산 (1주기 = 1)
             const chargeCycles = Math.floor(timeDiff / fiveMinutesMs) + 1;
             const totalAddOde = chargeCycles * 15;
             
+            // 🔥 [중요] 중복 실행을 원천 차단하기 위해 시간 기록을 자원 추가보다 "먼저" 업데이트합니다.
+            lastChecked = lastExpectedReset;
+            localStorage.setItem('lastOdeUpdateTime_v15', lastChecked.toString());
+            
+            // 데이터 연산 진행
             gameData.forEach(acc => {
                 acc.characters.forEach(char => {
                     if ((char.ode || 0) >= 840) return;
 
-                    const domInput = document.getElementById(`input-ode-${char.id}`);
-                    const currentActualOde = domInput ? (parseInt(domInput.value) || 0) : (char.ode || 0);
-                    
-                    let newBaseOde = currentActualOde + totalAddOde;
-                    if (newBaseOde > 840) { newBaseOde = 840; }
+                    // 화면 DOM 상태에 의존하지 않고, 순수 데이터(char.ode) 기반으로 누적 계산
+                    let newBaseOde = (char.ode || 0) + totalAddOde;
+                    if (newBaseOde > 840) { 
+                        newBaseOde = 840; 
+                    }
                     char.ode = newBaseOde;
                 });
             });
             
-            lastChecked = lastExpectedReset;
-            localStorage.setItem('lastOdeUpdateTime_v15', lastChecked.toString());
+            // 최종적으로 단 한 번만 저장 및 렌더링
             saveData();
         }
     }
