@@ -1,16 +1,105 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="favicon.png">
-    <title>아이온2 숙제 관리 대시보드</title>
+    <title>사용방법 - 아이온2 숙제 관리</title>
 
-    <!-- <link rel="stylesheet" href="css/reset.css"> -->
-    <link rel="stylesheet" href="css/layout.css?ver=<?php echo time()?>">
+    <link rel="stylesheet" href="css/layout.css?ver=1.5">
     <link rel="stylesheet" href="css/PretendardVariable.ttf">
     <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+    
+    <style>
+        .guide-wrapper {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .guide-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .guide-desc {
+            color: var(--text-muted, #94a3b8);
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+        }
+        .guide-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .guide-card {
+            background-color: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        .guide-card:hover {
+            transform: translateY(-2px);
+            border-color: #3b82f6;
+        }
+        .step-num {
+            background: #3b82f6;
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .guide-icon {
+            font-size: 2rem;
+            min-width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .guide-content {
+            flex: 1;
+        }
+        .guide-content h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            margin: 0 0 6px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .guide-content p {
+            color: var(--text-muted, #94a3b8);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+        .highlight {
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        .highlight-add {
+            color: #10b981;
+            font-weight: 600;
+        }
+        .highlight-del {
+            color: #ef4444;
+            font-weight: 600;
+        }
+    </style>
 </head>
 
 <body>
@@ -23,21 +112,51 @@
         <nav class="gnb">
             <ul>
                 <li><a href="guide.html" class="gnb-link active">사용방법</a></li>
-                <li><a href="index.html" class="gnb-link ">대시보드</a></li>
+                <li><a href="index.html" class="gnb-link">대시보드</a></li>
                 <li><a href="notice.html" class="gnb-link">안내사항</a></li>
             </ul>
         </nav>
     </div>
 </header>
-    <header>
-    <h1>사용방법</h1>
 
-    
-    
-</header>
+<main class="guide-wrapper">
+    <h1 class="guide-title">📖 대시보드 사용방법</h1>
+    <p class="guide-desc">효율적인 아이온2 숙제 관리를 위한 기초 가이드입니다. 천천히 따라해보세요!</p>
 
+    <div class="guide-grid">
+        <div class="guide-card">
+            <div class="guide-icon">📂</div>
+            <div class="guide-content">
+                <h3><span class="step-num">Step 1</span> 메인 계정 생성</h3>
+                <p>대시보드 화면 하단에 있는 <span class="highlight">+ 새 계정 추가</span> 버튼을 눌러 관리할 계정의 이름을 입력하고 생성합니다.</p>
+            </div>
+        </div>
 
+        <div class="guide-card">
+            <div class="guide-icon">👤</div>
+            <div class="guide-content">
+                <h3><span class="step-num">Step 2</span> 캐릭터 등록</h3>
+                <p>생성된 계정 박스의 우측 상단에 있는 <span class="highlight">캐릭추가</span> 버튼을 클릭하여 본인의 직업과 캐릭터 이름을 입력해 추가합니다.</p>
+            </div>
+        </div>
 
+        <div class="guide-card">
+            <div class="guide-icon">🔑</div>
+            <div class="guide-content">
+                <h3><span class="step-num">Step 3</span> 초기 자원 설정</h3>
+                <p>최초 등록 후, 현재 본인이 보유하고 있는 <span class="highlight">슈고 열쇠, 차원침공 열쇠, 오드 에너지</span> 등의 수치를 양식에 맞게 입력해 줍니다. (열쇠와 오드는 시스템 기준에 맞게 주기적으로 자동 충전됩니다.)</p>
+            </div>
+        </div>
+
+        <div class="guide-card">
+            <div class="guide-icon">📝</div>
+            <div class="guide-content">
+                <h3><span class="step-num">Step 4</span> 커스텀 숙제 관리</h3>
+                <p>캐릭터별 하단 서식을 이용해 원하는 <span class="highlight-add">일일/주간 커스텀 숙제를 자유롭게 추가</span>할 수 있으며, 불필요해진 숙제는 오른쪽의 <span class="highlight-del">❌ 버튼</span>을 눌러 언제든 삭제할 수 있습니다.</p>
+            </div>
+        </div>
+    </div>
+</main>
 
 <footer>
     © 당근. All rights reserved. (팬메이드 툴)<br>
