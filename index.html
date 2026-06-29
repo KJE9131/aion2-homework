@@ -290,77 +290,85 @@
     }
 
     // --- [ 🚨 상단 최상단 멀티 타이머 및 알람 연산 시스템 ] ---
-    function updateTopAlertTimers() {
-        const now = new Date();
-        const currentMin = now.getMinutes();
-        const currentSec = now.getSeconds();
+function updateTopAlertTimers() {
+    const now = new Date();
+    const currentMin = now.getMinutes();
+    const currentSec = now.getSeconds();
 
-        const festaEl = document.getElementById('timer-festa');
-        if(festaEl) {
-            if (!alarmSettings.festa) {
-                festaEl.innerText = "OFF";
-                festaEl.className = "alarm-timer disabled";
-            } else {
-                let festaMin = 59 - currentMin;
-                let festaSec = 59 - currentSec;
-                if (festaMin === 0 && festaSec === 0) playBeepSound();
-                
-                const festaStr = `${String(festaMin).padStart(2, '0')}:${String(festaSec).padStart(2, '0')} 남음`;
-                festaEl.innerText = festaMin < 5 ? `⚠️ 임박 (${festaStr})` : festaStr;
-                festaEl.className = "alarm-timer" + (festaMin < 5 ? " alarm-urgent" : "");
-            }
+    const festaEl = document.getElementById('timer-festa');
+    if(festaEl) {
+        if (!alarmSettings.festa) {
+            festaEl.innerText = "OFF";
+            festaEl.className = "alarm-timer disabled";
+        } else {
+            let festaMin = 59 - currentMin;
+            let festaSec = 59 - currentSec;
+            if (festaMin === 0 && festaSec === 0) playBeepSound();
+            
+            // 텍스트는 조건 없이 항상 시간만 표시
+            const festaStr = `${String(festaMin).padStart(2, '0')}:${String(festaSec).padStart(2, '0')} 남음`;
+            festaEl.innerText = festaStr; 
+            
+            // 클래스만 조건부로 변경 (CSS에서 alarm-urgent에 빨간 글씨색 지정 필요)
+            festaEl.className = "alarm-timer" + (festaMin < 5 ? " alarm-urgent" : "");
         }
+    }
 
-        const invEl = document.getElementById('timer-invasion');
-        if(invEl) {
-            if (!alarmSettings.invasion) {
-                invEl.innerText = "OFF";
-                invEl.className = "alarm-timer disabled";
-            } else {
-                let invInMin = (currentMin < 30) ? (29 - currentMin) : (59 - currentMin + 30);
-                let invSec = 59 - currentSec;
-                if (invInMin === 0 && invSec === 0) playBeepSound();
+    const invEl = document.getElementById('timer-invasion');
+    if(invEl) {
+        if (!alarmSettings.invasion) {
+            invEl.innerText = "OFF";
+            invEl.className = "alarm-timer disabled";
+        } else {
+            let invInMin = (currentMin < 30) ? (29 - currentMin) : (59 - currentMin + 30);
+            let invSec = 59 - currentSec;
+            if (invInMin === 0 && invSec === 0) playBeepSound();
 
-                const invStr = `${String(invInMin).padStart(2, '0')}:${String(invSec).padStart(2, '0')} 남음`;
-                invEl.innerText = invInMin < 5 ? `⚠️ 임박 (${invStr})` : invStr;
-                invEl.className = "alarm-timer" + (invInMin < 5 ? " alarm-urgent" : "");
-            }
+            // 텍스트는 조건 없이 항상 시간만 표시
+            const invStr = `${String(invInMin).padStart(2, '0')}:${String(invSec).padStart(2, '0')} 남음`;
+            invEl.innerText = invStr;
+            
+            // 클래스만 조건부로 변경
+            invEl.className = "alarm-timer" + (invInMin < 5 ? " alarm-urgent" : "");
         }
+    }
 
-        const spaceEl = document.getElementById('timer-space');
-        if(spaceEl) {
-            if (!alarmSettings.space) {
-                spaceEl.innerText = "OFF";
-                spaceEl.className = "alarm-timer disabled";
+    const spaceEl = document.getElementById('timer-space');
+    if(spaceEl) {
+        if (!alarmSettings.space) {
+            spaceEl.innerText = "OFF";
+            spaceEl.className = "alarm-timer disabled";
+        } else {
+            const targetHours = [2, 5, 8, 11, 14, 17, 20, 23];
+            let nextTarget = null;
+            for (let h of targetHours) {
+                let t = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, 0, 0, 0);
+                if (t.getTime() > now.getTime()) { nextTarget = t; break; }
+            }
+            if (!nextTarget) {
+                nextTarget = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 2, 0, 0, 0);
+            }
+
+            const spaceDiffMs = nextTarget.getTime() - now.getTime();
+            const sHours = Math.floor(spaceDiffMs / (1000 * 60 * 60));
+            const sMinutes = Math.floor((spaceDiffMs % (1000 * 60 * 60)) / (1000 * 60));
+            const sSeconds = Math.floor((spaceDiffMs % (1000 * 60)) / 1000);
+            
+            if (sHours === 0 && sMinutes === 0 && sSeconds === 0) playBeepSound();
+
+            // 텍스트는 조건 없이 항상 시간만 표시
+            const spaceStr = `${String(sHours).padStart(2, '0')}:${String(sMinutes).padStart(2, '0')}:${String(sSeconds).padStart(2, '0')} 남음`;
+            spaceEl.innerText = spaceStr;
+            
+            // 10분 미만일 때만 alarm-urgent 클래스 추가
+            if (sHours === 0 && sMinutes < 10) {
+                spaceEl.className = "alarm-timer alarm-urgent";
             } else {
-                const targetHours = [2, 5, 8, 11, 14, 17, 20, 23];
-                let nextTarget = null;
-                for (let h of targetHours) {
-                    let t = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, 0, 0, 0);
-                    if (t.getTime() > now.getTime()) { nextTarget = t; break; }
-                }
-                if (!nextTarget) {
-                    nextTarget = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 2, 0, 0, 0);
-                }
-
-                const spaceDiffMs = nextTarget.getTime() - now.getTime();
-                const sHours = Math.floor(spaceDiffMs / (1000 * 60 * 60));
-                const sMinutes = Math.floor((spaceDiffMs % (1000 * 60 * 60)) / (1000 * 60));
-                const sSeconds = Math.floor((spaceDiffMs % (1000 * 60)) / 1000);
-                
-                if (sHours === 0 && sMinutes === 0 && sSeconds === 0) playBeepSound();
-
-                const spaceStr = `${String(sHours).padStart(2, '0')}:${String(sMinutes).padStart(2, '0')}:${String(sSeconds).padStart(2, '0')} 남음`;
-                if (sHours === 0 && sMinutes < 10) {
-                    spaceEl.innerText = `⚠️ 임박 (${spaceStr})`;
-                    spaceEl.className = "alarm-timer alarm-urgent";
-                } else {
-                    spaceEl.innerText = spaceStr;
-                    spaceEl.className = "alarm-timer";
-                }
+                spaceEl.className = "alarm-timer";
             }
         }
     }
+}
 
     function getNextOdeResetTime() {
         const now = new Date();
