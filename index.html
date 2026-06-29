@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="favicon.png">
-    <title>아이온2 숙제 관리 대시보드3</title>
+    <title>아이온2 숙제 관리 대시보드</title>
 
     <!-- <link rel="stylesheet" href="css/reset.css"> -->
     <link rel="stylesheet" href="css/layout.css?ver=<?php echo time()?>">
@@ -415,16 +415,16 @@ function updateTopAlertTimers() {
    // 💡 함수 바깥(전역 변수 구역)에 디바운스용 플래그 선언
     let isOdeUpdating = false;
 
-    // ⏰ [테스트용 5분 주기 설정]
+    // ⏰ [본섭용 3시간 주기 설정 원상복구]
     function getNextOdeResetTime() {
         const now = new Date();
-        // 매일 아침 5시를 기준점으로 잡는 것은 동일
+        // 매일 아침 5시를 최초 기준점으로 설정
         let baseTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
         if (now.getTime() < baseTime.getTime()) baseTime.setDate(baseTime.getDate() - 1);
         let nextReset = baseTime.getTime();
         
-        const fiveMinutesMs = 5 * 60 * 1000; // 5분 밀리초
-        while (nextReset <= now.getTime()) { nextReset += fiveMinutesMs; }
+        const threeHoursMs = 3 * 60 * 60 * 1000; // 3시간 밀리초
+        while (nextReset <= now.getTime()) { nextReset += threeHoursMs; }
         return nextReset;
     }
 
@@ -434,20 +434,21 @@ function updateTopAlertTimers() {
 
         const now = Date.now();
         const nextReset = getNextOdeResetTime();
-        const fiveMinutesMs = 5 * 60 * 1000; // 5분 밀리초 (테스트용)
-        const lastExpectedReset = nextReset - fiveMinutesMs;
+        const threeHoursMs = 3 * 60 * 60 * 1000; // 3시간 밀리초
+        const lastExpectedReset = nextReset - threeHoursMs;
         
         if (parseInt(lastChecked) < lastExpectedReset) {
             const timeDiff = lastExpectedReset - parseInt(lastChecked);
             
-            // 💡 [버그 수정] 정각 그리드가 맞기 때문에 +1을 하지 않아야 정확히 1주기(15)만 계산됩니다.
-            const chargeCycles = Math.floor(timeDiff / fiveMinutesMs); 
+            // 💡 [수식 교정 완료] 정각 기준 그리드가 정렬되었으므로 +1 없이 정확한 배수 주기만 계산합니다.
+            const chargeCycles = Math.floor(timeDiff / threeHoursMs); 
             if (chargeCycles < 1) {
                 isOdeUpdating = false;
                 return;
             }
             const totalAddOde = chargeCycles * 15;
             
+            // 중복 차단을 위해 타임스탬프 먼저 락 처리
             lastChecked = lastExpectedReset;
             localStorage.setItem('lastOdeUpdateTime_v15', lastChecked.toString());
             
@@ -455,6 +456,7 @@ function updateTopAlertTimers() {
                 acc.characters.forEach(char => {
                     if ((char.ode || 0) >= 840) return;
 
+                    // 동시 연산 버그 방지를 위해 유일 목표값 대입 연산 적용
                     let targetOde = (char.ode || 0) + totalAddOde;
                     if (char.ode < targetOde) {
                         if (targetOde > 840) targetOde = 840;
@@ -471,13 +473,12 @@ function updateTopAlertTimers() {
     }
     
 
-    // ⏰ [테스트용 5분 타이머 화면 표시 설정]
+    // ⏰ [본섭용 3시간 타이머 화면 표시 설정 원상복구]
     function updateTimerDisplay() {
         const now = Date.now();
         const nextReset = getNextOdeResetTime();
         const diffMs = nextReset - now;
         
-        // 💡 3시간 분량을 구하던 기존 수식을 빼고, 남은 diffMs 분량을 그대로 시:분:초로 변환합니다.
         const hours = String(Math.floor(diffMs / (1000 * 60 * 60))).padStart(2, '0');
         const minutes = String(Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
         const seconds = String(Math.floor((diffMs % (1000 * 60)) / 1000)).padStart(2, '0');
@@ -521,11 +522,10 @@ function updateTopAlertTimers() {
         }
     }
 
-    // 🌟 [수정 완료] 1. 커스텀 일일 숙제 자동 초기화 및 열쇠 자동 충전 시스템 (매일 오전 5시 기점)
+    // 🌟 1. 커스텀 일일 숙제 자동 초기화 및 열쇠 자동 충전 시스템 (매일 오전 5시 기점)
     function checkDailyReset() {
         const now = new Date();
         let targetReset = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
-        // 만약 현재 시간이 오전 5시 전이라면, 이전 차수의 초기화 기준점은 어제 오전 5시입니다.
         if (now.getTime() < targetReset.getTime()) {
             targetReset.setDate(targetReset.getDate() - 1);
         }
@@ -533,7 +533,6 @@ function updateTopAlertTimers() {
 
         if (parseInt(lastDailyReset) < currentTargetReset) {
             gameData.forEach(acc => {
-                // 🔑 [열쇠 자동 충전 로직 추가] 
                 // 슈고 열쇠 기본 +2개 추가 (최대 14개 제한)
                 let newShugo = (acc.shugo || 0) + 2;
                 if (newShugo > 14) newShugo = 14;
@@ -545,7 +544,6 @@ function updateTopAlertTimers() {
                 acc.dimension = newDimension;
 
                 acc.characters.forEach(char => {
-                    // 커스텀 숙제 중 '일일(daily)' 숙제만 찾아 체크 해제
                     char.homeworks.forEach(hw => {
                         if (hw.type === 'daily') hw.checked = false;
                     });
@@ -557,7 +555,7 @@ function updateTopAlertTimers() {
         }
     }
 
-    // 🌟 [신규 추가] 2. 커스텀 주간 숙제 및 오드구매 초기화 연산 시스템 (매주 수요일 오전 5시 기점)
+    // 🌟 2. 커스텀 주간 숙제 및 오드구매 초기화 연산 시스템 (매주 수요일 오전 5시 기점)
     function checkWeeklyReset() {
         const now = new Date();
         let targetReset = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
@@ -570,15 +568,14 @@ function updateTopAlertTimers() {
 
         if (parseInt(lastWeeklyReset) < currentTargetReset) {
             gameData.forEach(acc => {
-                // 🧼 계정 단위 주간 컨텐츠 초기화 (수요일 오전 5시)
                 acc.odeBuyChecked = false;
-                acc.villageOrderChecked = false; // 📜 [여기에 추가됨] 지령서(마을) 초기화
-                acc.abyssOrderChecked = false;   // 🌌 [여기에 추가됨] 지령서(어비스) 초기화
+                acc.villageOrderChecked = false; 
+                acc.abyssOrderChecked = false;   
 
                 acc.characters.forEach(char => {
                     char.charBuyChecked = false;
-                    char.nightmareChecked = false; // 🧼 수요일 오전 5시 악몽 초기화
-                    char.awakeningChecked = false; // 🧼 수요일 오전 5시 각성 초기화
+                    char.nightmareChecked = false; 
+                    char.awakeningChecked = false; 
                     
                     char.homeworks.forEach(hw => {
                         if (hw.type === 'weekly') hw.checked = false;
