@@ -79,10 +79,10 @@
         .alarm-timer { 
             color: var(--timer-color); 
             background: #121214; 
-            padding: 2px 8px; 
+            padding: 2px 4px; 
             border-radius: 4px; 
             font-family: monospace;
-            font-size: 13px;
+            font-size: 12px;
             min-width: 90px;
             text-align: center;
         }
