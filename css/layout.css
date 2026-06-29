@@ -798,7 +798,7 @@ left:0;
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 12px;
     padding: 20px;
-    margin-bottom: 25px; /* 아래 계정 섹션과의 간격 */
+    margin: 25px 0; /* 섹션과의 간격 */
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
 }
 
