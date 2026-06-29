@@ -421,43 +421,24 @@ function updateTopAlertTimers() {
     }
 
     // 💡 함수 바깥(전역 변수 구역)에 디바운스용 플래그 선언
-let isOdeUpdating = false;
+    let isOdeUpdating = false;
 
-function updateOdeAutomatically() {
-    // 🎯 [안전장치] 이미 함수가 실행 중이거나 연속 호출된 경우 0.5초간 실행을 차단합니다.
-    if (isOdeUpdating) return;
-    isOdeUpdating = true;
-    setTimeout(() => { isOdeUpdating = false; }, 500); 
-
-    const now = Date.now();
-    const nextReset = getNextOdeResetTime();
-    const lastExpectedReset = nextReset - (3 * 60 * 60 * 1000);
-    
-    if (parseInt(lastChecked) < lastExpectedReset) {
-        const timeDiff = lastExpectedReset - parseInt(lastChecked);
+    function getNextOdeResetTime() {
+        const now = new Date();
+        let baseTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
+        if (now.getTime() < baseTime.getTime()) baseTime.setDate(baseTime.getDate() - 1);
+        let nextReset = baseTime.getTime();
         const threeHoursMs = 3 * 60 * 60 * 1000;
-        const chargeCycles = Math.floor(timeDiff / threeHoursMs) + 1;
-        
-        // 3시간 주기에 맞춘 정상 15 충전
-        const totalAddOde = chargeCycles * 15; 
-        
-        gameData.forEach(acc => {
-            acc.characters.forEach(char => {
-                if ((char.ode || 0) >= 840) return;
-                let newBaseOde = (char.ode || 0) + totalAddOde;
-                if (newBaseOde > 840) newBaseOde = 840;
-                char.ode = newBaseOde;
-            });
-        });
-        
-        // 🔑 중요: 스토리지에 시간 기록을 먼저 확실하게 밀어 넣기
-        lastChecked = lastExpectedReset;
-        localStorage.setItem('lastOdeUpdateTime_v15', lastChecked.toString());
-        saveData();
+        while (nextReset <= now.getTime()) { nextReset += threeHoursMs; }
+        return nextReset;
     }
-}
 
     function updateOdeAutomatically() {
+        // 🎯 [안전장치] 이미 함수가 실행 중이거나 연속 호출된 경우 0.5초간 실행을 확실하게 차단합니다.
+        if (isOdeUpdating) return;
+        isOdeUpdating = true;
+        setTimeout(() => { isOdeUpdating = false; }, 500); 
+
         const now = Date.now();
         const nextReset = getNextOdeResetTime();
         const lastExpectedReset = nextReset - (3 * 60 * 60 * 1000);
@@ -472,26 +453,25 @@ function updateOdeAutomatically() {
             
             gameData.forEach(acc => {
                 acc.characters.forEach(char => {
-                    // 1. 현재 캐릭터의 기본 오드가 이미 840(맥시멈) 이상이라면 충전하지 않고 패스합니다.
+                    // 1. 현재 캐릭터의 기본 오드가 이미 840(맥시멈) 이상이라면 충전하지 않고 패스
                     if ((char.ode || 0) >= 840) return;
 
-                    // 2. 기본 오드만 충전하고, 840을 초과하지 못하도록 차단합니다.
+                    // 2. 기본 오드만 충전하고, 840을 초과하지 못하도록 차단
                     let newBaseOde = (char.ode || 0) + totalAddOde;
                     if (newBaseOde > 840) {
                         newBaseOde = 840;
                     }
                     char.ode = newBaseOde;
-
-                    // ❌ char.extraOde (추가 오드)는 이 자동 충전 로직 내부에서 
-                    // 코드가 아예 배제되어 있으므로 사용자가 직접 적은 숫자가 완벽하게 유지됩니다.
                 });
             });
             
+            // 🔑 중요: 스토리지에 시간 기록을 먼저 확실하게 밀어 넣기
             lastChecked = lastExpectedReset;
             localStorage.setItem('lastOdeUpdateTime_v15', lastChecked.toString());
             saveData();
         }
     }
+    
 
     function updateTimerDisplay() {
         const now = Date.now();
