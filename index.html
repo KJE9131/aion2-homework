@@ -531,9 +531,55 @@
         document.getElementById('charModal').style.display = 'flex';
     }
 
-    function closeCharModal() { document.getElementById('charModal').style.display = 'none'; }
+    // 💡 캐릭터 수정을 위해 현재 어떤 계정의 어떤 캐릭터를 고르는지 저장할 전역 변수
+let editMode = false;
+let editAccId = null;
+let editCharId = null;
 
-    function submitCharacterForm(e) {
+// 💡 [설정] 버튼 클릭 시 모달을 수정 모드로 여는 함수
+function openEditCharModal(accId, charId, event) {
+    if (event) event.stopPropagation();
+    
+    const acc = gameData.find(a => a.id === accId);
+    const char = acc.characters.find(c => c.id === charId);
+    
+    editMode = true;
+    editAccId = accId;
+    editCharId = charId;
+    
+    // 기존 모달의 input 요소를 재활용하여 캐릭터 정보 채워 넣기
+    document.getElementById('modalAccId').value = accId;
+    document.getElementById('modalCharName').value = char.name;
+    document.getElementById('modalCharJob').value = char.job;
+    document.getElementById('modalCharPower').value = char.power;
+    
+    // 모달 제목 및 버튼 텍스트를 '수정'에 맞게 변경 (선택 사항이지만 UX에 좋습니다)
+    const modalTitle = document.querySelector('#charModal h2'); // 모달 내 타이틀 태그 선택자 확인 필요
+    if (modalTitle) modalTitle.innerText = "캐릭터 정보 수정";
+    
+    // 기존에 만드신 캐릭터 추가 모달 오픈 함수 호출
+    // (만약 기존 오픈 함수 이름이 다르다면 바꾸어주세요)
+    document.getElementById('charModal').style.display = 'block'; 
+}
+
+// 📑 [교체] 캐릭터 모달 닫기 및 상태 리셋 함수
+function closeCharModal() { 
+    // 모달창 숨기기
+    document.getElementById('charModal').style.display = 'none'; 
+    
+    // 💡 [추가된 로직] 수정 모드 상태를 리셋하고 타이틀을 다시 '캐릭터 추가'로 되돌립니다.
+    editMode = false;
+    editAccId = null;
+    editCharId = null;
+    
+    const modalTitle = document.querySelector('#charModal h2');
+    if (modalTitle) {
+        modalTitle.innerText = "캐릭터 추가";
+    }
+}
+
+// 📑 [교체] 캐릭터 폼 제출 (추가 및 안전한 수정 분기 처리) 함수
+function submitCharacterForm(e) {
     e.preventDefault();
     const accId = parseInt(document.getElementById('modalAccId').value);
     const name = document.getElementById('modalCharName').value.trim();
@@ -541,30 +587,48 @@
     const power = document.getElementById('modalCharPower').value;
 
     const acc = gameData.find(a => a.id === accId);
-    acc.characters.push({
-        id: Date.now(), 
-        name: name, 
-        job: job, 
-        power: power, 
-        ode: 0, 
-        extraOde: 0,
-        charBuyChecked: false, 
-        charCraftChecked: false, 
-        abyssChecked: false,     
-        nightmareChecked: false,  // 🔍 악몽 상태 변수 추가
-        awakeningChecked: false,  // 🔍 각성 상태 변수 추가
-        homeworks: [
-            { name: '시즌미션', type: 'weekly', checked: false },
-            { name: '투기장', type: 'weekly', checked: false },
-            { name: '루드라', type: 'weekly', checked: false },
-            { name: '침식', type: 'weekly', checked: false },
-            { name: '무스펠', type: 'weekly', checked: false }
-        ]
-    });
-    closeCharModal();
-    saveData();
+    
+    // 💡 [분기 처리] 현재 수정 모드(⚙️설정 클릭)인지 일반 추가 모드인지 판별합니다.
+    if (editMode) {
+        // 🔧 [수정 모드] 기존에 체크된 숙제, 오드 데이터 유실 없이 이름/직업/투력만 변경
+        const char = acc.characters.find(c => c.id === editCharId);
+        if (char) {
+            char.name = name;
+            char.job = job;
+            char.power = power;
+        }
+    } else {
+        // ➕ [추가 모드] 새 캐릭터를 생성할 때만 기본값 및 필수 고정 숙제 초기 세팅 주입
+        acc.characters.push({
+            id: Date.now(), 
+            name: name, 
+            job: job, 
+            power: power, 
+            ode: 0, 
+            extraOde: 0,
+            charBuyChecked: false, 
+            charCraftChecked: false, 
+            abyssChecked: false,     
+            nightmareChecked: false,  // 🔍 악몽 상태 변수 유지
+            awakeningChecked: false,  // 🔍 각성 상태 변수 유지
+            homeworks: [
+                { name: '시즌미션', type: 'weekly', checked: false },
+                { name: '투기장', type: 'weekly', checked: false },
+                { name: '루드라', type: 'weekly', checked: false },
+                { name: '침식', type: 'weekly', checked: false },
+                { name: '무스펠', type: 'weekly', checked: false }
+            ]
+        });
+    }
+
+    closeCharModal(); // 닫으면서 상태 리셋 실행
+    saveData();       // 로컬 스토리지 저장 및 갱신된 데이터로 render() 호출
 }
 
+
+
+
+    
     function addAccount() {
         const name = prompt("계정 이름을 입력하세요:");
         if (!name) return;
@@ -806,96 +870,98 @@ function render() {
             `;
         } else {
             // 기존 캐릭터 반복 렌더링 코드
-            acc.characters.forEach(char => {
-                const matchedIcon = jobIcons[char.job] || '👤';
-
-                html += `
-                    <div class="char-card">
-                        <div class="char-header">
-                            <div class="char-info">
-                                <span class="char-name">${matchedIcon} ${char.name}</span>
-                                <span class="char-sub-info">직업: ${char.job} | 투력: <span class="char-power">${Number(char.power).toLocaleString()}</span></span>
-                            </div>
-                            <button class="btn btn-xs btn-danger" onclick="removeCharacter(${acc.id}, ${char.id})">삭제</button>
-                        </div>
-                        
-                        <div class="resource-group">
-                            <div class="ode-title-row" style="display: flex; justify-content: space-between; align-items: center;">
-                                <div style="display:flex; flex-direction:column;">
-                                    <span>⚡ 오드에너지</span>
-                                    <span class="ode-timer" id="timer-${char.id}" style="margin-left:18px;">[로딩중...]</span>
-                                </div>
-                                
-                                <div class="tooltip">
-                                    <button class="btn-use-total" onclick="useSmartOde(${acc.id}, ${char.id})">오드사용</button>
-                                    <span class="tooltip-text">💡 클릭 시 80씩 자동 차감됩니다!</span>
+            // --- [ 화면 렌더링 중 캐릭터 카드 렌더링 루프 내부 교체 ] ---
+                acc.characters.forEach(char => {
+                    const matchedIcon = jobIcons[char.job] || '👤';
+                
+                    html += `
+                        <div class="char-card">
+                            <div class="char-header">
+                                <div class="char-info">
+                                    <span class="char-name">${matchedIcon} ${char.name}</span>
+                                    <span class="char-sub-info">직업: ${char.job} | 투력: <span class="char-power">${Number(char.power).toLocaleString()}</span></span>
                                 </div>
                             </div>
                             
-                            <div class="ode-row">
-                                <span class="ode-label">기본 [ <input type="number" id="input-ode-${char.id}" class="counter-input" value="${char.ode}" onchange="setDirectVal(${acc.id}, ${char.id}, 'ode', this.value)"> ] / 840</span>
+                            <div class="resource-group">
+                                <div class="ode-title-row" style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="display:flex; flex-direction:column;">
+                                        <span>⚡ 오드에너지</span>
+                                        <span class="ode-timer" id="timer-${char.id}" style="margin-left:18px;">[로딩중...]</span>
+                                    </div>
+                                    <div class="tooltip">
+                                        <button class="btn-use-total" onclick="useSmartOde(${acc.id}, ${char.id})">오드사용</button>
+                                        <span class="tooltip-text">💡 클릭 시 80씩 자동 차감됩니다!</span>
+                                    </div>
+                                </div>
+                                <div class="ode-row">
+                                    <span class="ode-label">기본 [ <input type="number" id="input-ode-${char.id}" class="counter-input" value="${char.ode}" onchange="setDirectVal(${acc.id}, ${char.id}, 'ode', this.value)"> ] / 840</span>
+                                </div>
+                                <div class="ode-row">
+                                    <span class="ode-label">추가 [ <input type="number" id="input-extraOde-${char.id}" class="counter-input" value="${char.extraOde}" onchange="setDirectVal(${acc.id}, ${char.id}, 'extraOde', this.value)"> ] / 2000</span>
+                                </div>
                             </div>
-                            
-                            <div class="ode-row">
-                                <span class="ode-label">추가 [ <input type="number" id="input-extraOde-${char.id}" class="counter-input" value="${char.extraOde}" onchange="setDirectVal(${acc.id}, ${char.id}, 'extraOde', this.value)"> ] / 2000</span>
-                            </div>
-                        </div>
-
-                        <div class="homework-group">
-                            <strong style="font-size:11px; display:block; margin-bottom:4px; color:#ffffff;">📌 고정 콘텐츠 숙제</strong>
-                            <div class="hw-item">
-                                <label class="hw-label">
-                                    <input type="checkbox" ${char.charBuyChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'charBuyChecked')">
-                                    <span class="hw-text ${char.charBuyChecked ? 'checked-text' : ''}">오드구매,제작 (4)</span>
-                                </label>
-                            </div>
-                            <div class="hw-item">
-                                <label class="hw-label">
-                                    <input type="checkbox" ${char.abyssChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'abyssChecked')">
-                                    <span class="hw-text ${char.abyssChecked ? 'checked-text' : ''}">회랑 [수/토초기화]</span>
-                                </label>
-                            </div>
-                            <div class="hw-item">
-                                <label class="hw-label">
-                                    <input type="checkbox" ${char.nightmareChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'nightmareChecked')">
-                                    <span class="hw-text ${char.nightmareChecked ? 'checked-text' : ''}">악몽</span>
-                                </label>
-                            </div>
-                            <div class="hw-item">
-                                <label class="hw-label">
-                                    <input type="checkbox" ${char.awakeningChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'awakeningChecked')">
-                                    <span class="hw-text ${char.awakeningChecked ? 'checked-text' : ''}">각성</span>
-                                </label>
-                            </div>
-                        </div>
-                        
-                        <div class="homework-group" style="border-bottom: none; padding-bottom: 0;">
-                            <strong style="font-size:11px; display:block; margin-bottom:4px; color:#ffffff;">📝 커스텀 숙제 리스트</strong>
-                            ${char.homeworks.length === 0 ? '<span style="font-size:11px; color:var(--text-muted);">추가된 숙제 없음</span>' : ''}
-                            ${char.homeworks.map((hw, idx) => `
+                
+                            <div class="homework-group">
+                                <strong style="font-size:11px; display:block; margin-bottom:4px; color:#ffffff;">📌 고정 콘텐츠 숙제</strong>
                                 <div class="hw-item">
                                     <label class="hw-label">
-                                        <input type="checkbox" ${hw.checked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, null, ${idx})">
-                                        <span class="hw-text ${hw.checked ? 'checked-text' : ''}">
-                                            [${hw.type === 'daily' ? '일' : '주'}] ${hw.name}
-                                        </span>
+                                        <input type="checkbox" ${char.charBuyChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'charBuyChecked')">
+                                        <span class="hw-text ${char.charBuyChecked ? 'checked-text' : ''}">오드구매,제작 (4)</span>
                                     </label>
-                                    <button class="btn btn-xs btn-danger2" style="padding: 1px 4px; font-size: 10px;" onclick="deleteCustomHomework(${acc.id}, ${char.id}, ${idx})">❌</button>
                                 </div>
-                            `).join('')}
+                                <div class="hw-item">
+                                    <label class="hw-label">
+                                        <input type="checkbox" ${char.abyssChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'abyssChecked')">
+                                        <span class="hw-text ${char.abyssChecked ? 'checked-text' : ''}">회랑 [수/토초기화]</span>
+                                    </label>
+                                </div>
+                                <div class="hw-item">
+                                    <label class="hw-label">
+                                        <input type="checkbox" ${char.nightmareChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'nightmareChecked')">
+                                        <span class="hw-text ${char.nightmareChecked ? 'checked-text' : ''}">악몽</span>
+                                    </label>
+                                </div>
+                                <div class="hw-item">
+                                    <label class="hw-label">
+                                        <input type="checkbox" ${char.awakeningChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'awakeningChecked')">
+                                        <span class="hw-text ${char.awakeningChecked ? 'checked-text' : ''}">각성</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="homework-group" style="border-bottom: none; padding-bottom: 0;">
+                                <strong style="font-size:11px; display:block; margin-bottom:4px; color:#ffffff;">📝 커스텀 숙제 리스트</strong>
+                                ${char.homeworks.length === 0 ? '<span style="font-size:11px; color:var(--text-muted);">추가된 숙제 없음</span>' : ''}
+                                ${char.homeworks.map((hw, idx) => `
+                                    <div class="hw-item">
+                                        <label class="hw-label">
+                                            <input type="checkbox" ${hw.checked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, null, ${idx})">
+                                            <span class="hw-text ${hw.checked ? 'checked-text' : ''}">
+                                                [${hw.type === 'daily' ? '일' : '주'}] ${hw.name}
+                                            </span>
+                                        </label>
+                                        <button class="btn btn-xs btn-danger2" style="padding: 1px 4px; font-size: 10px;" onclick="deleteCustomHomework(${acc.id}, ${char.id}, ${idx})">❌</button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                
+                            <form class="add-form" onsubmit="createCustomHomework(event, ${acc.id}, ${char.id})">
+                                <input type="text" name="hwName" placeholder="숙제 명" required>
+                                <select name="hwType">
+                                    <option value="daily">일일</option>
+                                    <option value="weekly">주간</option>
+                                </select>
+                                <button type="submit" class="btn btn-xs">+</button>
+                            </form>
+                
+                            <div class="char-control-footer">
+                                <button class="btn btn-xs btn-char-edit" onclick="openEditCharModal(${acc.id}, ${char.id}, event)">⚙️ 설정</button>
+                                <button class="btn btn-xs btn-char-del" onclick="removeCharacter(${acc.id}, ${char.id})">🗑️ 캐릭터 삭제</button>
+                            </div>
                         </div>
-
-                        <form class="add-form" onsubmit="createCustomHomework(event, ${acc.id}, ${char.id})">
-                            <input type="text" name="hwName" placeholder="숙제 명" required>
-                            <select name="hwType">
-                                <option value="daily">일일</option>
-                                <option value="weekly">주간</option>
-                            </select>
-                            <button type="submit" class="btn btn-xs">+</button>
-                        </form>
-                    </div>
-                `;
-            });
+                    `;
+                });
         }
 
         html += `
