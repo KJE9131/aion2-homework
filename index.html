@@ -410,17 +410,9 @@ function updateTopAlertTimers() {
     }
 }
 
-    function getNextOdeResetTime() {
-        const now = new Date();
-        let baseTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
-        if (now.getTime() < baseTime.getTime()) baseTime.setDate(baseTime.getDate() - 1);
-        let nextReset = baseTime.getTime();
-        const threeHoursMs = 3 * 60 * 60 * 1000;
-        while (nextReset <= now.getTime()) { nextReset += threeHoursMs; }
-        return nextReset;
-    }
 
-    // 💡 함수 바깥(전역 변수 구역)에 디바운스용 플래그 선언
+
+   // 💡 함수 바깥(전역 변수 구역)에 디바운스용 플래그 선언
     let isOdeUpdating = false;
 
     function getNextOdeResetTime() {
@@ -434,7 +426,6 @@ function updateTopAlertTimers() {
     }
 
     function updateOdeAutomatically() {
-        // 🎯 [안전장치] 이미 함수가 실행 중이거나 연속 호출된 경우 0.5초간 실행을 확실하게 차단합니다.
         if (isOdeUpdating) return;
         isOdeUpdating = true;
         setTimeout(() => { isOdeUpdating = false; }, 500); 
@@ -443,21 +434,29 @@ function updateTopAlertTimers() {
         const nextReset = getNextOdeResetTime();
         const lastExpectedReset = nextReset - (3 * 60 * 60 * 1000);
         
+        // 마지막으로 충전된 시간 기록이 방금 지나간 3시간 주기 기준점보다 과거일 때만 실행
         if (parseInt(lastChecked) < lastExpectedReset) {
             const timeDiff = lastExpectedReset - parseInt(lastChecked);
             const threeHoursMs = 3 * 60 * 60 * 1000;
+            // 몇 주기가 흘러갔는지 계산 (보통 1주기 = 1)
             const chargeCycles = Math.floor(timeDiff / threeHoursMs) + 1;
             
-            // 🔍 3시간 단위 주기에 맞춘 기본 오드 충전량 계산 (주기당 15)
+            // 🔍 중요: 이번 주기에 추가되어야 할 '딱 정해진 충전량' (예: 15)
             const totalAddOde = chargeCycles * 15;
             
             gameData.forEach(acc => {
                 acc.characters.forEach(char => {
-                    // 1. 현재 캐릭터의 기본 오드가 이미 840(맥시멈) 이상이라면 충전하지 않고 패스
+                    // 현재 캐릭터가 가진 오드가 이미 맥스라면 계산 패스
                     if ((char.ode || 0) >= 840) return;
 
-                    // 2. 기본 오드만 충전하고, 840을 초과하지 못하도록 차단
-                    let newBaseOde = (char.ode || 0) + totalAddOde;
+                    // 💡 [버그 원천 차단 핵심 로직]
+                    // 단순히 현재 값에 +15를 더하는 게 아니라,
+                    // 스토리지 저장 직전의 렌더링 값(또는 인풋 박스에 적힌 실제 값)을 기준으로 
+                    // 이번 주기 분량인 딱 totalAddOde(15)만큼만 더해진 최종 목적지 값을 강제로 지정합니다.
+                    const domInput = document.getElementById(`input-ode-${char.id}`);
+                    const currentActualOde = domInput ? (parseInt(domInput.value) || 0) : (char.ode || 0);
+                    
+                    let newBaseOde = currentActualOde + totalAddOde;
                     if (newBaseOde > 840) {
                         newBaseOde = 840;
                     }
@@ -465,7 +464,7 @@ function updateTopAlertTimers() {
                 });
             });
             
-            // 🔑 중요: 스토리지에 시간 기록을 먼저 확실하게 밀어 넣기
+            // 🔑 시간 기록을 업데이트하여 중복 실행을 원천 차단
             lastChecked = lastExpectedReset;
             localStorage.setItem('lastOdeUpdateTime_v15', lastChecked.toString());
             saveData();
