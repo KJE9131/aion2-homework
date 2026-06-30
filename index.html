@@ -209,34 +209,33 @@
 
     
 
-    // --- [ 🔊 선명하고 깔끔한 스마트 알람음 재생 시스템 ] ---
+    // --- [ 🔊 2초간 길게 유지되는 선명한 알람음 재생 시스템 ] ---
     function playBeepSound() {
         try {
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             
-            // 볼륨을 조절하는 마스터 게인 (0.15로 설정하여 귀가 아프지 않게 조절)
+            // 귀가 아프지 않도록 마스터 볼륨을 부드럽게 조절 (0.12)
             const mainGain = audioCtx.createGain();
             mainGain.connect(audioCtx.destination);
-            mainGain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            mainGain.gain.setValueAtTime(0.12, audioCtx.currentTime);
 
-            // --- 첫 번째 빕음 (치고 빠지는 선명한 고음) ---
+            // --- 첫 번째 빕음 (0.8초 동안 길게 유지 후 감쇄) ---
             const osc1 = audioCtx.createOscillator();
             const gain1 = audioCtx.createGain();
             
-            osc1.type = 'sine'; // 가장 깔끔한 사인파
-            osc1.frequency.setValueAtTime(880, audioCtx.currentTime); // 고음역대 (라, A5)
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(880, audioCtx.currentTime); // 선명한 고음 (A5)
             
-            // 소리 볼륨 형태 (뚝 끊어지듯 경고 인지율 상승)
             gain1.gain.setValueAtTime(1, audioCtx.currentTime);
-            gain1.gain.setValueAtTime(1, audioCtx.currentTime + 0.08); // 0.08초 동안 유지
-            gain1.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1); // 빠르게 감쇄
+            gain1.gain.setValueAtTime(1, audioCtx.currentTime + 0.8); // 0.8초 동안 소리 유지
+            gain1.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.0); // 0.2초간 부드럽게 감소
             
             osc1.connect(gain1);
             gain1.connect(mainGain);
             osc1.start(audioCtx.currentTime);
-            osc1.stop(audioCtx.currentTime + 0.12);
+            osc1.stop(audioCtx.currentTime + 1.0);
 
-            // --- 두 번째 빕음 (0.15초 뒤에 똑같이 한 번 더 반복하여 '삐빅' 효과) ---
+            // --- 두 번째 빕음 (0.9초 뒤에 바통을 이어받아 총 2초 대역 완성) ---
             setTimeout(() => {
                 const osc2 = audioCtx.createOscillator();
                 const gain2 = audioCtx.createGain();
@@ -245,19 +244,21 @@
                 osc2.frequency.setValueAtTime(880, audioCtx.currentTime);
                 
                 gain2.gain.setValueAtTime(1, audioCtx.currentTime);
-                gain2.gain.setValueAtTime(1, audioCtx.currentTime + 0.08);
-                gain2.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+                gain2.gain.setValueAtTime(1, audioCtx.currentTime + 0.8); // 마찬가지로 0.8초 유지
+                gain2.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.0); // 부드럽게 감소
                 
                 osc2.connect(gain2);
                 gain2.connect(mainGain);
                 osc2.start(audioCtx.currentTime);
-                osc2.stop(audioCtx.currentTime + 0.12);
-            }, 150); // 150ms(0.15초) 간격
+                osc2.stop(audioCtx.currentTime + 1.0);
+            }, 900); // 첫 음이 잦아들 무렵인 0.9초(900ms) 지점에서 자연스럽게 바통 터치
 
         } catch(e) {
             console.log("오디오 재생 실패");
         }
     }
+
+    
 
     function toggleAlarmSetting(type) {
         alarmSettings[type] = document.getElementById(`toggle-${type}`).checked;
