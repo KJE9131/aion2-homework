@@ -45,7 +45,6 @@
                 <li><span class="info-alert">일일 콘텐츠 및 오드 계산</span> 기준은 <span class="info-highlight">매일 아침 5시</span>를 기준으로 초기화 및 3시간 단위 연산이 진행됩니다.</li>
                 <li><span class="info-highlight">컨텐츠 열쇠, 오드에너지</span>는 <span class="info-alert ">멤버십 이용자</span>를 기준으로 계산됩니다.</li>
                 <li><span class="info-alert">어비스 회랑</span>은 <span class="info-highlight">매주 수요일 및 토요일 오후 10시(22시)</span>에 체크 상태가 자동 초기화됩니다.</li>
-                <li><span class="info-alert">숙제 계정 일괄 추가</span> 기능을 사용하면 해당 계정에 소속된 <span class="info-highlight">모든 캐릭터</span>에게 일괄적으로 커스텀 숙제가 주입됩니다.</li>
             </ul>
         </div>
 
@@ -945,7 +944,7 @@
                             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom: 10px;">
                                 <span class="account-contents-title" style="margin-bottom:0;">계정 공통 콘텐츠 및 상점 체크</span>
                                 <form class="batch-add-form" onclick="event.stopPropagation();" onsubmit="createBatchHomework(event, ${acc.id})">
-                                    <span style="font-size:12px; color:var(--accent); font-weight:bold;">캐릭터 전체 일괄 숙제 추가 : </span>
+                                    <span style="font-size:12px; color:var(--accent); font-weight:bold;">해당계정 캐릭터 모두에게 숙제 일괄 추가 : </span>
                                     <input type="text" name="batchHwName" placeholder="일괄 숙제 이름" required>
                                     <select name="batchHwType">
                                         <option value="daily">일일</option>
