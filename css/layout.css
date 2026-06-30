@@ -757,6 +757,9 @@ left:0;
     justify-content: center;
     gap: 3px;
 }
+.char-control-footer > .char-memo-wrapper {
+            flex:1;
+}
 .char-control-footer .char-memo-wrapper .btn-char-memo {
     width: 100%;
 }
