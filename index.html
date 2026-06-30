@@ -1077,7 +1077,7 @@
                 membershipText = '멤버십 남은기간 : 0일';
             }
 
-            const membershipBadge = `<span style="font-size: 12px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.15); color: var(--text-muted, #94a3b8); padding: 3px 8px; border-radius: 4px; margin-left: 10px; font-weight: normal; vertical-align: middle;">${membershipText}</span>`;
+            const membershipBadge = `<span style="font-size: 12px; background: rgba(255, 255, 255, 0.06); color: var(--text-muted, #94a3b8); padding: 3px 8px; border-radius: 4px; margin-left: 10px; font-weight: normal; vertical-align: middle;">${membershipText}</span>`;
             
             html += `
             <div class="account-section">
@@ -1189,7 +1189,7 @@
                             </div>
                 
                             <div class="homework-group">
-                                <strong style="font-size:11px; display:block; margin-bottom:4px; color:#ffffff;">📌 고정 숙제 리스트</strong>
+                                <strong style="font-size:11px; display:block; margin-bottom:4px; color:#a1a1aa;">📌 고정 숙제 리스트</strong>
                                 <div class="hw-item">
                                     <label class="hw-label">
                                         <input type="checkbox" ${char.charBuyChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'charBuyChecked')">
@@ -1217,7 +1217,7 @@
                             </div>
                             
                             <div class="homework-group" style="border-bottom: none; padding-bottom: 0;">
-                                <strong style="font-size:11px; display:block; margin-bottom:4px; color:#ffffff;">📝 커스텀 숙제 리스트</strong>
+                                <strong style="font-size:11px; display:block; margin-bottom:4px; color:#a1a1aa;">📝 커스텀 숙제 리스트</strong>
                                 ${(!char.homeworks || char.homeworks.length === 0) ? '<span style="font-size:11px; color:var(--text-muted);">추가된 숙제 없음</span>' : ''}
                                 ${(char.homeworks || []).map((hw, idx) => `
                                     <div class="hw-item">
