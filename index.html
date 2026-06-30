@@ -289,17 +289,19 @@
             const ctx = new AudioContext();
             const now = ctx.currentTime;
             
+            // 1. 전체 마스터 볼륨을 0.12 -> 0.08로 살짝 낮춰 귀의 피로감을 줄입니다.
             const mainGain = ctx.createGain();
             mainGain.connect(ctx.destination);
-            mainGain.gain.setValueAtTime(0.12, now);
-
+            mainGain.gain.setValueAtTime(0.08, now);
+    
+            // 2. 각 음별로 개별 볼륨(volume) 설정을 추가했습니다.
             const sequence = [
-                { pitch: 523.25, start: 0.0,  duration: 0.8, type: 'sine'     }, 
-                { pitch: 659.25, start: 0.2,  duration: 0.4, type: 'triangle' }, 
-                { pitch: 783.99, start: 0.35, duration: 0.4, type: 'triangle' }, 
-                { pitch: 1046.50, start: 0.5,  duration: 1.0, type: 'sine'     }  
+                { pitch: 523.25, start: 0.0,  duration: 0.8, type: 'sine',     volume: 0.4 }, // 🌟 첫 음 볼륨을 기존의 채 1/2 수준으로 줄이고 부드러운 sine파 유지
+                { pitch: 659.25, start: 0.2,  duration: 0.4, type: 'triangle', volume: 0.7 }, // 중간 화음
+                { pitch: 783.99, start: 0.35, duration: 0.4, type: 'triangle', volume: 0.7 }, // 중간 화음
+                { pitch: 1046.50, start: 0.5,  duration: 1.0, type: 'sine',     volume: 0.9 }  // 마지막 강조 음
             ];
-
+    
             sequence.forEach((note) => {
                 const startTime = now + note.start;
                 const stopTime = startTime + note.duration;
@@ -310,9 +312,13 @@
                 osc.type = note.type;
                 osc.frequency.setValueAtTime(note.pitch, startTime);
                 
+                // 3. 개별 지정된 볼륨(note.volume)을 곱해 페이드인/아웃을 처리합니다.
+                const targetVolume = note.volume;
+    
                 gainNode.gain.setValueAtTime(0, startTime);
-                gainNode.gain.linearRampToValueAtTime(1.0, startTime + 0.05); 
-                gainNode.gain.setValueAtTime(1.0, startTime + (note.duration * 0.4)); 
+                // 처음에 팍 터지지 않도록 페이드인 시간을 0.05초 -> 0.08초로 조금 더 늘려 부드럽게 시작합니다.
+                gainNode.gain.linearRampToValueAtTime(targetVolume, startTime + 0.08); 
+                gainNode.gain.setValueAtTime(targetVolume, startTime + (note.duration * 0.4)); 
                 gainNode.gain.exponentialRampToValueAtTime(0.001, stopTime); 
                 
                 osc.connect(gainNode);
@@ -326,6 +332,7 @@
             console.error("오디오 재생 중 오류 발생:", error);
         }
     }
+    
 
     function toggleMembershipUI() {
         const isMembership = document.querySelector('input[name="modalAccMembership"]:checked').value === 'O';
