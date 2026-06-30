@@ -1381,9 +1381,12 @@
                             </form>
                 
                             <div class="char-control-footer">
-                                <button class="btn btn-xs btn-char-memo" onclick="openMemoModal(${acc.id}, ${char.id}, event)">메모</button>
+                                <div class="char-memo-wrapper" style="position: relative; display: inline-block;">
+                                    <button class="btn btn-xs btn-char-memo" onclick="openMemoModal(${acc.id}, ${char.id}, event)">메모</button>
+                                    ${char.memo && char.memo.trim() !== '' ? '<span class="memo-red-dot"></span>' : ''}
+                                </div>
                                 <button class="btn btn-xs btn-char-edit" onclick="openEditCharModal(${acc.id}, ${char.id}, event)">설정</button>
-                                <button class="btn btn-xs btn-char-del" onclick="removeCharacter(${acc.id}, ${char.id})">삭제</button>
+                                <button class="btn btn-xs btn-char-del" onclick="removeCharacter(${acc.id}, ${char.id}, event)">삭제</button>
                             </div>
                         </div>
                     `;
