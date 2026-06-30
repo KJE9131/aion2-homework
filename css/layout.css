@@ -48,7 +48,6 @@
         /* ⏰ 상단 실시간 콘텐츠 알람 대시보드 */
         .alarm-container {
             max-width: 93%;
-            margin: 0 12px;
             background: #1e1e1e;
             border: 1px solid var(--card-border);
             border-radius: 8px;
@@ -429,7 +428,7 @@
           color: #888888;        /* 부드러운 회색조 */
           line-height: 1.6;      /* 줄간격을 넓혀 가독성 확보 */
           margin-top: 40px;      /* 본문과의 간격 */
-          padding-top: 20px;
+          padding: 20px 0;
           border-top: 1px solid #3d3d3d; /* 상단에 얇은 구분선 */
       }
 
@@ -978,7 +977,7 @@ color:var(--primary);
             width: 52px;
             height: 52px;
             border-radius: 50%;
-            background: #2563eb;
+            background: #ff7e36;
             color: #fff;
             border: none;
             cursor: pointer;
