@@ -141,8 +141,8 @@
         }
         .info-box ul { margin: 0; padding-left: 20px; }
         .info-box li { margin: 4px 0; }
-        .info-highlight { color: #818cf8; font-weight: bold; }
-        .info-alert { color: var(--accent); font-weight: bold; }
+        .info-highlight { color: #818cf8; }
+        .info-alert { color: var(--accent); }
 
         /* 컨트롤 메뉴 (버튼 그룹) */
         .control-menu {
