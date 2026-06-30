@@ -938,16 +938,15 @@ left:0;
     background-color: #fff9f5;
 }
 
-/* 활성화되었을 때 버튼 스타일 변화 */
-.btn-toggle-hide.active {
-    background-color: var(--primary-color, #ff7e36);
-    color: #fff;
-    border-color: var(--primary-color, #ff7e36);
+/* 💡 body에 .hide-completed-mode가 붙으면 체크박스가 선택된 항목들을 즉시 숨깁니다 */
+body.hide-completed-mode .resource-item:has(input:checked),
+body.hide-completed-mode .hw-item:has(input:checked) {
+    display: none !important;
 }
 
-/* 💡 핵심: body에 클래스가 붙으면 체크된 숙제와 회랑 행을 부드럽게 숨김 */
-body.hide-completed-mode .homework-item:has(input:checked),
-body.hide-completed-mode .weekly-row-static label:has(input:checked),
-body.hide-completed-mode .abyss-row:has(input:checked) {
-    display: none !important;
+/* 활성화 상태 버튼 색상 포인트 (기존 테마 컬러를 적용하시거나 원하시는 주황색 계열 선택 가능) */
+.btn-toggle-hide.active {
+    background-color: #ff7e36 !important;
+    color: #fff !important;
+    border-color: #ff7e36 !important;
 }
