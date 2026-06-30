@@ -915,7 +915,7 @@
         let html = '';
 
         html += `
-            <div class="global-action-bar" style="max-width: 1200px; margin: 10px auto; padding: 0 20px; display: flex; justify-content: flex-end;">
+            <div class="global-action-bar">
                 <button id="btnToggleHide" class="btn-toggle-hide ${isHideCompleted ? 'active' : ''}" onclick="toggleHideCompleted()" 
                         style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background-color: var(--bg-card, #fff); border: 1px solid var(--border-color, #ddd); border-radius: 20px; color: var(--text-color, #333); font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.2s ease;">
                     ${isHideCompleted ? '👁️ 모든 숙제 보기' : '🙈 완료된 숙제 숨기기'}
