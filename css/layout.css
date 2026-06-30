@@ -124,8 +124,9 @@
         /* 📢 안내사항 스타일 */
         .top_box {
             display:flex;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             justify-content: space-between;
+                    gap:10px;
         }
         .info-box {
             max-width: 93%;
@@ -911,7 +912,7 @@ left:0;
 /* 👁️ 완료된 숙제 숨기기 토글 관련 스타일 */
 .global-action-bar {
     max-width: 100%;
-    margin: 10px auto;
+    margin: 10px auto 30px auto;
     display: flex;
     justify-content: flex-start; 
 }
