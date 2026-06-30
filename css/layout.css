@@ -76,7 +76,7 @@
             gap: 6px;
         }
         .alarm-timer { 
-            color: var(--timer-color); 
+            color: #4d9cff; 
             background: #121214; 
             padding: 2px 4px; 
             border-radius: 4px; 
