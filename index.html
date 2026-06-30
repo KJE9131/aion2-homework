@@ -40,7 +40,7 @@
     <div class="top_box">
         <div class="info-box">
             <ul>
-                <li>모든 데이터는 <span class="info-highlight">사용자의 브라우저(LocalStorage)에 저장</span>되며, 별도의 서버에는 저장되지 않습니다.<br> <span class="info-alert">브라우저 기록을 지우면</span> 내역이 날아갈 수 있어요.</li>
+                <li>모든 데이터는 <span class="info-highlight">사용자의 브라우저(LocalStorage)에 저장</span>되며, 별도의 서버에는 저장되지 않습니다.<span class="info-alert">브라우저 기록을 지우면</span> 내역이 날아갈 수 있어요.</li>
                 <li><span class="info-alert">일일 콘텐츠 및 오드 계산</span> 기준은 <span class="info-highlight">매일 아침 5시</span>를 기준으로 초기화 및 연산이 진행됩니다.</li>
                 <li><span class="info-highlight">컨텐츠 열쇠, 오드에너지</span>는 <span class="info-alert ">멤버십 이용자</span>를 기준으로 계산됩니다.</li>
                 <li><span class="info-alert">어비스 회랑</span>은 <span class="info-highlight">매주 수요일 및 토요일 오후 10시(22시)</span>에 체크 상태가 자동 초기화됩니다.</li>
@@ -250,47 +250,50 @@
     });
 
     // --- [ 🔊 알람음 ] ---
+    // --- [ 🔊 부드럽고 청아하게 늘어지는 4연타 알람음 ] ---
     function playBeepSound() {
         try {
-            // Web Audio API 컨텍스트 생성
             const AudioContext = window.AudioContext || window.webkitAudioContext;
             if (!AudioContext) return;
             
             const ctx = new AudioContext();
+            const now = ctx.currentTime;
             
-            // 🔔 1. 청아하고 맑은 메인 음 (높은 도~미 사이의 청량한 톤)
-            const osc1 = ctx.createOscillator();
-            const gain1 = ctx.createGain();
-            
-            // 부드러운 사인파(sine)와 둥근 느낌의 삼각파(triangle)를 조합
-            osc1.type = 'sine'; 
-            osc1.frequency.setValueAtTime(880, ctx.currentTime); // A5 노트 (맑은 실로폰 느낌)
-            
-            // 🌟 2. 은은한 잔향을 만들어줄 서브 배음
-            const osc2 = ctx.createOscillator();
-            const gain2 = ctx.createGain();
-            osc2.type = 'triangle';
-            osc2.frequency.setValueAtTime(1318.51, ctx.currentTime); // E6 노트 (화음 추가)
+            // 메인 볼륨 제어 (전체적인 소리 균형)
+            const mainGain = ctx.createGain();
+            mainGain.connect(ctx.destination);
+            mainGain.gain.setValueAtTime(0.12, now);
 
-            // 볼륨 컨트롤 (귀가 아프지 않게 페이드아웃 효과 적용)
-            gain1.gain.setValueAtTime(0.15, ctx.currentTime); // 시작 볼륨
-            gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6); // 0.6초 동안 부드럽게 사라짐
-            
-            gain2.gain.setValueAtTime(0.05, ctx.currentTime);
-            gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+            // 🎶 또옹(도) -> 똥(미) -> 똥(솔) -> 또옹(높은도) 음계 설정
+            const sequence = [
+                { pitch: 523.25, start: 0.0,  duration: 0.8, type: 'sine'     }, // 1. 첫 음 '또옹' (길고 부드럽게)
+                { pitch: 659.25, start: 0.2,  duration: 0.4, type: 'triangle' }, // 2. 두 번째 '똥' (가볍게)
+                { pitch: 783.99, start: 0.35, duration: 0.4, type: 'triangle' }, // 3. 세 번째 '똥' (스타카토 느낌)
+                { pitch: 1046.50, start: 0.5,  duration: 1.0, type: 'sine'     }  // 4. 마지막 '또옹~' (높고 길게 여운)
+            ];
 
-            // 장치 연결 및 재생
-            osc1.connect(gain1);
-            gain1.connect(ctx.destination);
-            
-            osc2.connect(gain2);
-            gain2.connect(ctx.destination);
-            
-            osc1.start();
-            osc2.start();
-            
-            osc1.stop(ctx.currentTime + 0.6);
-            osc2.stop(ctx.currentTime + 0.4);
+            sequence.forEach((note) => {
+                const startTime = now + note.start;
+                const stopTime = startTime + note.duration;
+                
+                const osc = ctx.createOscillator();
+                const gainNode = ctx.createGain();
+                
+                osc.type = note.type;
+                osc.frequency.setValueAtTime(note.pitch, startTime);
+                
+                // 볼륨 감쇄 효과 (부드럽게 밀려오다 사르르 사라지는 잔향 연출)
+                gainNode.gain.setValueAtTime(0, startTime);
+                gainNode.gain.linearRampToValueAtTime(1.0, startTime + 0.05); // 톡 치는 느낌 추가
+                gainNode.gain.setValueAtTime(1.0, startTime + (note.duration * 0.4)); 
+                gainNode.gain.exponentialRampToValueAtTime(0.001, stopTime); // 뒤로 갈수록 부드럽게 스르륵 늘어짐
+                
+                osc.connect(gainNode);
+                gainNode.connect(mainGain);
+                
+                osc.start(startTime);
+                osc.stop(stopTime + 0.1);
+            });
             
         } catch (error) {
             console.error("오디오 재생 중 오류 발생:", error);
