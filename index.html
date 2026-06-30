@@ -159,7 +159,7 @@
 <div id="memoModal" class="modal" style="display: none;">
     <div class="modal-content">
         <div class="modal-header">
-            <h2 id="memoModalTitle">📝 캐릭터 메모 관리</h2>
+            <h2 id="memoModalTitle">캐릭터 메모 관리</h2>
         </div>
         <form id="memoForm" onsubmit="submitMemoForm(event)">
             <input type="hidden" id="memoAccId">
@@ -181,7 +181,7 @@
 <div id="accountModal" class="modal" style="display: none; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
     <div class="modal-content" style="background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 20px; width: 100%; max-width: 400px; color: #fff;">
         <div class="modal-header" style="margin-bottom: 15px;">
-            <h3 id="accountModalTitle" style="margin: 0; font-size: 18px;">👥 새 계정 추가</h3>
+            <h3 id="accountModalTitle" style="margin: 0; font-size: 18px;">새 계정 추가</h3>
         </div>
         <form id="accountForm" onsubmit="submitAccountForm(event)">
             <input type="hidden" id="modalAccId">
@@ -249,10 +249,6 @@
     let lastWeeklyReset = localStorage.getItem('lastWeeklyResetTime_v15') || "0";
 
     let alarmSettings = JSON.parse(localStorage.getItem('alarmSettings_v15')) || { festa: true, invasion: true, space: true };
-
-    const jobIcons = {
-        '치유성': '💚', '호법성': '⚜️', '수호성': '🛡️', '검성': '🗡️', '마도성': '🧙‍♀️', '정령성': '🦊', '궁성': '🏹', '살성': '⚔️', '권성': '🤜', '미지정': '👤'
-    };
 
     // --- [ 현재 서버 시간 표시 ] ---
     function updateServerClock() {
@@ -380,7 +376,7 @@
                 document.getElementById('membershipHours').value = displayHours;
             }
             
-            document.getElementById('accountModalTitle').innerText = "⚙️ 계정 설정 수정";
+            document.getElementById('accountModalTitle').innerText = "계정 설정 수정";
             document.getElementById('accountModalSubmitBtn').innerText = "수정 완료";
         } else {
             accEditMode = false;
@@ -389,7 +385,7 @@
             document.getElementById('membershipDays').value = 30;
             document.getElementById('membershipHours').value = 0;
             
-            document.getElementById('accountModalTitle').innerText = "👥 새 계정 추가";
+            document.getElementById('accountModalTitle').innerText = "새 계정 추가";
             document.getElementById('accountModalSubmitBtn').innerText = "생성";
         }
         
@@ -931,7 +927,7 @@
         
         const memoTitleEl = document.getElementById('memoModalTitle');
         if (memoTitleEl && char) {
-            memoTitleEl.innerText = `📝 [${char.name}] 메모 관리`;
+            memoTitleEl.innerText = `[${char.name}] 메모 관리`;
         }
         
         document.getElementById('memoModal').style.display = 'flex';
@@ -1212,8 +1208,8 @@
                     </div>
                     <div onclick="event.stopPropagation();">
                         <button class="btn btn-sm" onclick="openCharModal(${acc.id}, event)">+ 캐릭터 추가</button>
-                        <button class="btn btn-sm btn-char-edit" onclick="openAccountModal(${acc.id}, event)">⚙️ 계정 설정</button>
-                        <button class="btn btn-sm btn-char-del" onclick="removeAccount(${acc.id}, event)">계정 삭제</button>
+                        <button class="btn btn-sm btn-char-edit" onclick="openAccountModal(${acc.id}, event)">⚙️</button>
+                        <button class="btn btn-sm btn-char-del" onclick="removeAccount(${acc.id}, event)">🗑️</button>
                     </div>
                 </div>
                     
@@ -1289,14 +1285,13 @@
                 `;
             } else {
                 acc.characters.forEach(char => {
-                    const matchedIcon = jobIcons[char.job] || '👤';
-                    const currentTicket = char.nightmareTicket !== undefined ? char.nightmareTicket : 2;
+                const currentTicket = char.nightmareTicket !== undefined ? char.nightmareTicket : 2;
                     
                     html += `
                         <div class="char-card">
                             <div class="char-header">
                                 <div class="char-info">
-                                    <span class="char-name">${matchedIcon} ${char.name}</span>
+                                    <span class="char-name">${char.name}</span>
                                     <span class="char-sub-info">직업: ${char.job} | 투력: <span class="char-power">${Number(char.power).toLocaleString()}</span></span>
                                 </div>
                             </div>
@@ -1304,8 +1299,8 @@
                             <div class="resource-group">
                                 <div class="ode-title-row" style="display: flex; justify-content: space-between; align-items: center;">
                                     <div style="display:flex; flex-direction:column;">
-                                        <span>⚡ 오드에너지</span>
-                                        <span class="ode-timer" id="timer-${char.id}" style="margin-left:18px;">[로딩중...]</span>
+                                        <span>오드에너지</span>
+                                        <span class="ode-timer" id="timer-${char.id}">[로딩중...]</span>
                                     </div>
                                     <div class="tooltip">
                                         <button class="btn-use-total" onclick="useSmartOde(${acc.id}, ${char.id})">오드사용</button>
@@ -1322,7 +1317,7 @@
 
                             <div class="resource-group">
                                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                                    <span style="font-size:12px; font-weight:600; color:#cbd5e1;">😈 악몽 티켓</span>
+                                    <span style="font-size:12px; font-weight:600; color:#cbd5e1;">악몽 티켓</span>
                                     <div class="counter-controls">
                                         <button class="btn btn-sm" onclick="changeVal(${acc.id}, ${char.id}, 'nightmareTicket', -1)">-</button>
                                         <input type="number" class="counter-input" value="${currentTicket}" max="14" onchange="setDirectVal(${acc.id}, ${char.id}, 'nightmareTicket', this.value)">
@@ -1386,9 +1381,9 @@
                             </form>
                 
                             <div class="char-control-footer">
-                                <button class="btn btn-xs btn-char-memo" onclick="openMemoModal(${acc.id}, ${char.id}, event)">📝 메모</button>
-                                <button class="btn btn-xs btn-char-edit" onclick="openEditCharModal(${acc.id}, ${char.id}, event)">⚙️ 설정</button>
-                                <button class="btn btn-xs btn-char-del" onclick="removeCharacter(${acc.id}, ${char.id})">🗑️ 삭제</button>
+                                <button class="btn btn-xs btn-char-memo" onclick="openMemoModal(${acc.id}, ${char.id}, event)">메모</button>
+                                <button class="btn btn-xs btn-char-edit" onclick="openEditCharModal(${acc.id}, ${char.id}, event)">설정</button>
+                                <button class="btn btn-xs btn-char-del" onclick="removeCharacter(${acc.id}, ${char.id})">삭제</button>
                             </div>
                         </div>
                     `;
