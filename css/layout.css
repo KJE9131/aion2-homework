@@ -2,7 +2,7 @@
             --primary: #3d67b9;
             --primary-hover: #20458f;
             --bg: #121214;
-            --card-bg: #1e1e24;
+            --card-bg: #181818;
             --card-border: #2a2a32;
             --text: #e3e3e6;
             --text-muted: #a1a1aa;
@@ -16,12 +16,12 @@
             --accent: #ffb86c;
             --timer-color: #4ade80;
             --modal-overlay: rgba(0, 0, 0, 0.6);
-            --info-bg: #1a2333;
+            --info-bg: #1e1e1e;
             --info-border: #2b3d5c;
         }
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: var(--bg); 
+            background-color: #141414; 
             color: var(--text); 
             margin: 0; 
             line-height: 1.5;
@@ -49,7 +49,7 @@
         .alarm-container {
             max-width: 93%;
             margin: 0 12px;
-            background: #1e1e24;
+            background: #1e1e1e;
             border: 1px solid var(--card-border);
             border-radius: 8px;
             padding: 12px 12px;
@@ -201,7 +201,7 @@
         .account-body.collapsed { display: none; }
         
         .account-contents {
-            background: var(--account-content-bg);
+            background: #1E1E1E;
             border: 1px solid var(--card-border);
             border-radius: 8px;
             padding: 4px 10px;
@@ -261,7 +261,7 @@
             border: 1px solid var(--card-border); 
             border-radius: 8px; 
             padding: 10px; 
-            background: #25252e; 
+            background: #1E1E1E; 
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
@@ -411,13 +411,13 @@
         }
         .btn-b2 {
           background: #1e1e1e;
-          border: 1px solid #535353;
+          border: 1px solid #454545;
           font-size: 12px;
           font-weight: 400;
         }
         .btn-b3 {
           background: #1e1e1e;
-          border: 1px solid #535353;
+          border: 1px solid #454545;
           font-size: 12px;
           font-weight: 400;
         }
