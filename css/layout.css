@@ -910,11 +910,10 @@ left:0;
 
 /* 👁️ 완료된 숙제 숨기기 토글 관련 스타일 */
 .global-action-bar {
-    max-width: 1200px;
+    max-width: 100%;
     margin: 10px auto;
-    padding: 0 20px;
     display: flex;
-    justify-content: flex-end; /* 오른쪽 정렬 */
+    justify-content: flex-start; 
 }
 
 .btn-toggle-hide {
