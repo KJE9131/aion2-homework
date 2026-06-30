@@ -1110,24 +1110,32 @@
         }
     }
 
-    let isHideCompleted = JSON.parse(localStorage.getItem('isHideCompleted_v15')) || false;
+   let isHideCompleted = JSON.parse(localStorage.getItem('isHideCompleted_v15')) || false;
 
     function toggleHideCompleted() {
         isHideCompleted = !isHideCompleted;
         localStorage.setItem('isHideCompleted_v15', JSON.stringify(isHideCompleted));
         
         const btn = document.getElementById('btnToggleHide');
+        const desc = document.getElementById('hideToggleDescription'); // 안내문구 요소 가져오기
+        
         if (isHideCompleted) {
             document.body.classList.add('hide-completed-mode');
             if (btn) {
                 btn.classList.add('active');
                 btn.innerText = '👀 모든 숙제 보기';
             }
+            if (desc) {
+                desc.innerText = '숨겨진 숙제를 모두 표시합니다.';
+            }
         } else {
             document.body.classList.remove('hide-completed-mode');
             if (btn) {
                 btn.classList.remove('active');
                 btn.innerText = '✅ 완료된 숙제 숨기기';
+            }
+            if (desc) {
+                desc.innerText = '완료된 숙제를 대시보드에서 숨깁니다.';
             }
         }
     }
@@ -1140,15 +1148,19 @@
         }
 
         let html = '';
-
-        html += `
-            <div class="global-action-bar">
-                <button id="btnToggleHide" class="btn-toggle-hide ${isHideCompleted ? 'active' : ''}" onclick="toggleHideCompleted()" 
-                        style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background-color: var(--bg-card, #fff); border: 1px solid var(--border-color, #ddd); border-radius: 20px; color: var(--text-color, #333); font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.2s ease;">
-                    ${isHideCompleted ? '👀 모든 숙제 보기' : '✅ 완료된 숙제 숨기기'}
-                </button>
-            </div>
-        `;
+        // 🌟 수정된 글로벌 액션 바 영역 (안내 문구 추가)
+            html += `
+                <div class="global-action-bar" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <button id="btnToggleHide" class="btn-toggle-hide ${isHideCompleted ? 'active' : ''}" onclick="toggleHideCompleted()" 
+                            style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background-color: var(--bg-card, #fff); border: 1px solid var(--border-color, #ddd); border-radius: 20px; color: var(--text-color, #333); font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.2s ease;">
+                        ${isHideCompleted ? '👀 모든 숙제 보기' : '✅ 완료된 숙제 숨기기'}
+                    </button>
+                    
+                    <span id="hideToggleDescription" style="font-size: 11px; color: #94a3b8; font-weight: 400; letter-spacing: -0.3px; line-height: 1;">
+                        ${isHideCompleted ? '숨겨진 숙제를 모두 표시합니다.' : '완료된 숙제를 대시보드에서 숨깁니다.'}
+                    </span>
+                </div>
+            `;
 
         gameData.forEach(acc => {
             if (accordionStatus[acc.id] === undefined) accordionStatus[acc.id] = true;
