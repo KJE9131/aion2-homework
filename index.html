@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="css/layout.css?ver=<?php echo time()?>">
     <link rel="stylesheet" href="css/PretendardVariable.ttf">
     <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+
 </head>
 
 <body>
@@ -28,7 +29,6 @@
     </div>
 </header>
 <header>
-    <!-- 🌟 Flexbox 레이아웃을 적용하여 타이틀 영역과 우측 버튼을 양끝으로 정렬 -->
     <h1 style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 10px;">
         <div style="display: flex; align-items: center; flex-wrap: wrap;">
             아이온2 숙제 관리 대시보드 
@@ -36,8 +36,7 @@
             [서버 시간: 로딩 중...]
             </span>
         </div>
-        <!-- 🔗 우측 끝 공식 홈페이지 새창 이동 버튼 -->
-        <a href="https://aion2.plaync.com" target="_blank" class="btn-aion2">
+        <a href="https://aion2.plaync.com" target="_blank" class="btn btn-sm" style="text-decoration: none; display: inline-flex; align-items: center; background: #2563eb; color: #fff; padding: 6px 12px; border-radius: 4px; font-size: 13px; font-weight: 500; transition: background 0.2s;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
             AION2 공식홈 ➔
         </a>
     </h1>
@@ -85,20 +84,39 @@
                 </div>
             </div>
         </div>
-
-        <div class="control-menu">
-            <button class="btn" onclick="openAccountModal()">+ 새 계정 추가</button>
-            <button class="btn btn-b2 btn-success" onclick="exportBackup()">데이터 백업 (내보내기)</button>
-            <button class="btn btn-b3 btn-success" onclick="document.getElementById('importFile').click()">데이터 불러오기 (가져오기)</button>
-            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importBackup(event)">
-        </div>
     </div>
-    
-    
 </header>
 
-<div class="container" id="app">
+<div class="floating-menu-container" id="floatingMenu">
+    <button class="floating-toggle-btn" onclick="toggleFloatingMenu()" title="메뉴 열기">
+        <svg class="icon-menu" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        <svg class="icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+
+    <div class="floating-items">
+        <div class="floating-item-wrapper">
+            <div class="floating-tooltip">새 계정 추가</div>
+            <button class="floating-sub-btn" onclick="openAccountModal(); toggleFloatingMenu();">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="16" y1="11" x2="22" y2="11"></line></svg>
+            </button>
+        </div>
+        <div class="floating-item-wrapper">
+            <div class="floating-tooltip">데이터 백업 (내보내기)</div>
+            <button class="floating-sub-btn btn-success-clip" onclick="exportBackup(); toggleFloatingMenu();">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            </button>
+        </div>
+        <div class="floating-item-wrapper">
+            <div class="floating-tooltip">데이터 불러오기 (가져오기)</div>
+            <button class="floating-sub-btn btn-success-clip" onclick="document.getElementById('importFile').click(); toggleFloatingMenu();">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            </button>
+        </div>
     </div>
+</div>
+<input type="file" id="importFile" accept=".json" style="display: none;" onchange="importBackup(event)">
+
+<div class="container" id="app"></div>
 
 <div class="modal-overlay" id="charModal">
     <div class="modal-content">
@@ -135,7 +153,7 @@
     </div>
 </div>
 
-    <div id="memoModal" class="modal" style="display: none;">
+<div id="memoModal" class="modal" style="display: none;">
     <div class="modal-content">
         <div class="modal-header">
             <h2 id="memoModalTitle">📝 캐릭터 메모 관리</h2>
@@ -157,7 +175,7 @@
     </div>
 </div>
 
-    <div id="accountModal" class="modal" style="display: none; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+<div id="accountModal" class="modal" style="display: none; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
     <div class="modal-content" style="background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 20px; width: 100%; max-width: 400px; color: #fff;">
         <div class="modal-header" style="margin-bottom: 15px;">
             <h3 id="accountModalTitle" style="margin: 0; font-size: 18px;">👥 새 계정 추가</h3>
@@ -203,6 +221,20 @@
 </div>
 
 <script>
+    // --- [ 플로팅 메뉴 인터랙션 함수 ] ---
+    function toggleFloatingMenu() {
+        const container = document.getElementById('floatingMenu');
+        container.classList.toggle('active');
+    }
+
+    // 외부 공간 클릭 시 열려있는 메뉴 닫기 핸들러
+    window.addEventListener('click', function(e) {
+        const container = document.getElementById('floatingMenu');
+        if (container.classList.contains('active') && !container.contains(e.target)) {
+            container.classList.remove('active');
+        }
+    });
+
     // --- [ 데이터 구조 및 초기화 ] ---
     let gameData = JSON.parse(localStorage.getItem('gameHomeworkData_v15')) || [];
     let lastChecked = localStorage.getItem('lastOdeUpdateTime_v15') || Date.now();
@@ -210,7 +242,6 @@
     let lastAbyssReset = localStorage.getItem('lastAbyssResetTime_v15') || "0";
     let accordionStatus = JSON.parse(localStorage.getItem('accordionStatus_v15')) || {};
     
-    // ⏰ 커스텀 일일/주간 숙제 초기화 시간 저장을 위한 타임스탬프 변수
     let lastDailyReset = localStorage.getItem('lastDailyResetTime_v15') || "0";
     let lastWeeklyReset = localStorage.getItem('lastWeeklyResetTime_v15') || "0";
 
@@ -292,7 +323,6 @@
             console.error("오디오 재생 중 오류 발생:", error);
         }
     }
-    
 
     function toggleMembershipUI() {
         const isMembership = document.querySelector('input[name="modalAccMembership"]:checked').value === 'O';
@@ -1102,7 +1132,7 @@
     function render() {
         const app = document.getElementById('app');
         if (gameData.length === 0) {
-            app.innerHTML = `<p style="text-align:center; color:#fff; margin-top: 50px; font-weight:600;">우측 상단의 새 계정 추가 버튼으로 계정을 추가하세요!</p>`;
+            app.innerHTML = `<p style="text-align:center; color:#fff; margin-top: 50px; font-weight:600;">우측 하단의 메뉴 단추(三)를 눌러 새 계정을 추가해 주세요!</p>`;
             return;
         }
 
