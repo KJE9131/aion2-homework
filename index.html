@@ -884,10 +884,15 @@
         }
     }
 
-    let isHideCompleted = false;
+
+    //완료된 숙제 숨기기
+    let isHideCompleted = JSON.parse(localStorage.getItem('isHideCompleted_v15')) || false;
 
     function toggleHideCompleted() {
         isHideCompleted = !isHideCompleted;
+        
+        // 💾 바뀐 설정을 브라우저(LocalStorage)에 영구 저장
+        localStorage.setItem('isHideCompleted_v15', JSON.stringify(isHideCompleted));
         
         const btn = document.getElementById('btnToggleHide');
         if (isHideCompleted) {
@@ -903,7 +908,8 @@
                 btn.innerText = '🙈 완료된 숙제 숨기기';
             }
         }
-    }  
+    }
+    
     
     // --- [ 화면 렌더링 ] ---
     function render() {
