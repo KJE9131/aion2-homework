@@ -1209,7 +1209,7 @@
                     <div onclick="event.stopPropagation();">
                         <button class="btn btn-sm" onclick="openCharModal(${acc.id}, event)">+ 캐릭터 추가</button>
                         <button class="btn btn-sm btn-char-edit" onclick="openAccountModal(${acc.id}, event)" title="계정 설정">⚙️</button>
-                        <button class="btn btn-sm btn-char-del" onclick="removeAccount(${acc.id}, event)" title="계정 삭">🗑️</button>
+                        <button class="btn btn-sm btn-char-del" onclick="removeAccount(${acc.id}, event)" title="계정 삭제">🗑️</button>
                     </div>
                 </div>
                     
@@ -1338,7 +1338,7 @@
                                 <div class="hw-item">
                                     <label class="hw-label">
                                         <input type="checkbox" ${char.abyssChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'abyssChecked')">
-                                        <span class="hw-text ${char.abyssChecked ? 'checked-text' : ''}">회랑 [수/토 초기화]</span>
+                                        <span class="hw-text ${char.abyssChecked ? 'checked-text' : ''}" title="매주 수요일, 토요일 오후 10시 자동 초기화">회랑 [수/토 초기화]</span>
                                     </label>
                                 </div>
                                 <div class="hw-item">
