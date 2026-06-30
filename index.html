@@ -40,9 +40,8 @@
     <div class="top_box">
         <div class="info-box">
             <ul>
-                <li>모든 데이터는 <span class="info-highlight">사용자의 브라우저(LocalStorage)에 저장</span>되며, 별도의 서버에는 저장되지 않습니다.</li>
-                <li>내 숙제 데이터는 소중하니까! <span class="info-highlight">브라우저 기록을 지우면</span> 내역이 날아갈 수 있어요.</li>
-                <li><span class="info-alert">일일 콘텐츠 및 오드 계산</span> 기준은 <span class="info-highlight">매일 아침 5시</span>를 기준으로 초기화 및 3시간 단위 연산이 진행됩니다.</li>
+                <li>모든 데이터는 <span class="info-highlight">사용자의 브라우저(LocalStorage)에 저장</span>되며, 별도의 서버에는 저장되지 않습니다. <span class="info-alert">브라우저 기록을 지우면</span> 내역이 날아갈 수 있어요.</li>
+                <li><span class="info-alert">일일 콘텐츠 및 오드 계산</span> 기준은 <span class="info-highlight">매일 아침 5시</span>를 기준으로 초기화 및 연산이 진행됩니다.</li>
                 <li><span class="info-highlight">컨텐츠 열쇠, 오드에너지</span>는 <span class="info-alert ">멤버십 이용자</span>를 기준으로 계산됩니다.</li>
                 <li><span class="info-alert">어비스 회랑</span>은 <span class="info-highlight">매주 수요일 및 토요일 오후 10시(22시)</span>에 체크 상태가 자동 초기화됩니다.</li>
             </ul>
@@ -137,14 +136,14 @@
 <div id="memoModal" class="modal" style="display: none;">
     <div class="modal-content">
         <div class="modal-header">
-            <h2>📝 캐릭터 메모 관리</h2>
+            <h2 id="memoModalTitle">📝 캐릭터 메모 관리</h2>
         </div>
         <form id="memoForm" onsubmit="submitMemoForm(event)">
             <input type="hidden" id="memoAccId">
             <input type="hidden" id="memoCharId">
             
             <div class="form-group">
-                <label for="modalMemoText" style="display:block; margin-bottom:8px; font-size:13px; color:var(--text-muted);">이 캐릭터에 기록할 메모를 입력하세요 (줄바꿈 지원)</label>
+                <label for="modalMemoText" style="display:block; margin-bottom:8px; font-size:13px; color:var(--text-muted);">이 캐릭터에 기록할 메모를 입력하세요</label>
                 <textarea id="modalMemoText" rows="6" placeholder="기록할 내용을 입력해 주세요." style="width:100%; background:#1e293b; border:1px solid rgba(255,255,255,0.08); border-radius:6px; color:#fff; padding:10px; box-sizing:border-box; resize:none; font-family:inherit; font-size:14px; line-height:1.5;"></textarea>
             </div>
             
@@ -705,8 +704,15 @@
         document.getElementById('memoCharId').value = charId;
         document.getElementById('modalMemoText').value = char.memo || '';
         
+        // 📝 [추가] 모달 제목을 "📝 [캐릭터이름] 메모 관리"로 동적 변경
+        const memoTitleEl = document.getElementById('memoModalTitle');
+        if (memoTitleEl && char) {
+            memoTitleEl.innerText = `📝 [${char.name}] 메모 관리`;
+        }
+        
         document.getElementById('memoModal').style.display = 'flex';
     }
+    
 
     function closeMemoModal() {
         document.getElementById('memoModal').style.display = 'none';
@@ -952,7 +958,7 @@
                             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom: 10px;">
                                 <span class="account-contents-title" style="margin-bottom:0;">계정 공통 콘텐츠 및 상점 체크</span>
                                 <form class="batch-add-form" onclick="event.stopPropagation();" onsubmit="createBatchHomework(event, ${acc.id})">
-                                    <span style="font-size:12px; color:var(--accent); font-weight:bold;">해당계정 캐릭터 모두에게 숙제 일괄 추가 : </span>
+                                    <span style="font-size:12px; color:var(--accent); font-weight:bold;">이 계정 전체에 숙제 일괄 추가 : </span>
                                     <input type="text" name="batchHwName" placeholder="일괄 숙제 이름" required>
                                     <select name="batchHwType">
                                         <option value="daily">일일</option>
