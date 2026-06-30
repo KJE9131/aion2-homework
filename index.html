@@ -82,7 +82,7 @@
         </div>
 
         <div class="control-menu">
-            <button class="btn" onclick="addAccount()">+ 새 계정 추가</button>
+            <button class="btn" onclick="openAccountModal()">+ 새 계정 추가</button>
             <button class="btn btn-b2 btn-success" onclick="exportBackup()">데이터 백업 (내보내기)</button>
             <button class="btn btn-b3 btn-success" onclick="document.getElementById('importFile').click()">데이터 불러오기 (가져오기)</button>
             <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importBackup(event)">
@@ -132,7 +132,7 @@
     </div>
 </div>
 
-    <!--캐릭별 메모추-->
+    <!--캐릭별 메모추가-->
 <div id="memoModal" class="modal" style="display: none;">
     <div class="modal-content">
         <div class="modal-header">
@@ -150,6 +150,56 @@
             <div class="modal-footer" style="display:flex; gap:10px; margin-top:15px;">
                 <button type="button" class="btn" onclick="closeMemoModal()" style="background:#334155; color:#fff; padding:10px 15px;">취소</button>
                 <button type="submit" class="btn btn-success" style="flex:1; padding:10px 0;">완료</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+    <!-- 👥 계정 생성 및 수정 모달창 -->
+<div id="accountModal" class="modal" style="display: none; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+    <div class="modal-content" style="background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 20px; width: 100%; max-width: 400px; color: #fff;">
+        <div class="modal-header" style="margin-bottom: 15px;">
+            <h3 id="accountModalTitle" style="margin: 0; font-size: 18px;">👥 새 계정 추가</h3>
+        </div>
+        <form id="accountForm" onsubmit="submitAccountForm(event)">
+            <input type="hidden" id="modalAccId">
+
+            <!-- 1. 계정 이름 -->
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-size: 13px; color: var(--text-muted, #94a3b8);">계정 이름</label>
+                <input type="text" id="modalAccName" placeholder="계정 이름을 입력하세요" required style="width: 100%; background: #1e293b; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; color: #fff; padding: 8px; box-sizing: border-box;">
+            </div>
+
+            <!-- 2. 멤버십 여부 -->
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-size: 13px; color: var(--text-muted, #94a3b8);">멤버십 이용 여부</label>
+                <div style="display: flex; gap: 20px; padding: 5px 0;">
+                    <label style="cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                        <input type="radio" name="modalAccMembership" value="O" checked onchange="toggleMembershipUI()"> 멤버십 이용 중 (O)
+                    </label>
+                    <label style="cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                        <input type="radio" name="modalAccMembership" value="X" onchange="toggleMembershipUI()"> 미이용 (X)
+                    </label>
+                </div>
+            </div>
+
+            <!-- 2-1. 멤버십 X 일 때 경고 문구 -->
+            <div id="membershipWarningArea" style="display: none; background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-radius: 6px; padding: 10px; margin-bottom: 15px; color: #f87171; font-size: 12px; line-height: 1.5;">
+                ⚠️ 해당 사이트는 멤버십 기준으로 작동되어 멤버십 미이용자에게는 적합하지 않습니다. (계정 생성은 가능합니다.)
+            </div>
+
+            <!-- 2-2. 멤버십 O 일 때 기간 설정 -->
+            <div id="membershipTimeArea" style="display: block; margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-size: 13px; color: var(--text-muted, #94a3b8);">남은 멤버십 기간</label>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="number" id="membershipDays" min="0" value="30" style="width: 70px; background: #1e293b; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; color: #fff; padding: 8px; text-align: center;"> <span>일</span>
+                    <input type="number" id="membershipHours" min="0" max="23" value="0" style="width: 70px; background: #1e293b; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; color: #fff; padding: 8px; text-align: center;"> <span>시간</span>
+                </div>
+            </div>
+
+            <div class="modal-footer" style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="button" class="btn" onclick="closeAccountModal()" style="background: #334155; color: #fff; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer;">취소</button>
+                <button type="submit" id="accountModalSubmitBtn" class="btn btn-success" style="flex: 1; padding: 10px 0; border: none; border-radius: 4px; cursor: pointer;">생성</button>
             </div>
         </form>
     </div>
@@ -249,6 +299,59 @@
             console.log("오디오 재생 실패");
         }
     }
+
+    
+
+    // 라디오 버튼 선택에 따라 경고문구/기간설정 UI 토글
+function toggleMembershipUI() {
+    const isMembership = document.querySelector('input[name="modalAccMembership"]:checked').value === 'O';
+    document.getElementById('membershipWarningArea').style.display = isMembership ? 'none' : 'block';
+    document.getElementById('membershipTimeArea').style.display = isMembership ? 'block' : 'none';
+}
+
+let accEditMode = false;
+
+// 계정 생성/수정 모달창 열기
+function openAccountModal(accId = null, event = null) {
+    if (event) event.stopPropagation();
+    
+    document.getElementById('accountForm').reset();
+    
+    if (accId) {
+        // [수정 모드]
+        accEditMode = true;
+        const acc = gameData.find(a => a.id === accId);
+        
+        document.getElementById('modalAccId').value = accId;
+        document.getElementById('modalAccName').value = acc.name;
+        
+        if (acc.membership === 'X') {
+            document.querySelector('input[name="modalAccMembership"][value="X"]').checked = true;
+        } else {
+            document.querySelector('input[name="modalAccMembership"][value="O"]').checked = true;
+        }
+        
+        document.getElementById('membershipDays').value = acc.membershipDays !== undefined ? acc.membershipDays : 0;
+        document.getElementById('membershipHours').value = acc.membershipHours !== undefined ? acc.membershipHours : 0;
+        
+        document.getElementById('accountModalTitle').innerText = "⚙️ 계정 설정 수정";
+        document.getElementById('accountModalSubmitBtn').innerText = "수정 완료";
+    } else {
+        // [신규 생성 모드]
+        accEditMode = false;
+        document.getElementById('modalAccId').value = "";
+        document.getElementById('accountModalTitle').innerText = "👥 새 계정 추가";
+        document.getElementById('accountModalSubmitBtn').innerText = "생성";
+    }
+    
+    toggleMembershipUI();
+    document.getElementById('accountModal').style.display = 'flex';
+}
+
+function closeAccountModal() {
+    document.getElementById('accountModal').style.display = 'none';
+    accEditMode = false;
+}
 
     
 
@@ -930,21 +1033,42 @@
         `;
 
         gameData.forEach(acc => {
-            if (accordionStatus[acc.id] === undefined) accordionStatus[acc.id] = true;
-            const isCollapsed = !accordionStatus[acc.id];
+        if (accordionStatus[acc.id] === undefined) accordionStatus[acc.id] = true;
+        const isCollapsed = !accordionStatus[acc.id];
 
+        // 🏷️ [멤버십 남은 기간 동적 표시 배지]
+        let membershipText = '';
+        if (acc.membership === 'O') {
+            const d = acc.membershipDays || 0;
+            const h = acc.membershipHours || 0;
+            
+            if (d === 0 && h === 0) {
+                membershipText = '멤버십 남은기간 : 0일';
+            } else {
+                membershipText = `멤버십 남은기간 : ${d}일 ${h}시간`;
+            }
+        } else {
+            membershipText = '멤버십 남은기간 : 0일';
+        }
+
+        // 디자인 요소를 가미한 인라인 스타일 배지 마크업
+            const membershipBadge = `<span style="font-size: 12px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.15); color: var(--text-muted, #94a3b8); padding: 3px 8px; border-radius: 4px; margin-left: 10px; font-weight: normal; vertical-align: middle;">${membershipText}</span>`;
+            
             html += `
-                <div class="account-section">
-                    <div class="account-header" onclick="toggleAccordion(${acc.id})">
-                        <div class="account-title-area">
-                            <span class="accordion-icon" id="acc-icon-${acc.id}">${isCollapsed ? '▼' : '▲'}</span>
-                            <h2>${acc.name}</h2>
-                        </div>
-                        <div>
-                            <button class="btn btn-sm" onclick="openCharModal(${acc.id}, event)">+ 캐릭터 추가</button>
-                            <button class="btn btn-sm btn-char-del" onclick="removeAccount(${acc.id}, event)">계정 삭제</button>
-                        </div>
+            <div class="account-section">
+                <div class="account-header" onclick="toggleAccordion(${acc.id})">
+                    <div class="account-title-area" style="display: flex; align-items: center;">
+                        <span class="accordion-icon" id="acc-icon-${acc.id}">${isCollapsed ? '▼' : '▲'}</span>
+                        <h2 style="margin: 0; display: flex; align-items: center;">
+                            ${acc.name} ${membershipBadge}
+                        </h2>
                     </div>
+                    <div onclick="event.stopPropagation();">
+                        <button class="btn btn-sm btn-char-edit" onclick="openAccountModal(${acc.id}, event)">⚙️ 계정 설정</button>
+                        <button class="btn btn-sm" onclick="openCharModal(${acc.id}, event)">+ 캐릭터 추가</button>
+                        <button class="btn btn-sm btn-danger" onclick="removeAccount(${acc.id}, event)">계정 삭제</button>
+                    </div>
+                </div>
                     
                     <div class="account-body ${isCollapsed ? 'collapsed' : ''}" id="acc-body-${acc.id}">
                         <div class="account-contents">
