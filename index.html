@@ -319,9 +319,26 @@
                 document.getElementById('membershipHours').value = 0;
             } else {
                 document.querySelector('input[name="modalAccMembership"][value="O"]').checked = true;
-                // 사용자가 설정해둔 기존 값을 그대로 입력칸에 노출 (시간 차감 없음)
-                document.getElementById('membershipDays').value = acc.membershipDays !== undefined ? acc.membershipDays : 30;
-                document.getElementById('membershipHours').value = acc.membershipHours !== undefined ? acc.membershipHours : 0;
+                
+                // 역연산 방지 및 정확한 최신 남은 시간 바인딩
+                // 만약 현재 실시간 차감이 진행 중이라면, 화면 모달을 띄웠을 때 최신 차감 상태를 보여줍니다.
+                let displayDays = acc.membershipDays !== undefined ? acc.membershipDays : 30;
+                let displayHours = acc.membershipHours !== undefined ? acc.membershipHours : 0;
+                
+                if (acc.membershipUpdatedAt) {
+                    const diffMs = Date.now() - acc.membershipUpdatedAt;
+                    const diffMins = Math.floor(diffMs / (1000 * 60));
+                    if (diffMins > 0) {
+                        let totalHours = (displayDays * 24) + displayHours;
+                        let passedHours = Math.floor(diffMins / 60);
+                        totalHours = Math.max(0, totalHours - passedHours);
+                        displayDays = Math.floor(totalHours / 24);
+                        displayHours = totalHours % 24;
+                    }
+                }
+
+                document.getElementById('membershipDays').value = displayDays;
+                document.getElementById('membershipHours').value = displayHours;
             }
             
             document.getElementById('accountModalTitle').innerText = "⚙️ 계정 설정 수정";
@@ -348,7 +365,7 @@
         accEditMode = false;
     }
 
-    // 👥 계정 추가 및 수정 폼 서브밋 핸들러 (버그 수정 완결판)
+    // 👥 계정 추가 및 수정 폼 서브밋 핸들러
     function submitAccountForm(e) {
         e.preventDefault();
         
@@ -357,6 +374,7 @@
         const membership = document.querySelector('input[name="modalAccMembership"]:checked').value;
         const days = membership === 'O' ? parseInt(document.getElementById('membershipDays').value) || 0 : 0;
         const hours = membership === 'O' ? parseInt(document.getElementById('membershipHours').value) || 0 : 0;
+        const nowTimestamp = Date.now();
 
         if (accEditMode) {
             // 기존 계정 수정
@@ -366,6 +384,7 @@
                 acc.membership = membership;
                 acc.membershipDays = days;
                 acc.membershipHours = hours;
+                acc.membershipUpdatedAt = nowTimestamp; // ⏳ 시간 계산 기준점 갱신
             }
         } else {
             // 신규 계정 생성
@@ -376,6 +395,7 @@
                 membership: membership,
                 membershipDays: days,
                 membershipHours: hours,
+                membershipUpdatedAt: nowTimestamp, // ⏳ 시간 계산 기준점 세팅
                 shugo: 2, 
                 dimension: 1, 
                 odeBuyChecked: false, 
@@ -618,6 +638,53 @@
         });
         
         updateTopAlertTimers();
+    }
+
+    // ⏳ 멤버십 남은 시간 실시간 차감 연산 시스템 (추가됨)
+    function checkAndReduceMembershipTime() {
+        let isChanged = false;
+        const now = Date.now();
+
+        gameData.forEach(acc => {
+            if (acc.membership === 'O') {
+                // 기준 타임스탬프가 없으면 생성 시점으로 임시 세팅
+                if (!acc.membershipUpdatedAt) {
+                    acc.membershipUpdatedAt = now;
+                    isChanged = true;
+                    return;
+                }
+
+                const diffMs = now - acc.membershipUpdatedAt;
+                const diffMins = Math.floor(diffMs / (1000 * 60)); // 분 단위로 연산
+
+                // 60분(1시간) 이상 차이가 발생했다면 차감 실행
+                if (diffMins >= 60) {
+                    let totalHours = ((acc.membershipDays || 0) * 24) + (acc.membershipHours || 0);
+                    const passedHours = Math.floor(diffMins / 60);
+
+                    totalHours -= passedHours;
+
+                    if (totalHours <= 0) {
+                        // 시간 만료 처리
+                        acc.membership = 'X';
+                        acc.membershipDays = 0;
+                        acc.membershipHours = 0;
+                        acc.membershipUpdatedAt = now;
+                    } else {
+                        acc.membershipDays = Math.floor(totalHours / 24);
+                        acc.membershipHours = totalHours % 24;
+                        // 차감한 시간(분)만큼 기준 시간 업데이트
+                        acc.membershipUpdatedAt = acc.membershipUpdatedAt + (passedHours * 60 * 60 * 1000);
+                    }
+                    isChanged = true;
+                }
+            }
+        });
+
+        if (isChanged) {
+            localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
+            render();
+        }
     }
 
     function checkAbyssReset() {
@@ -1074,12 +1141,25 @@
             if (accordionStatus[acc.id] === undefined) accordionStatus[acc.id] = true;
             const isCollapsed = !accordionStatus[acc.id];
      
-            // 🏷️ [멤버십 남은 기간 고정 표시 배지]
+            // 🏷️ [멤버십 남은 기간 고정 표시 배지 및 백그라운드 갭 보정 연산 포함]
             let membershipText = '';
             if (acc.membership === 'O') {
-                const d = acc.membershipDays || 0;
-                const h = acc.membershipHours || 0;
+                let d = acc.membershipDays || 0;
+                let h = acc.membershipHours || 0;
                 
+                // 렌더링 시점에 백그라운드 누적 미세 오차 실시간 가상 보정 노출
+                if (acc.membershipUpdatedAt) {
+                    const diffMs = Date.now() - acc.membershipUpdatedAt;
+                    const diffMins = Math.floor(diffMs / (1000 * 60));
+                    if (diffMins > 0) {
+                        let totalHours = (d * 24) + h;
+                        let passedHours = Math.floor(diffMins / 60);
+                        totalHours = Math.max(0, totalHours - passedHours);
+                        d = Math.floor(totalHours / 24);
+                        h = totalHours % 24;
+                    }
+                }
+
                 if (d === 0 && h === 0) {
                     membershipText = '멤버십 남은기간 : 0일';
                 } else {
@@ -1123,7 +1203,6 @@
                             </form>
                         </div>
                         <div class="account-resource-grid">
-                            <!-- 슈고 열쇠 -->
                             <div class="resource-item" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;">
                                 <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                                     <span class="resource-name">🎉 슈고 열쇠</span>
@@ -1136,7 +1215,6 @@
                                 <span style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">(매일 +2개 자동충전 / 최대 14개 상한)</span>
                             </div>
                         
-                            <!-- 차원침공 열쇠 -->
                             <div class="resource-item" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;">
                                 <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                                     <span class="resource-name">⚔️ 차원침공 열쇠</span>
@@ -1149,7 +1227,6 @@
                                 <span style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">(매일 +1개 자동충전 / 최대 7개 상한)</span>
                             </div>
                         
-                            <!-- 오드구매, 제작 및 지령서들 -->
                             <div class="resource-item">
                                 <label class="hw-label">
                                     <input type="checkbox" ${acc.odeBuyChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'odeBuyChecked')">
@@ -1306,6 +1383,7 @@
     }
 
     // --- [ 초기 구동 및 인터벌 세팅 ] ---
+    checkAndReduceMembershipTime(); // ⏳ 구동 시 즉시 백그라운드 밀린 멤버십 시간 정산
     updateOdeAutomatically();
     checkAbyssReset();
     checkDailyReset();   
@@ -1315,6 +1393,7 @@
     
     setInterval(updateTimerDisplay, 1000);
     setInterval(() => {
+        checkAndReduceMembershipTime(); // ⏳ 1분마다 실시간 멤버십 시간 차감 체크
         updateOdeAutomatically();
         checkAbyssReset();
         checkDailyReset();   
