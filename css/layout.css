@@ -946,9 +946,9 @@ body.hide-completed-mode .hw-item:has(input:checked) {
 
 /* 활성화 상태 버튼 색상 포인트 (기존 테마 컬러를 적용하시거나 원하시는 주황색 계열 선택 가능) */
 .btn-toggle-hide.active {
-    background-color: #ff7e36 !important;
+    background-color: #2d2d2d !important;
     color: #fff !important;
-    border-color: #ff7e36 !important;
+    border-color: #5a5a5a !important;
 }
 
 .btn-aion2 {
