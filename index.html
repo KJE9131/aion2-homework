@@ -813,11 +813,9 @@
                 nightmareChecked: false,  
                 awakeningChecked: false,  
                 homeworks: [
-                    { name: '시즌미션', type: 'weekly', checked: false },
+                    { name: '시즌주간미션', type: 'weekly', checked: false },
                     { name: '투기장', type: 'weekly', checked: false },
                     { name: '루드라', type: 'weekly', checked: false },
-                    { name: '침식', type: 'weekly', checked: false },
-                    { name: '무스펠', type: 'weekly', checked: false },
                 ]
             });
         }
@@ -1198,7 +1196,7 @@
                                 <div class="hw-item">
                                     <label class="hw-label">
                                         <input type="checkbox" ${char.abyssChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'abyssChecked')">
-                                        <span class="hw-text ${char.abyssChecked ? 'checked-text' : ''}">회랑 [수/토초기화]</span>
+                                        <span class="hw-text ${char.abyssChecked ? 'checked-text' : ''}">회랑 [수/토 초기화]</span>
                                     </label>
                                 </div>
                                 <div class="hw-item">
