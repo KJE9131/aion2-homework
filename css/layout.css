@@ -756,6 +756,7 @@ left:0;
     align-items: center;
     justify-content: center;
     gap: 3px;
+            margin:0;
 }
 .char-control-footer > .char-memo-wrapper {
             flex:1;
