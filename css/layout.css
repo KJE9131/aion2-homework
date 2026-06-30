@@ -349,7 +349,7 @@
         
         .hw-item { display: flex; align-items: center; justify-content: space-between; margin: 5px 0; font-size: 13px; }
         .hw-label { display: flex; align-items: center; gap: 6px; cursor: pointer; width: 100%; min-width: 0; }
-        .hw-label input[type="checkbox"] { width: 14px; height: 14px; accent-color: var(--primary); cursor: pointer; flex-shrink: 0; }
+        .hw-label input[type="checkbox"] { width: 12px; height: 12px; accent-color: var(--primary); cursor: pointer; flex-shrink: 0; }
         .hw-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .checked-text { text-decoration: line-through; color: var(--text-muted); }
         
