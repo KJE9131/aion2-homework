@@ -958,6 +958,5 @@ color:#fff;
 font-style:italic;
 }
 .btn-aion2:hover {
-            font-style:normal;
-            color:var(--primary);
+color:var(--primary);
 }
