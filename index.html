@@ -208,49 +208,42 @@
 
     
 
-    // --- [ 🔊 2초간 길게 유지되는 선명한 알람음 재생 시스템 ] ---
+    // --- [ 🔊 부드럽고 청아한 3화음 아르페지오 알람음 시스템 ] ---
     function playBeepSound() {
         try {
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             
-            // 귀가 아프지 않도록 마스터 볼륨을 부드럽게 조절 (0.12)
+            // 전체 마스터 볼륨을 은은하게 조절 (0.12)
             const mainGain = audioCtx.createGain();
             mainGain.connect(audioCtx.destination);
             mainGain.gain.setValueAtTime(0.12, audioCtx.currentTime);
 
-            // --- 첫 번째 빕음 (0.8초 동안 길게 유지 후 감쇄) ---
-            const osc1 = audioCtx.createOscillator();
-            const gain1 = audioCtx.createGain();
+            // 음의 구성: 라(440Hz), 도(523.25Hz), 미(659.25Hz) -> 포근하고 청아한 코드 조합
+            const notes = [440.00, 523.25, 659.25];
             
-            osc1.type = 'sine';
-            osc1.frequency.setValueAtTime(880, audioCtx.currentTime); // 선명한 고음 (A5)
-            
-            gain1.gain.setValueAtTime(1, audioCtx.currentTime);
-            gain1.gain.setValueAtTime(1, audioCtx.currentTime + 0.8); // 0.8초 동안 소리 유지
-            gain1.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.0); // 0.2초간 부드럽게 감소
-            
-            osc1.connect(gain1);
-            gain1.connect(mainGain);
-            osc1.start(audioCtx.currentTime);
-            osc1.stop(audioCtx.currentTime + 1.0);
-
-            // --- 두 번째 빕음 (0.9초 뒤에 바통을 이어받아 총 2초 대역 완성) ---
-            setTimeout(() => {
-                const osc2 = audioCtx.createOscillator();
-                const gain2 = audioCtx.createGain();
+            notes.forEach((freq, index) => {
+                // 각 음이 0.15초 간격으로 차례대로 켜지도록 레이턴시(지연) 계산
+                const startTime = audioCtx.currentTime + (index * 0.15);
                 
-                osc2.type = 'sine';
-                osc2.frequency.setValueAtTime(880, audioCtx.currentTime);
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
                 
-                gain2.gain.setValueAtTime(1, audioCtx.currentTime);
-                gain2.gain.setValueAtTime(1, audioCtx.currentTime + 0.8); // 마찬가지로 0.8초 유지
-                gain2.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.0); // 부드럽게 감소
+                // 'triangle' 파형을 사용하여 sine파보다 풍성하면서도 부드러운 실로폰/오르간 음색 연출
+                osc.type = 'triangle'; 
+                osc.frequency.setValueAtTime(freq, startTime);
                 
-                osc2.connect(gain2);
-                gain2.connect(mainGain);
-                osc2.start(audioCtx.currentTime);
-                osc2.stop(audioCtx.currentTime + 1.0);
-            }, 900); // 첫 음이 잦아들 무렵인 0.9초(900ms) 지점에서 자연스럽게 바통 터치
+                // ⚡ [중요] 소리가 부드럽게 켜지고(Fade-in) 부드럽게 꺼지도록(Fade-out) 볼륨 곡선 설계
+                gainNode.gain.setValueAtTime(0, startTime);
+                gainNode.gain.linearRampToValueAtTime(1, startTime + 0.1); // 0.1초 동안 부드럽게 켜짐
+                gainNode.gain.setValueAtTime(1, startTime + 0.6);          // 0.6초 동안 유지
+                gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 1.2); // 0.6초 동안 스르륵 소멸
+                
+                osc.connect(gainNode);
+                gainNode.connect(mainGain);
+                
+                osc.start(startTime);
+                osc.stop(startTime + 1.3); // 안전하게 마감
+            });
 
         } catch(e) {
             console.log("오디오 재생 실패");
