@@ -27,12 +27,19 @@
         </nav>
     </div>
 </header>
-    <header>
-    <h1>
-        아이온2 숙제 관리 대시보드 
-        <span id="server-clock" style="font-size: 14px; color: #b3b3b3; margin-left: 15px; font-weight: normal;">
-        [서버 시간: 로딩 중...]
-        </span>
+<header>
+    <!-- 🌟 Flexbox 레이아웃을 적용하여 타이틀 영역과 우측 버튼을 양끝으로 정렬 -->
+    <h1 style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; flex-wrap: wrap;">
+            아이온2 숙제 관리 대시보드 
+            <span id="server-clock" style="font-size: 14px; color: #b3b3b3; margin-left: 15px; font-weight: normal;">
+            [서버 시간: 로딩 중...]
+            </span>
+        </div>
+        <!-- 🔗 우측 끝 공식 홈페이지 새창 이동 버튼 -->
+        <a href="https://aion2.plaync.com" target="_blank" class="btn btn-sm" style="text-decoration: none; display: inline-flex; align-items: center; background: #2563eb; color: #fff; padding: 6px 12px; border-radius: 4px; font-size: 13px; font-weight: 500; transition: background 0.2s;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
+            AION2 공식홈 ➔
+        </a>
     </h1>
 
     <div class="top_box">
@@ -240,7 +247,6 @@
     });
 
     // --- [ 🔊 알람음 ] ---
-    // --- [ 🔊 부드럽고 청아하게 늘어지는 4연타 알람음 ] ---
     function playBeepSound() {
         try {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -249,17 +255,15 @@
             const ctx = new AudioContext();
             const now = ctx.currentTime;
             
-            // 메인 볼륨 제어 (전체적인 소리 균형)
             const mainGain = ctx.createGain();
             mainGain.connect(ctx.destination);
             mainGain.gain.setValueAtTime(0.12, now);
 
-            // 🎶 또옹(도) -> 똥(미) -> 똥(솔) -> 또옹(높은도) 음계 설정
             const sequence = [
-                { pitch: 523.25, start: 0.0,  duration: 0.8, type: 'sine'     }, // 1. 첫 음 '또옹' (길고 부드럽게)
-                { pitch: 659.25, start: 0.2,  duration: 0.4, type: 'triangle' }, // 2. 두 번째 '똥' (가볍게)
-                { pitch: 783.99, start: 0.35, duration: 0.4, type: 'triangle' }, // 3. 세 번째 '똥' (스타카토 느낌)
-                { pitch: 1046.50, start: 0.5,  duration: 1.0, type: 'sine'     }  // 4. 마지막 '또옹~' (높고 길게 여운)
+                { pitch: 523.25, start: 0.0,  duration: 0.8, type: 'sine'     }, 
+                { pitch: 659.25, start: 0.2,  duration: 0.4, type: 'triangle' }, 
+                { pitch: 783.99, start: 0.35, duration: 0.4, type: 'triangle' }, 
+                { pitch: 1046.50, start: 0.5,  duration: 1.0, type: 'sine'     }  
             ];
 
             sequence.forEach((note) => {
@@ -272,11 +276,10 @@
                 osc.type = note.type;
                 osc.frequency.setValueAtTime(note.pitch, startTime);
                 
-                // 볼륨 감쇄 효과 (부드럽게 밀려오다 사르르 사라지는 잔향 연출)
                 gainNode.gain.setValueAtTime(0, startTime);
-                gainNode.gain.linearRampToValueAtTime(1.0, startTime + 0.05); // 톡 치는 느낌 추가
+                gainNode.gain.linearRampToValueAtTime(1.0, startTime + 0.05); 
                 gainNode.gain.setValueAtTime(1.0, startTime + (note.duration * 0.4)); 
-                gainNode.gain.exponentialRampToValueAtTime(0.001, stopTime); // 뒤로 갈수록 부드럽게 스르륵 늘어짐
+                gainNode.gain.exponentialRampToValueAtTime(0.001, stopTime); 
                 
                 osc.connect(gainNode);
                 gainNode.connect(mainGain);
@@ -291,7 +294,6 @@
     }
     
 
-    // 라디오 버튼 선택에 따라 경고문구/기간설정 UI 토글
     function toggleMembershipUI() {
         const isMembership = document.querySelector('input[name="modalAccMembership"]:checked').value === 'O';
         document.getElementById('membershipWarningArea').style.display = isMembership ? 'none' : 'block';
@@ -300,7 +302,6 @@
 
     let accEditMode = false;
 
-    // 계정 생성/수정 모달창 열기
     function openAccountModal(accId = null, event = null) {
         if (event) event.stopPropagation();
         
@@ -320,8 +321,6 @@
             } else {
                 document.querySelector('input[name="modalAccMembership"][value="O"]').checked = true;
                 
-                // 역연산 방지 및 정확한 최신 남은 시간 바인딩
-                // 만약 현재 실시간 차감이 진행 중이라면, 화면 모달을 띄웠을 때 최신 차감 상태를 보여줍니다.
                 let displayDays = acc.membershipDays !== undefined ? acc.membershipDays : 30;
                 let displayHours = acc.membershipHours !== undefined ? acc.membershipHours : 0;
                 
@@ -358,14 +357,11 @@
         document.getElementById('accountModal').style.display = 'flex';
     }
 
-    
-
     function closeAccountModal() {
         document.getElementById('accountModal').style.display = 'none';
         accEditMode = false;
     }
 
-    // 👥 계정 추가 및 수정 폼 서브밋 핸들러
     function submitAccountForm(e) {
         e.preventDefault();
         
@@ -377,17 +373,15 @@
         const nowTimestamp = Date.now();
 
         if (accEditMode) {
-            // 기존 계정 수정
             const acc = gameData.find(a => a.id === parseInt(accId));
             if (acc) {
                 acc.name = name;
                 acc.membership = membership;
                 acc.membershipDays = days;
                 acc.membershipHours = hours;
-                acc.membershipUpdatedAt = nowTimestamp; // ⏳ 시간 계산 기준점 갱신
+                acc.membershipUpdatedAt = nowTimestamp; 
             }
         } else {
-            // 신규 계정 생성
             const newId = Date.now();
             gameData.push({ 
                 id: newId, 
@@ -395,7 +389,7 @@
                 membership: membership,
                 membershipDays: days,
                 membershipHours: hours,
-                membershipUpdatedAt: nowTimestamp, // ⏳ 시간 계산 기준점 세팅
+                membershipUpdatedAt: nowTimestamp, 
                 shugo: 2, 
                 dimension: 1, 
                 odeBuyChecked: false, 
@@ -412,8 +406,6 @@
         saveData(); 
     }
 
-    
-
     function toggleAlarmSetting(type) {
         alarmSettings[type] = document.getElementById(`toggle-${type}`).checked;
         localStorage.setItem('alarmSettings_v15', JSON.stringify(alarmSettings));
@@ -426,7 +418,6 @@
         document.getElementById('toggle-space').checked = alarmSettings.space;
     }
 
-    // --- [ 백업 & 불러오기 로직 ] ---
     function exportBackup() {
         if (gameData.length === 0) {
             alert("백업할 데이터가 없습니다. 먼저 계정을 생성해 주세요.");
@@ -484,7 +475,6 @@
         reader.readAsText(file);
     }
 
-    // --- [ 🚨 상단 멀티 타이머 및 알람 연산 시스템 ] ---
     function updateTopAlertTimers() {
         const now = new Date();
         const currentMin = now.getMinutes();
@@ -640,14 +630,12 @@
         updateTopAlertTimers();
     }
 
-    // ⏳ 멤버십 남은 시간 실시간 차감 연산 시스템 (추가됨)
     function checkAndReduceMembershipTime() {
         let isChanged = false;
         const now = Date.now();
 
         gameData.forEach(acc => {
             if (acc.membership === 'O') {
-                // 기준 타임스탬프가 없으면 생성 시점으로 임시 세팅
                 if (!acc.membershipUpdatedAt) {
                     acc.membershipUpdatedAt = now;
                     isChanged = true;
@@ -655,9 +643,8 @@
                 }
 
                 const diffMs = now - acc.membershipUpdatedAt;
-                const diffMins = Math.floor(diffMs / (1000 * 60)); // 분 단위로 연산
+                const diffMins = Math.floor(diffMs / (1000 * 60)); 
 
-                // 60분(1시간) 이상 차이가 발생했다면 차감 실행
                 if (diffMins >= 60) {
                     let totalHours = ((acc.membershipDays || 0) * 24) + (acc.membershipHours || 0);
                     const passedHours = Math.floor(diffMins / 60);
@@ -665,7 +652,6 @@
                     totalHours -= passedHours;
 
                     if (totalHours <= 0) {
-                        // 시간 만료 처리
                         acc.membership = 'X';
                         acc.membershipDays = 0;
                         acc.membershipHours = 0;
@@ -673,7 +659,6 @@
                     } else {
                         acc.membershipDays = Math.floor(totalHours / 24);
                         acc.membershipHours = totalHours % 24;
-                        // 차감한 시간(분)만큼 기준 시간 업데이트
                         acc.membershipUpdatedAt = acc.membershipUpdatedAt + (passedHours * 60 * 60 * 1000);
                     }
                     isChanged = true;
@@ -692,7 +677,7 @@
         function getPreviousResetTime(d) {
             let target = new Date(d.getTime());
             target.setHours(22, 0, 0, 0);
-            if (d.getTime() < target.getTime()) target.setDate(target.getDate() - 1);
+            if (d.getTime() < target.getTime()) d.setDate(d.getDate() - 1);
             while (target.getDay() !== 3 && target.getDay() !== 6) { target.setDate(target.getDate() - 1); }
             return target.getTime();
         }
@@ -728,7 +713,6 @@
 
                 if(!acc.characters) return;
                 acc.characters.forEach(char => {
-                    // 😈 악몽 티켓 일일 자동 충전 (하루 +2, 최대 14)
                     let newNightmareTicket = (char.nightmareTicket !== undefined ? char.nightmareTicket : 2) + 2;
                     if (newNightmareTicket > 14) newNightmareTicket = 14;
                     char.nightmareTicket = newNightmareTicket;
@@ -782,7 +766,6 @@
         render();
     }
 
-    // --- [ 제어 기능 함수들 ] ---
     function toggleAccordion(accId) {
         if (accordionStatus[accId] === undefined) accordionStatus[accId] = true;
         accordionStatus[accId] = !accordionStatus[accId];
@@ -871,7 +854,7 @@
                 power: power, 
                 ode: 0, 
                 extraOde: 0,
-                nightmareTicket: 2, // 기본 악몽 티켓 수량 2개 세팅
+                nightmareTicket: 2, 
                 memo: '', 
                 charBuyChecked: false, 
                 charCraftChecked: false, 
@@ -1002,7 +985,6 @@
             let newVal = (char[key] || 0) + diff;
             if (newVal < 0) newVal = 0;
             
-            // 악몽 티켓 상한치 조절 (최대 14)
             if (key === 'nightmareTicket' && newVal > 14) newVal = 14;
             
             char[key] = newVal;
@@ -1040,7 +1022,6 @@
             if (index !== null) {
                 char.homeworks[index].checked = !char.homeworks[index].checked;
                 
-                // 💥 [일회성] 타입 숙제 체크 시 리스트에서 자동 삭제 처리
                 if (char.homeworks[index].type === 'once' && char.homeworks[index].checked) {
                     char.homeworks.splice(index, 1);
                 }
@@ -1118,7 +1099,6 @@
         }
     }
     
-    // --- [ 화면 렌더링 ] ---
     function render() {
         const app = document.getElementById('app');
         if (gameData.length === 0) {
@@ -1141,13 +1121,11 @@
             if (accordionStatus[acc.id] === undefined) accordionStatus[acc.id] = true;
             const isCollapsed = !accordionStatus[acc.id];
      
-            // 🏷️ [멤버십 남은 기간 고정 표시 배지 및 백그라운드 갭 보정 연산 포함]
             let membershipText = '';
             if (acc.membership === 'O') {
                 let d = acc.membershipDays || 0;
                 let h = acc.membershipHours || 0;
                 
-                // 렌더링 시점에 백그라운드 누적 미세 오차 실시간 가상 보정 노출
                 if (acc.membershipUpdatedAt) {
                     const diffMs = Date.now() - acc.membershipUpdatedAt;
                     const diffMins = Math.floor(diffMs / (1000 * 60));
@@ -1382,8 +1360,7 @@
         }
     }
 
-    // --- [ 초기 구동 및 인터벌 세팅 ] ---
-    checkAndReduceMembershipTime(); // ⏳ 구동 시 즉시 백그라운드 밀린 멤버십 시간 정산
+    checkAndReduceMembershipTime(); 
     updateOdeAutomatically();
     checkAbyssReset();
     checkDailyReset();   
@@ -1393,7 +1370,7 @@
     
     setInterval(updateTimerDisplay, 1000);
     setInterval(() => {
-        checkAndReduceMembershipTime(); // ⏳ 1분마다 실시간 멤버십 시간 차감 체크
+        checkAndReduceMembershipTime(); 
         updateOdeAutomatically();
         checkAbyssReset();
         checkDailyReset();   
