@@ -1081,4 +1081,28 @@ color:var(--primary);
         .floating-menu-container.active .floating-toggle-btn .icon-close { display: block; }
         .floating-menu-container.active .floating-toggle-btn { background: #ef4444; }
         .floating-menu-container.active .floating-toggle-btn:hover { background: #dc2626; }
+
+
+/* 레드닷이 배치될 기준 부모 */
+.char-memo-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+/* 🔴 레드닷 디자인 */
+.memo-red-dot {
+    position: absolute;
+    top: -2px;     /* 부모 요소의 위쪽 살짝 걸치게 조절 */
+    right: -2px;   /* 부모 요소의 오른쪽 살짝 걸치게 조절 */
+    width: 6px;    /* 너무 크면 촌스러우므로 은은한 6px */
+    height: 6px;
+    background-color: #ef4444; /* 세련된 애플 레드 톤 */
+    border-radius: 50%; /* 완벽한 원형 */
+    
+    /* 대시보드 배경이 어두울 경우 레드닷이 더 선명하게 돋보이도록 은은한 테두리 추가 */
+    border: 1px solid var(--bg-card, #fff); 
+    
+    /* 마우스 이벤트를 통과시켜 버튼 클릭에 방해되지 않도록 설정 */
+    pointer-events: none; 
+}
   
