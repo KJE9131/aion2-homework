@@ -297,9 +297,8 @@
         if (event) event.stopPropagation();
         
         document.getElementById('accountForm').reset();
-       
+        
         if (accId) {
-             // [⚙️ 수정 모드]
             accEditMode = true;
             const acc = gameData.find(a => a.id === accId);
             
@@ -312,27 +311,14 @@
                 document.getElementById('membershipHours').value = 0;
             } else {
                 document.querySelector('input[name="modalAccMembership"][value="O"]').checked = true;
-                
-                // ⏳ 저장된 만료 시점으로부터 남은 시간 역산하기
-                const now = Date.now();
-                const diffMs = (acc.membershipExpireTime || now) - now;
-                
-                if (diffMs <= 0) {
-                    document.getElementById('membershipDays').value = 0;
-                    document.getElementById('membershipHours').value = 0;
-                } else {
-                    const totalHours = Math.floor(diffMs / (1000 * 60 * 60));
-                    const d = Math.floor(totalHours / 24);
-                    const h = totalHours % 24;
-                    document.getElementById('membershipDays').value = d;
-                    document.getElementById('membershipHours').value = h;
-                }
+                // 사용자가 설정해둔 기존 값을 그대로 입력칸에 노출 (시간 차감 없음)
+                document.getElementById('membershipDays').value = acc.membershipDays !== undefined ? acc.membershipDays : 30;
+                document.getElementById('membershipHours').value = acc.membershipHours !== undefined ? acc.membershipHours : 0;
             }
             
             document.getElementById('accountModalTitle').innerText = "⚙️ 계정 설정 수정";
             document.getElementById('accountModalSubmitBtn').innerText = "수정 완료";
         } else {
-            // [👥 신규 생성 모드]
             accEditMode = false;
             document.getElementById('modalAccId').value = "";
             document.querySelector('input[name="modalAccMembership"][value="O"]').checked = true;
@@ -346,6 +332,8 @@
         toggleMembershipUI();
         document.getElementById('accountModal').style.display = 'flex';
     }
+
+    
 
     function closeAccountModal() {
         document.getElementById('accountModal').style.display = 'none';
@@ -362,33 +350,22 @@
         const days = membership === 'O' ? parseInt(document.getElementById('membershipDays').value) || 0 : 0;
         const hours = membership === 'O' ? parseInt(document.getElementById('membershipHours').value) || 0 : 0;
 
-        // ⏱️ 현재 시간 기준으로 미래의 멤버십 만료 시점(Timestamp) 계산
-        let expireTime = 0;
-        if (membership === 'O') {
-            const now = new Date();
-            // 현재 시간에 사용자가 입력한 일(days)과 시간(hours)을 더함
-            now.setDate(now.getDate() + days);
-            now.setHours(now.getHours() + hours);
-            expireTime = now.getTime(); // 밀리초(ms) 단위 타임스탬프 변환
-        }
-
         if (accEditMode) {
+            // 기존 계정 수정
             const acc = gameData.find(a => a.id === parseInt(accId));
             if (acc) {
                 acc.name = name;
                 acc.membership = membership;
-                acc.membershipExpireTime = expireTime; // 타임스탬프 저장
-                // 모달 다시 열었을 때 복원용 임시 데이터
                 acc.membershipDays = days;
                 acc.membershipHours = hours;
             }
         } else {
+            // 신규 계정 생성
             const newId = Date.now();
             gameData.push({ 
                 id: newId, 
                 name: name, 
                 membership: membership,
-                membershipExpireTime: expireTime, // 타임스탬프 저장
                 membershipDays: days,
                 membershipHours: hours,
                 shugo: 2, 
@@ -404,7 +381,7 @@
         }
 
         closeAccountModal();
-        saveData();
+        saveData(); 
     }
 
     
@@ -1069,20 +1046,15 @@
             if (accordionStatus[acc.id] === undefined) accordionStatus[acc.id] = true;
             const isCollapsed = !accordionStatus[acc.id];
      
-            // 🏷️ [멤버십 남은 기간 실시간 계산 배지]
+            // 🏷️ [멤버십 남은 기간 고정 표시 배지]
             let membershipText = '';
-            if (acc.membership === 'O' && acc.membershipExpireTime) {
-                const now = Date.now();
-                const diffMs = acc.membershipExpireTime - now;
-    
-                if (diffMs <= 0) {
-                    membershipText = '멤버십 만료됨 (0일)';
+            if (acc.membership === 'O') {
+                const d = acc.membershipDays || 0;
+                const h = acc.membershipHours || 0;
+                
+                if (d === 0 && h === 0) {
+                    membershipText = '멤버십 남은기간 : 0일';
                 } else {
-                    // 밀리초 연산을 통해 일(d)과 시간(h) 도출
-                    const totalHours = Math.floor(diffMs / (1000 * 60 * 60));
-                    const d = Math.floor(totalHours / 24);
-                    const h = totalHours % 24;
-                    
                     membershipText = `멤버십 남은기간 : ${d}일 ${h}시간`;
                 }
             } else {
