@@ -639,28 +639,6 @@ box-sizing:border-box;
 }
 
 
-/* --- 캐릭터 카드 최하단 수정/삭제 버튼 셋 --- */
-.char-control-footer {
-    display: flex;
-    gap: 8px;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid rgba(255, 255, 255, 0.04); /* 상단과 분리되는 은은한 선 */
-}
-
-.char-control-footer button {
-    flex: 1; /* 반반씩 정확하게 채우기 */
-    padding: 6px 0;
-    font-size: 11px;
-    font-weight: 500;
-    border-radius: 6px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    transition: background 0.2s ease, border-color 0.2s ease;
-}
 
 /* ⚙️ 설정 버튼 스타일 */
 .btn-char-edit {
@@ -686,28 +664,7 @@ box-sizing:border-box;
     color: #fff;
 }
 
-/* --- 최하단 3버튼 컨트롤러 정렬 패키지 --- */
-.char-control-footer {
-    display: flex;
-    gap: 6px;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid rgba(255, 255, 255, 0.04);
-}
 
-.char-control-footer button {
-    flex: 1; /* 가로폭 동일 배분 (3등분) */
-    padding: 6px 0;
-    font-size: 11px;
-    font-weight: 500;
-    border-radius: 6px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-    transition: all 0.2s ease;
-}
 
 
 /* 📌 저장된 메모 프리뷰 노출 스타일 */
@@ -780,6 +737,9 @@ left:0;
 .char-control-footer {
     display: flex;
     gap: 6px; /* 버튼 사이 간격 정돈 */
+            width: 100%; /* 부모 카드 너비를 꽉 채움 */
+            align-items: center;
+            justify-content: space-between; /* 🌟 자식들을 가로로 균등 배치 */
     margin-top: 12px;
     padding-top: 12px;
     border-top: 1px solid rgba(255, 255, 255, 0.04);
@@ -796,6 +756,14 @@ left:0;
     align-items: center;
     justify-content: center;
     gap: 3px;
+}
+.char-control-footer .char-memo-wrapper .btn-char-memo {
+    width: 100%;
+}
+.char-control-footer .btn {
+    justify-content: center;
+    text-align: center;
+    white-space: nowrap; /* 글자가 좁아져서 줄바꿈되는 것 방지 */
 }
 
 /* 📝 메모 버튼 전용 스타일 */
