@@ -1027,13 +1027,13 @@
             document.body.classList.add('hide-completed-mode');
             if (btn) {
                 btn.classList.add('active');
-                btn.innerText = '👁️ 모든 숙제 보기';
+                btn.innerText = '👀 모든 숙제 보기';
             }
         } else {
             document.body.classList.remove('hide-completed-mode');
             if (btn) {
                 btn.classList.remove('active');
-                btn.innerText = '🙈 완료된 숙제 숨기기';
+                btn.innerText = '✅ 완료된 숙제 숨기기';
             }
         }
     }
@@ -1052,7 +1052,7 @@
             <div class="global-action-bar">
                 <button id="btnToggleHide" class="btn-toggle-hide ${isHideCompleted ? 'active' : ''}" onclick="toggleHideCompleted()" 
                         style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background-color: var(--bg-card, #fff); border: 1px solid var(--border-color, #ddd); border-radius: 20px; color: var(--text-color, #333); font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.2s ease;">
-                    ${isHideCompleted ? '👁️ 모든 숙제 보기' : '🙈 완료된 숙제 숨기기'}
+                    ${isHideCompleted ? '👀 모든 숙제 보기' : '✅ 완료된 숙제 숨기기'}
                 </button>
             </div>
         `;
@@ -1088,8 +1088,8 @@
                         </h2>
                     </div>
                     <div onclick="event.stopPropagation();">
-                        <button class="btn btn-sm btn-char-edit" onclick="openAccountModal(${acc.id}, event)">⚙️ 계정 설정</button>
                         <button class="btn btn-sm" onclick="openCharModal(${acc.id}, event)">+ 캐릭터 추가</button>
+                        <button class="btn btn-sm btn-char-edit" onclick="openAccountModal(${acc.id}, event)">⚙️ 계정 설정</button>
                         <button class="btn btn-sm btn-char-del" onclick="removeAccount(${acc.id}, event)">계정 삭제</button>
                     </div>
                 </div>
