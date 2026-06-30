@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -7,7 +6,6 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <title>아이온2 숙제 관리 대시보드</title>
 
-    <!-- <link rel="stylesheet" href="css/reset.css"> -->
     <link rel="stylesheet" href="css/layout.css?ver=<?php echo time()?>">
     <link rel="stylesheet" href="css/PretendardVariable.ttf">
     <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
@@ -41,7 +39,7 @@
         <div class="info-box">
             <ul>
                 <li>모든 데이터는 <span class="info-highlight">사용자의 브라우저(LocalStorage)에 저장</span>되며, 별도의 서버에는 저장되지 않습니다.<span class="info-alert">브라우저 기록을 지우면</span> 내역이 날아갈 수 있어요.</li>
-                <li><span class="info-alert">일일 콘텐츠 및 오드 계산</span> 기준은 <span class="info-highlight">매일 아침 5시</span>를 기준으로 초기화 및 연산이 진행됩니다.</li>
+                <li><span class="info-alert">일일 콘텐츠, 악몽 티켓 및 오드 계산</span> 기준은 <span class="info-highlight">매일 아침 5시</span>를 기준으로 초기화 및 연산이 진행됩니다.</li>
                 <li><span class="info-highlight">컨텐츠 열쇠, 오드에너지</span>는 <span class="info-alert ">멤버십 이용자</span>를 기준으로 계산됩니다.</li>
                 <li><span class="info-alert">어비스 회랑</span>은 <span class="info-highlight">매주 수요일 및 토요일 오후 10시(22시)</span>에 체크 상태가 자동 초기화됩니다.</li>
             </ul>
@@ -93,10 +91,8 @@
 </header>
 
 <div class="container" id="app">
-    <!-- 동적 대시보드 구조 생성 영역 -->
-</div>
+    </div>
 
-<!-- 캐릭터 추가 모달 팝업 -->
 <div class="modal-overlay" id="charModal">
     <div class="modal-content">
         <h3>새 캐릭터 추가</h3>
@@ -132,8 +128,7 @@
     </div>
 </div>
 
-    <!--캐릭별 메모추가-->
-<div id="memoModal" class="modal" style="display: none;">
+    <div id="memoModal" class="modal" style="display: none;">
     <div class="modal-content">
         <div class="modal-header">
             <h2 id="memoModalTitle">📝 캐릭터 메모 관리</h2>
@@ -155,8 +150,7 @@
     </div>
 </div>
 
-    <!-- 👥 계정 생성 및 수정 모달창 -->
-<div id="accountModal" class="modal" style="display: none; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+    <div id="accountModal" class="modal" style="display: none; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
     <div class="modal-content" style="background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 20px; width: 100%; max-width: 400px; color: #fff;">
         <div class="modal-header" style="margin-bottom: 15px;">
             <h3 id="accountModalTitle" style="margin: 0; font-size: 18px;">👥 새 계정 추가</h3>
@@ -164,13 +158,11 @@
         <form id="accountForm" onsubmit="submitAccountForm(event)">
             <input type="hidden" id="modalAccId">
 
-            <!-- 1. 계정 이름 -->
             <div class="form-group" style="margin-bottom: 15px;">
                 <label style="display: block; margin-bottom: 5px; font-size: 13px; color: var(--text-muted, #94a3b8);">계정 이름</label>
                 <input type="text" id="modalAccName" placeholder="계정 이름을 입력하세요" required style="width: 100%; background: #1e293b; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; color: #fff; padding: 8px; box-sizing: border-box;">
             </div>
 
-            <!-- 2. 멤버십 여부 -->
             <div class="form-group" style="margin-bottom: 15px;">
                 <label style="display: block; margin-bottom: 5px; font-size: 13px; color: var(--text-muted, #94a3b8);">멤버십 이용 여부</label>
                 <div style="display: flex; gap: 20px; padding: 5px 0;">
@@ -183,12 +175,10 @@
                 </div>
             </div>
 
-            <!-- 2-1. 멤버십 X 일 때 경고 문구 -->
             <div id="membershipWarningArea" style="display: none; background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-radius: 6px; padding: 10px; margin-bottom: 15px; color: #f87171; font-size: 12px; line-height: 1.5;">
                 ⚠️ 해당 사이트는 멤버십 기준으로 작동되어 멤버십 미이용자에게는 적합하지 않습니다. (계정 생성은 가능합니다.)
             </div>
 
-            <!-- 2-2. 멤버십 O 일 때 기간 설정 -->
             <div id="membershipTimeArea" style="display: block; margin-bottom: 15px;">
                 <label style="display: block; margin-bottom: 5px; font-size: 13px; color: var(--text-muted, #94a3b8);">남은 멤버십 기간</label>
                 <div style="display: flex; gap: 10px; align-items: center;">
@@ -671,6 +661,11 @@
 
                 if(!acc.characters) return;
                 acc.characters.forEach(char => {
+                    // 😈 악몽 티켓 일일 자동 충전 (하루 +2, 최대 14)
+                    let newNightmareTicket = (char.nightmareTicket !== undefined ? char.nightmareTicket : 2) + 2;
+                    if (newNightmareTicket > 14) newNightmareTicket = 14;
+                    char.nightmareTicket = newNightmareTicket;
+
                     char.homeworks.forEach(hw => {
                         if (hw.type === 'daily') hw.checked = false;
                     });
@@ -809,6 +804,7 @@
                 power: power, 
                 ode: 0, 
                 extraOde: 0,
+                nightmareTicket: 2, // 기본 악몽 티켓 수량 2개 세팅
                 memo: '', 
                 charBuyChecked: false, 
                 charCraftChecked: false, 
@@ -938,6 +934,10 @@
             const char = acc.characters.find(c => c.id === charId);
             let newVal = (char[key] || 0) + diff;
             if (newVal < 0) newVal = 0;
+            
+            // 악몽 티켓 상한치 조절 (최대 14)
+            if (key === 'nightmareTicket' && newVal > 14) newVal = 14;
+            
             char[key] = newVal;
         }
         
@@ -957,6 +957,7 @@
             acc[key] = numVal;
         } else {
             const char = acc.characters.find(c => c.id === charId);
+            if (key === 'nightmareTicket' && numVal > 14) numVal = 14;
             char[key] = numVal;
         }
 
@@ -969,7 +970,14 @@
         if (charId === null) { acc[field] = !acc[field]; } 
         else {
             const char = acc.characters.find(c => c.id === charId);
-            if (index !== null) char.homeworks[index].checked = !char.homeworks[index].checked;
+            if (index !== null) {
+                char.homeworks[index].checked = !char.homeworks[index].checked;
+                
+                // 💥 [개별] 타입 숙제 체크 시 리스트에서 자동 삭제 처리
+                if (char.homeworks[index].type === 'once' && char.homeworks[index].checked) {
+                    char.homeworks.splice(index, 1);
+                }
+            }
             else char[field] = !char[field];
         }
         saveData();
@@ -1004,7 +1012,11 @@
             char.homeworks.push({ name, type, checked: false });
         });
 
-        alert(`✅ [${type === 'daily' ? '일일' : '주간'}] "${name}" 숙제가 이 계정의 모든 캐릭터(${acc.characters.length}명)에게 일괄 추가되었습니다.`);
+        let typeText = '일일';
+        if (type === 'weekly') typeText = '주간';
+        if (type === 'once') typeText = '개별';
+
+        alert(`✅ [${typeText}] "${name}" 숙제가 이 계정의 모든 캐릭터(${acc.characters.length}명)에게 일괄 추가되었습니다.`);
         saveData();
     }
 
@@ -1105,6 +1117,7 @@
                                 <select name="batchHwType">
                                     <option value="daily">일일</option>
                                     <option value="weekly">주간</option>
+                                    <option value="once">개별</option>
                                 </select>
                                 <button type="submit" class="btn btn-xs btn-success" style="padding:4px 8px;">일괄 추가</button>
                             </form>
@@ -1159,6 +1172,7 @@
             } else {
                 acc.characters.forEach(char => {
                     const matchedIcon = jobIcons[char.job] || '👤';
+                    const currentTicket = char.nightmareTicket !== undefined ? char.nightmareTicket : 2;
                     
                     html += `
                         <div class="char-card">
@@ -1186,6 +1200,18 @@
                                 <div class="ode-row">
                                     <span class="ode-label">추가오드 [ <input type="number" id="input-extraOde-${char.id}" class="counter-input" value="${char.extraOde || 0}" onchange="setDirectVal(${acc.id}, ${char.id}, 'extraOde', this.value)"> ] / 2000</span>
                                 </div>
+                            </div>
+
+                            <div class="resource-group" style="border-top: 1px dashed rgba(255,255,255,0.08); padding-top: 10px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <span style="font-size:12px; font-weight:600; color:#cbd5e1;">😈 악몽 티켓</span>
+                                    <div class="counter-controls">
+                                        <button class="btn btn-sm" onclick="changeVal(${acc.id}, ${char.id}, 'nightmareTicket', -1)">-</button>
+                                        <input type="number" class="counter-input" value="${currentTicket}" max="14" onchange="setDirectVal(${acc.id}, ${char.id}, 'nightmareTicket', this.value)">
+                                        <button class="btn btn-sm" onclick="changeVal(${acc.id}, ${char.id}, 'nightmareTicket', 1)">+</button>
+                                    </div>
+                                </div>
+                                <span style="font-size:10px; color:var(--text-muted); display:block; margin-top:2px;">(매일 +2개 자동충전 / 최대 14개 상한)</span>
                             </div>
                 
                             <div class="homework-group">
@@ -1219,17 +1245,22 @@
                             <div class="homework-group" style="border-bottom: none; padding-bottom: 0;">
                                 <strong style="font-size:11px; display:block; margin-bottom:4px; color:#a1a1aa;">📝 커스텀 숙제 리스트</strong>
                                 ${(!char.homeworks || char.homeworks.length === 0) ? '<span style="font-size:11px; color:var(--text-muted);">추가된 숙제 없음</span>' : ''}
-                                ${(char.homeworks || []).map((hw, idx) => `
+                                ${(char.homeworks || []).map((hw, idx) => {
+                                    let typeLabel = '일';
+                                    if (hw.type === 'weekly') typeLabel = '주';
+                                    if (hw.type === 'once') typeLabel = '개별';
+                                    
+                                    return `
                                     <div class="hw-item">
                                         <label class="hw-label">
                                             <input type="checkbox" ${hw.checked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, null, ${idx})">
                                             <span class="hw-text ${hw.checked ? 'checked-text' : ''}">
-                                                [${hw.type === 'daily' ? '일' : '주'}] ${hw.name}
+                                                [${typeLabel}] ${hw.name}
                                             </span>
                                         </label>
                                         <button class="btn btn-xs btn-danger2" style="padding: 1px 4px; font-size: 10px;" onclick="deleteCustomHomework(${acc.id}, ${char.id}, ${idx})">❌</button>
                                     </div>
-                                `).join('')}
+                                `;}).join('')}
                             </div>
                 
                             <form class="add-form" onsubmit="createCustomHomework(event, ${acc.id}, ${char.id})">
@@ -1237,6 +1268,7 @@
                                 <select name="hwType">
                                     <option value="daily">일일</option>
                                     <option value="weekly">주간</option>
+                                    <option value="once">개별</option>
                                 </select>
                                 <button type="submit" class="btn btn-xs">+</button>
                             </form>
