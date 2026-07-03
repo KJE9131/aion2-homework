@@ -4,86 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="favicon.png">
-    <title>안내사항 - 아이온2 숙제 관리</title>
+    <title>아이온2 숙제 관리 대시보드</title>
 
-    <!-- 스타일시트 연동 -->
-    <link rel="stylesheet" href="css/layout.css?ver=1.5">
+    <link rel="stylesheet" href="css/layout.css?ver=<?php echo time()?>">
     <link rel="stylesheet" href="css/PretendardVariable.ttf">
     <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
-    
-    <!-- 안내사항 페이지 전용 스타일 추가 -->
     <style>
-        .notice-wrapper {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 0 20px;
+        /* 💡 캐릭터 숨기기 모드를 위한 부가 CSS 스타일링 */
+        .char-card.is-hidden-char {
+            display: none !important; /* 기본적으로 숨김 처리 */
         }
-        .notice-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        /* '숨긴 캐릭터 보기' 모드가 활성화되면 숨겨진 카드들을 반투명하게 시각적으로 표시 */
+        body.show-hidden-chars-mode .char-card.is-hidden-char {
+            display: flex !important;
+            opacity: 0.4;
+            filter: grayscale(0.6);
+            border: 1px dashed #ef4444 !important;
         }
-        .notice-desc {
-            color: var(--text-muted, #94a3b8);
-            font-size: 0.95rem;
-            margin-bottom: 30px;
+        .btn-char-hide {
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            padding: 2px 6px;
+            font-size: 13px;
+            transition: color 0.2s;
         }
-        .notice-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+        .btn-char-hide:hover {
+            color: #f43f5e;
         }
-        .notice-item {
-            background-color: rgba(30, 41, 59, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            border-radius: 10px;
-            padding: 20px;
-            display: flex;
-            gap: 16px;
-            align-items: flex-start;
-        }
-        .notice-item.alert-card {
-            border-color: rgba(239, 68, 68, 0.2);
-            background-color: rgba(239, 68, 68, 0.02);
-        }
-        .notice-icon {
-            font-size: 1.3rem;
-            margin-top: 2px;
-        }
-        .notice-content {
-            flex: 1;
-        }
-        .notice-content h3 {
-            font-size: 1.05rem;
-            font-weight: 600;
-            color: #fff;
-            margin: 0 0 6px 0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .notice-content p {
-            color: var(--text-muted, #94a3b8);
-            font-size: 0.92rem;
-            line-height: 1.6;
-            margin: 0;
-        }
-        .badge {
-            font-size: 0.75rem;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-weight: 600;
-        }
-        .badge-danger { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
-        .badge-info { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
-        .badge-success { background: rgba(16, 185, 129, 0.15); color: #10b981; }
-        
-        .highlight { color: #fff; font-weight: 600; }
-        .danger-text { color: #f87171; font-weight: 600; }
     </style>
 </head>
 
@@ -91,99 +40,1455 @@
 <header class="site-header">
     <div class="header-container">
         <a href="index.html" class="site-logo">
-            🥕 <span class="made-by">Made by. 당근</span>
+            🥕<span class="made-by">Made by. 당근</span>
         </a>
         
         <nav class="gnb">
             <ul>
                 <li><a href="guide.html" class="gnb-link">사용방법</a></li>
-                <li><a href="index.html" class="gnb-link">대시보드</a></li>
-                <li><a href="notice.html" class="gnb-link active">안내사항</a></li>
+                <li><a href="index.html" class="gnb-link active">대시보드</a></li>
+                <li><a href="notice.html" class="gnb-link">안내사항</a></li>
             </ul>
         </nav>
     </div>
 </header>
+<header>
+    <h1 style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; flex-wrap: wrap;">
+            아이온2 숙제 관리 대시보드 
+            <span id="server-clock" style="font-size: 14px; color: #b3b3b3; margin-left: 15px; font-weight: normal;">
+            [서버 시간: 로딩 중...]
+            </span>
+        </div>
+        <a href="https://aion2.plaync.com" target="_blank" class="btn btn-sm" 
+           style="text-decoration: none; display: inline-flex; align-items: center; background: none; color: #94a3b8; padding: 6px 12px; font-size: 13px; font-weight: 500; transition: color 0.2s;" 
+           onmouseover="this.style.color='#ffffff';" 
+           onmouseout="this.style.color='#94a3b8';">
+            AION2 공식홈 ➔
+        </a>
+    </h1>
 
-<main class="notice-wrapper">
-    <h1 class="notice-title">📢 이용 안내 및 유의사항</h1>
-    <p class="notice-desc">아이온2 숙제 관리 대시보드 이용에 관한 고정 기준 및 필수 안내사항입니다.</p>
-
-    <div class="notice-list">
-        <!-- 1. 데이터 저장 방식 (강조형) -->
-        <div class="notice-item alert-card">
-            <div class="notice-icon">⚠️</div>
-            <div class="notice-content">
-                <h3>데이터 저장 및 유실 안내 <span class="badge badge-danger">필독</span></h3>
-                <p>모든 데이터는 사용자의 브라우저(<span class="highlight">LocalStorage</span>)에 저장되며, 별도의 서버에 저장되지 않습니다. 내 숙제 데이터는 소중하니까! <span class="danger-text">브라우저 방문 기록이나 캐시/쿠키를 삭제하면 모든 설정 내역이 날아갈 수 있으니</span> 주의해 주세요.</p>
-            </div>
+    <div class="top_box">
+        <div class="info-box">
+            <ul>
+                <li>모든 데이터는 <span class="info-highlight">사용자의 브라우저(LocalStorage)에 저장</span>되며, 별도의 서버에는 저장되지 않습니다. 브라우저 기록을 지우면 내역이 날아갈 수 있으니 <span class="info-alert">*데이터 백업*</span>을 적극 권장합니다!</li>
+                <li>일일 콘텐츠, 티켓, 열쇠, 오드는 <span class="info-highlight">매일 아침 5시</span>를 기준으로 초기화 및 연산이 진행됩니다.</li>
+                <li><span class="info-highlight">컨텐츠 열쇠, 오드에너지</span>는 <span class="info-alert ">멤버십 이용자</span>를 기준으로 계산됩니다.</li>
+            </ul>
         </div>
 
-        <!-- 2. 초기화 기준 -->
-        <div class="notice-item">
-            <div class="notice-icon">⏰</div>
-            <div class="notice-content">
-                <h3>일일 콘텐츠 및 오드 연산 기준 <span class="badge badge-info">시스템</span></h3>
-                <p>일일 커스텀 숙제 및 자원(슈고/침공 열쇠)은 <span class="highlight">매일 아침 오전 5시</span>를 기준으로 자동 초기화 및 충전됩니다. 또한 오드 에너지는 해당 시점부터 <span class="highlight">3시간 단위</span>로 충전 연산이 진행됩니다.</p>
+        <div class="alarm-container">
+            <p>🎉 이벤트 알람 (on/off)</p>
+            <div class="alarm-item">
+                <span class="alarm-title">페스타</span>
+                <div class="alarm-timer-wrapper">
+                    <span class="alarm-timer" id="timer-festa">00:00 남음</span>
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-festa" onchange="toggleAlarmSetting('festa')">
+                        <span class="slider"></span>
+                    </label>
+                </div>
             </div>
-        </div>
-
-        <!-- 3. 멤버십 기준 -->
-        <div class="notice-item">
-            <div class="notice-icon">💎</div>
-            <div class="notice-content">
-                <h3>자원 충전 밸런스 기준 <span class="badge badge-info">멤버십</span></h3>
-                <p>대시보드 내의 콘텐츠 열쇠 충전량 및 오드 에너지 충전 효율 계산 방식은 기본적으로 <span class="highlight">멤버십 이용자</span>의 혜택 수치를 기준으로 계산됩니다.</p>
+            <div class="alarm-item">
+                <span class="alarm-title">침공</span>
+                <div class="alarm-timer-wrapper">
+                    <span class="alarm-timer" id="timer-invasion">00:00 남음</span>
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-invasion" onchange="toggleAlarmSetting('invasion')">
+                        <span class="slider"></span>
+                    </label>
+                </div>
             </div>
-        </div>
-
-        <!-- 5. 일괄 추가 기능 -->
-        <div class="notice-item">
-            <div class="notice-icon">⚡</div>
-            <div class="notice-content">
-                <h3>숙제 일괄 추가 시스템 기능 <span class="badge badge-success">편의성</span></h3>
-                <p>계정 설정 내의 <span class="highlight">숙제 계정 일괄 추가</span> 기능을 활용하면, 개별적으로 하나씩 등록할 필요 없이 해당 계정에 소속된 모든 부캐릭터 및 본캐릭터에게 한 번에 동일한 커스텀 숙제가 주입됩니다.</p>
-            </div>
-        </div>
-
-        <!-- 6. 브라우저 호환성 (추가 제안 사항) -->
-        <div class="notice-item">
-            <div class="notice-icon">🌐</div>
-            <div class="notice-content">
-                <h3>권장 브라우저 환경 안내 <span class="badge badge-success">기타</span></h3>
-                <p>본 사이트는 로컬 저장소를 적극 활용하므로 브라우저의 <span class="highlight">시크릿 모드(InPrivate)</span>에서는 데이터가 유지되지 않습니다. 가급적 구글 크롬(Chrome)이나 삼성 인터넷, 네이버 웨일 등의 일반 모드 브라우저 이용을 권장합니다.</p>
+            <div class="alarm-item">
+                <span class="alarm-title">시공</span>
+                <div class="alarm-timer-wrapper">
+                    <span class="alarm-timer" id="timer-space">00:00:00 남음</span>
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-space" onchange="toggleAlarmSetting('space')">
+                        <span class="slider"></span>
+                    </label>
+                </div>
             </div>
         </div>
     </div>
+</header>
 
-    <div class="update-notice-section">
-        <div class="update-header">
-            <span class="update-badge">UPDATE</span>
-            <h2>🛠️ 주요 업데이트 내용 안내</h2>
+<div class="floating-menu-container" id="floatingMenu">
+    <button class="floating-toggle-btn" onclick="toggleFloatingMenu()" title="메뉴 열기">
+        <svg class="icon-menu" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        <svg class="icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+
+    <div class="floating-items">
+        <div class="floating-item-wrapper">
+            <div class="floating-tooltip">새 계정 추가</div>
+            <button class="floating-sub-btn" onclick="openAccountModal(); toggleFloatingMenu();">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="16" y1="11" x2="22" y2="11"></line></svg>
+            </button>
         </div>
-        <ul class="update-list">
-            <li>
-                <span class="update-date">2026.06.30</span>
-                <div class="update-content">
-                    <strong>완료된 숙제 숨기기 기능 추가</strong>
-                    <p>[✅ 완료된 숙제 숨기기] 버튼이 추가되었습니다.</p>
-                </div>
-            </li>
-            <li>
-                <span class="update-date">2026.06.29</span>
-                <div class="update-content">
-                    <strong>캐릭터별 개별 메모 기능 추가</strong>
-                    <p>캐릭터 카드 하단에 [📝 메모] 버튼이 추가되었습니다.</p>
-                </div>
-            </li>
-        </ul>
+        <div class="floating-item-wrapper">
+            <div class="floating-tooltip">데이터 백업 (내보내기)</div>
+            <button class="floating-sub-btn btn-success-clip" onclick="exportBackup(); toggleFloatingMenu();">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            </button>
+        </div>
+        <div class="floating-item-wrapper">
+            <div class="floating-tooltip">데이터 불러오기 (가져오기)</div>
+            <button class="floating-sub-btn btn-success-clip" onclick="document.getElementById('importFile').click(); toggleFloatingMenu();">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            </button>
+        </div>
     </div>
-</main>
+</div>
+<input type="file" id="importFile" accept=".json" style="display: none;" onchange="importBackup(event)">
 
+<div class="container" id="app"></div>
+
+<div class="modal-overlay" id="charModal">
+    <div class="modal-content">
+        <h3>새 캐릭터 추가</h3>
+        <form id="charForm" onsubmit="submitCharacterForm(event)">
+            <input type="hidden" id="modalAccId">
+            <div class="modal-field">
+                <label for="modalCharName">캐릭터 이름</label>
+                <input type="text" id="modalCharName" required placeholder="예: 홍길동">
+            </div>
+            <div class="modal-field">
+                <label for="modalCharJob">직업 선택</label>
+                <select id="modalCharJob" required>
+                    <option value="치유성">치유성</option>
+                    <option value="호법성">호법성</option>
+                    <option value="수호성">수호성</option>
+                    <option value="검성">검성</option>
+                    <option value="궁성">궁성</option>
+                    <option value="살성">살성</option>
+                    <option value="마도성">마도성</option>
+                    <option value="정령성">정령성</option>
+                    <option value="권성">권성</option>
+                </select>
+            </div>
+            <div class="modal-field">
+                <label for="modalCharPower">전투력</label>
+                <input type="number" id="modalCharPower" required placeholder="숫자만 입력">
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-danger" onclick="closeCharModal()">취소</button>
+                <button type="submit" class="btn">완료</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="memoModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="memoModalTitle">캐릭터 메모 관리</h2>
+        </div>
+        <form id="memoForm" onsubmit="submitMemoForm(event)">
+            <input type="hidden" id="memoAccId">
+            <input type="hidden" id="memoCharId">
+            
+            <div class="form-group">
+                <label for="modalMemoText" style="display:block; margin-bottom:8px; font-size:13px; color:var(--text-muted);">이 캐릭터에 기록할 메모를 입력하세요</label>
+                <textarea id="modalMemoText" rows="6" placeholder="기록할 내용을 입력해 주세요." style="width:100%; background:#1e293b; border:1px solid rgba(255,255,255,0.08); border-radius:6px; color:#fff; padding:10px; box-sizing:border-box; resize:none; font-family:inherit; font-size:14px; line-height:1.5;"></textarea>
+            </div>
+            
+            <div class="modal-footer" style="display:flex; gap:10px; margin-top:15px;">
+                <button type="button" class="btn" onclick="closeMemoModal()" style="background:#334155; color:#fff; padding:10px 15px;">취소</button>
+                <button type="submit" class="btn btn-success" style="flex:1; padding:10px 0;">완료</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="accountModal" class="modal" style="display: none; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+    <div class="modal-content" style="background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 20px; width: 100%; max-width: 400px; color: #fff;">
+        <div class="modal-header" style="margin-bottom: 15px;">
+            <h3 id="accountModalTitle" style="margin: 0; font-size: 18px;">새 계정 추가</h3>
+        </div>
+        <form id="accountForm" onsubmit="submitAccountForm(event)">
+            <input type="hidden" id="modalAccId">
+
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-size: 13px; color: var(--text-muted, #94a3b8);">계정 이름</label>
+                <input type="text" id="modalAccName" placeholder="계정 이름을 입력하세요" required style="width: 100%; background: #1e293b; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; color: #fff; padding: 8px; box-sizing: border-box;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-size: 13px; color: var(--text-muted, #94a3b8);">멤버십 이용 여부</label>
+                <div style="display: flex; gap: 20px; padding: 5px 0;">
+                    <label style="cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                        <input type="radio" name="modalAccMembership" value="O" checked onchange="toggleMembershipUI()"> 멤버십 이용 중 (O)
+                    </label>
+                    <label style="cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                        <input type="radio" name="modalAccMembership" value="X" onchange="toggleMembershipUI()"> 미이용 (X)
+                    </label>
+                </div>
+            </div>
+
+            <div id="membershipWarningArea" style="display: none; background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-radius: 6px; padding: 10px; margin-bottom: 15px; color: #f87171; font-size: 12px; line-height: 1.5;">
+                ⚠️ 해당 사이트는 멤버십 기준으로 작동되어 멤버십 미이용자에게는 적합하지 않습니다. (계정 생성은 가능합니다.)
+            </div>
+
+            <div id="membershipTimeArea" style="display: block; margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-size: 13px; color: var(--text-muted, #94a3b8);">남은 멤버십 기간</label>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="number" id="membershipDays" min="0" value="30" style="width: 70px; background: #1e293b; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; color: #fff; padding: 8px; text-align: center;"> <span>일</span>
+                    <input type="number" id="membershipHours" min="0" max="23" value="0" style="width: 70px; background: #1e293b; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; color: #fff; padding: 8px; text-align: center;"> <span>시간</span>
+                </div>
+            </div>
+
+            <div class="modal-footer" style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="button" class="btn" onclick="closeAccountModal()" style="background: #334155; color: #fff; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer;">취소</button>
+                <button type="submit" id="accountModalSubmitBtn" class="btn btn-success" style="flex: 1; padding: 10px 0; border: none; border-radius: 4px; cursor: pointer;">생성</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // --- [ 플로팅 메뉴 인터랙션 함수 ] ---
+    function toggleFloatingMenu() {
+        const container = document.getElementById('floatingMenu');
+        container.classList.toggle('active');
+    }
+
+    // 외부 공간 클릭 시 열려있는 메뉴 닫기 핸들러
+    window.addEventListener('click', function(e) {
+        const container = document.getElementById('floatingMenu');
+        if (container.classList.contains('active') && !container.contains(e.target)) {
+            container.classList.remove('active');
+        }
+    });
+
+    // --- [ 데이터 구조 및 초기화 ] ---
+    let gameData = JSON.parse(localStorage.getItem('gameHomeworkData_v15')) || [];
+    let lastChecked = localStorage.getItem('lastOdeUpdateTime_v15') || Date.now();
+    localStorage.setItem('lastOdeUpdateTime_v15', lastChecked);
+    let lastAbyssReset = localStorage.getItem('lastAbyssResetTime_v15') || "0";
+    let accordionStatus = JSON.parse(localStorage.getItem('accordionStatus_v15')) || {};
     
+    let lastDailyReset = localStorage.getItem('lastDailyResetTime_v15') || "0";
+    let lastWeeklyReset = localStorage.getItem('lastWeeklyResetTime_v15') || "0";
+
+    let alarmSettings = JSON.parse(localStorage.getItem('alarmSettings_v15')) || { festa: true, invasion: true, space: true };
+
+    // --- [ 현재 서버 시간 표시 ] ---
+    function updateServerClock() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const date = String(now.getDate()).padStart(2, '0');
+        const weekDays = ['일', '월', '화', '수', '목', '금', '토'];
+        const dayOfWeek = weekDays[now.getDay()];
+        
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        
+        const timeString = `⏰ 현재 시간: ${year}-${month}-${date}(${dayOfWeek}) ${hours}:${minutes}:${seconds}`;
+        
+        const clockElement = document.getElementById('server-clock');
+        if (clockElement) {
+            clockElement.innerText = timeString;
+        }
+    }
+    
+    window.addEventListener('DOMContentLoaded', () => {
+        updateServerClock();
+        setInterval(updateServerClock, 1000);
+    });
+
+    // --- [ 🔊 알람음 ] ---
+    function playBeepSound() {
+        try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            
+            const ctx = new AudioContext();
+            const now = ctx.currentTime;
+            
+            const mainGain = ctx.createGain();
+            mainGain.connect(ctx.destination);
+            mainGain.gain.setValueAtTime(0.08, now);
+    
+            const sequence = [
+                { pitch: 523.25, start: 0.0,  duration: 0.8, type: 'sine',     volume: 0.4 }, 
+                { pitch: 659.25, start: 0.2,  duration: 0.4, type: 'triangle', volume: 0.7 }, 
+                { pitch: 783.99, start: 0.35, duration: 0.4, type: 'triangle', volume: 0.7 }, 
+                { pitch: 1046.50, start: 0.5,  duration: 1.0, type: 'sine',     volume: 0.9 }  
+            ];
+    
+            sequence.forEach((note) => {
+                const startTime = now + note.start;
+                const stopTime = startTime + note.duration;
+                
+                const osc = ctx.createOscillator();
+                const gainNode = ctx.createGain();
+                
+                osc.type = note.type;
+                osc.frequency.setValueAtTime(note.pitch, startTime);
+                
+                const targetVolume = note.volume;
+    
+                gainNode.gain.setValueAtTime(0, startTime);
+                gainNode.gain.linearRampToValueAtTime(targetVolume, startTime + 0.08); 
+                gainNode.gain.setValueAtTime(targetVolume, startTime + (note.duration * 0.4)); 
+                gainNode.gain.exponentialRampToValueAtTime(0.001, stopTime); 
+                
+                osc.connect(gainNode);
+                gainNode.connect(mainGain);
+                
+                osc.start(startTime);
+                osc.stop(stopTime + 0.1);
+            });
+            
+        } catch (error) {
+            console.error("오디오 재생 중 오류 발생:", error);
+        }
+    }
+    
+
+    function toggleMembershipUI() {
+        const isMembership = document.querySelector('input[name="modalAccMembership"]:checked').value === 'O';
+        document.getElementById('membershipWarningArea').style.display = isMembership ? 'none' : 'block';
+        document.getElementById('membershipTimeArea').style.display = isMembership ? 'block' : 'none';
+    }
+
+    let accEditMode = false;
+
+    function openAccountModal(accId = null, event = null) {
+        if (event) event.stopPropagation();
+        
+        document.getElementById('accountForm').reset();
+        
+        if (accId) {
+            accEditMode = true;
+            const acc = gameData.find(a => a.id === accId);
+            
+            document.getElementById('modalAccId').value = accId;
+            document.getElementById('modalAccName').value = acc.name;
+            
+            if (acc.membership === 'X') {
+                document.querySelector('input[name="modalAccMembership"][value="X"]').checked = true;
+                document.getElementById('membershipDays').value = 30;
+                document.getElementById('membershipHours').value = 0;
+            } else {
+                document.querySelector('input[name="modalAccMembership"][value="O"]').checked = true;
+                
+                let displayDays = acc.membershipDays !== undefined ? acc.membershipDays : 30;
+                let displayHours = acc.membershipHours !== undefined ? acc.membershipHours : 0;
+                
+                if (acc.membershipUpdatedAt) {
+                    const diffMs = Date.now() - acc.membershipUpdatedAt;
+                    const diffMins = Math.floor(diffMs / (1000 * 60));
+                    if (diffMins > 0) {
+                        let totalHours = (displayDays * 24) + displayHours;
+                        let passedHours = Math.floor(diffMins / 60);
+                        totalHours = Math.max(0, totalHours - passedHours);
+                        displayDays = Math.floor(totalHours / 24);
+                        displayHours = totalHours % 24;
+                    }
+                }
+
+                document.getElementById('membershipDays').value = displayDays;
+                document.getElementById('membershipHours').value = displayHours;
+            }
+            
+            document.getElementById('accountModalTitle').innerText = "계정 설정 수정";
+            document.getElementById('accountModalSubmitBtn').innerText = "수정 완료";
+        } else {
+            accEditMode = false;
+            document.getElementById('modalAccId').value = "";
+            document.querySelector('input[name="modalAccMembership"][value="O"]').checked = true;
+            document.getElementById('membershipDays').value = 30;
+            document.getElementById('membershipHours').value = 0;
+            
+            document.getElementById('accountModalTitle').innerText = "새 계정 추가";
+            document.getElementById('accountModalSubmitBtn').innerText = "생성";
+        }
+        
+        toggleMembershipUI();
+        document.getElementById('accountModal').style.display = 'flex';
+    }
+
+    function closeAccountModal() {
+        document.getElementById('accountModal').style.display = 'none';
+        accEditMode = false;
+    }
+
+    function submitAccountForm(e) {
+        e.preventDefault();
+        
+        const accId = document.getElementById('modalAccId').value;
+        const name = document.getElementById('modalAccName').value.trim();
+        const membership = document.querySelector('input[name="modalAccMembership"]:checked').value;
+        const days = membership === 'O' ? parseInt(document.getElementById('membershipDays').value) || 0 : 0;
+        const hours = membership === 'O' ? parseInt(document.getElementById('membershipHours').value) || 0 : 0;
+        const nowTimestamp = Date.now();
+
+        if (accEditMode) {
+            const acc = gameData.find(a => a.id === parseInt(accId));
+            if (acc) {
+                acc.name = name;
+                acc.membership = membership;
+                acc.membershipDays = days;
+                acc.membershipHours = hours;
+                acc.membershipUpdatedAt = nowTimestamp; 
+            }
+        } else {
+            const newId = Date.now();
+            gameData.push({ 
+                id: newId, 
+                name: name, 
+                membership: membership,
+                membershipDays: days,
+                membershipHours: hours,
+                membershipUpdatedAt: nowTimestamp, 
+                shugo: 2, 
+                dimension: 1, 
+                odeBuyChecked: false, 
+                odeCraftChecked: false,
+                villageOrderChecked: false,
+                abyssOrderChecked: false,
+                dailyDungeonChecked: false, 
+                characters: [] 
+            });
+            accordionStatus[newId] = true;
+            localStorage.setItem('accordionStatus_v15', JSON.stringify(accordionStatus));
+        }
+
+        closeAccountModal();
+        saveData(); 
+    }
+
+    function toggleAlarmSetting(type) {
+        alarmSettings[type] = document.getElementById(`toggle-${type}`).checked;
+        localStorage.setItem('alarmSettings_v15', JSON.stringify(alarmSettings));
+        updateTopAlertTimers();
+    }
+
+    function initAlarmToggles() {
+        document.getElementById('toggle-festa').checked = alarmSettings.festa;
+        document.getElementById('toggle-invasion').checked = alarmSettings.invasion;
+        document.getElementById('toggle-space').checked = alarmSettings.space;
+    }
+
+    function exportBackup() {
+        if (gameData.length === 0) {
+            alert("백업할 데이터가 없습니다. 먼저 계정을 생성해 주세요.");
+            return;
+        }
+        const backupData = { gameData, lastChecked, lastAbyssReset, lastDailyReset, lastWeeklyReset, accordionStatus, alarmSettings };
+        const jsonString = JSON.stringify(backupData, null, 2);
+        const blob = new Blob([jsonString], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        const dateStr = new Date().toISOString().slice(0, 10);
+        a.href = url;
+        a.download = `homework_backup_${dateStr}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    function importBackup(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        if (!confirm("⚠️ 주의: 파일을 불러오면 현재 모든 데이터가 덮어씌워집니다. 진행하시겠습니까?")) {
+            event.target.value = '';
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const parsed = JSON.parse(e.target.result);
+                if (parsed.gameData && Array.isArray(parsed.gameData)) {
+                    gameData = parsed.gameData;
+                    lastChecked = parsed.lastChecked || Date.now().toString();
+                    lastAbyssReset = parsed.lastAbyssReset || "0";
+                    lastDailyReset = parsed.lastDailyReset || "0";
+                    lastWeeklyReset = parsed.lastWeeklyReset || "0";
+                    accordionStatus = parsed.accordionStatus || {};
+                    alarmSettings = parsed.alarmSettings || { festa: true, invasion: true, space: true };
+                    
+                    localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
+                    localStorage.setItem('lastOdeUpdateTime_v15', lastChecked);
+                    localStorage.setItem('lastAbyssResetTime_v15', lastAbyssReset);
+                    localStorage.setItem('lastDailyResetTime_v15', lastDailyReset);
+                    localStorage.setItem('lastWeeklyResetTime_v15', lastWeeklyReset);
+                    localStorage.setItem('accordionStatus_v15', JSON.stringify(accordionStatus));
+                    localStorage.setItem('alarmSettings_v15', JSON.stringify(alarmSettings));
+                    
+                    alert("✅ 성공: 데이터를 안정적으로 불러왔습니다!");
+                    initAlarmToggles();
+                    render();
+                } else { alert("❌ 실패: 올바른 백업 파일 형식이 아닙니다."); }
+            } catch (err) { alert("❌ 오류: 파일 해석 중 문제가 발생했습니다."); }
+            event.target.value = '';
+        };
+        reader.readAsText(file);
+    }
+
+    function updateTopAlertTimers() {
+        const now = new Date();
+        const currentMin = now.getMinutes();
+        const currentSec = now.getSeconds();
+
+        const festaEl = document.getElementById('timer-festa');
+        if(festaEl) {
+            if (!alarmSettings.festa) {
+                festaEl.innerText = "OFF";
+                festaEl.className = "alarm-timer disabled";
+            } else {
+                let festaMin = 59 - currentMin;
+                let festaSec = 59 - currentSec;
+                if (festaMin === 0 && festaSec === 0) playBeepSound();
+                
+                const festaStr = `${String(festaMin).padStart(2, '0')}:${String(festaSec).padStart(2, '0')} 남음`;
+                festaEl.innerText = festaStr; 
+                festaEl.className = "alarm-timer" + (festaMin < 5 ? " alarm-urgent" : "");
+            }
+        }
+
+        const invEl = document.getElementById('timer-invasion');
+        if(invEl) {
+            if (!alarmSettings.invasion) {
+                invEl.innerText = "OFF";
+                invEl.className = "alarm-timer disabled";
+            } else {
+                let invInMin = (currentMin < 30) ? (29 - currentMin) : (59 - currentMin + 30);
+                let invSec = 59 - currentSec;
+                if (invInMin === 0 && invSec === 0) playBeepSound();
+
+                const invStr = `${String(invInMin).padStart(2, '0')}:${String(invSec).padStart(2, '0')} 남음`;
+                invEl.innerText = invStr;
+                invEl.className = "alarm-timer" + (invInMin < 5 ? " alarm-urgent" : "");
+            }
+        }
+
+        const spaceEl = document.getElementById('timer-space');
+        if(spaceEl) {
+            if (!alarmSettings.space) {
+                spaceEl.innerText = "OFF";
+                spaceEl.className = "alarm-timer disabled";
+            } else {
+                const targetHours = [2, 5, 8, 11, 14, 17, 20, 23];
+                let nextTarget = null;
+                for (let h of targetHours) {
+                    let t = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, 0, 0, 0);
+                    if (t.getTime() > now.getTime()) { nextTarget = t; break; }
+                }
+                if (!nextTarget) {
+                    nextTarget = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 2, 0, 0, 0);
+                }
+
+                const spaceDiffMs = nextTarget.getTime() - now.getTime();
+                const sHours = Math.floor(spaceDiffMs / (1000 * 60 * 60));
+                const sMinutes = Math.floor((spaceDiffMs % (1000 * 60 * 60)) / (1000 * 60));
+                const sSeconds = Math.floor((spaceDiffMs % (1000 * 60)) / 1000);
+                
+                if (sHours === 0 && sMinutes === 0 && sSeconds === 0) playBeepSound();
+
+                const spaceStr = `${String(sHours).padStart(2, '0')}:${String(sMinutes).padStart(2, '0')}:${String(sSeconds).padStart(2, '0')} 남음`;
+                spaceEl.innerText = spaceStr;
+                
+                if (sHours === 0 && sMinutes < 10) {
+                    spaceEl.className = "alarm-timer alarm-urgent";
+                } else {
+                    spaceEl.className = "alarm-timer";
+                }
+            }
+        }
+    }
+
+    let isOdeUpdating = false;
+
+    function getNextOdeResetTime() {
+        const now = new Date();
+        let baseTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
+        if (now.getTime() < baseTime.getTime()) baseTime.setDate(baseTime.getDate() - 1);
+        let nextReset = baseTime.getTime();
+        
+        const threeHoursMs = 3 * 60 * 60 * 1000; 
+        while (nextReset <= now.getTime()) { nextReset += threeHoursMs; }
+        return nextReset;
+    }
+
+    function updateOdeAutomatically() {
+        if (isOdeUpdating) return;
+        isOdeUpdating = true;
+
+        const now = Date.now();
+        const nextReset = getNextOdeResetTime();
+        const threeHoursMs = 3 * 60 * 60 * 1000; 
+        const lastExpectedReset = nextReset - threeHoursMs;
+        
+        if (parseInt(lastChecked) < lastExpectedReset) {
+            const timeDiff = lastExpectedReset - parseInt(lastChecked);
+            const chargeCycles = Math.round(timeDiff / threeHoursMs); 
+            if (chargeCycles < 1) {
+                isOdeUpdating = false;
+                return;
+            }
+            const totalAddOde = chargeCycles * 15;
+            
+            lastChecked = lastExpectedReset;
+            localStorage.setItem('lastOdeUpdateTime_v15', lastChecked.toString());
+            
+            gameData.forEach(acc => {
+                if(!acc.characters) return;
+                acc.characters.forEach(char => {
+                    if ((char.ode || 0) >= 840) return;
+
+                    let targetOde = (char.ode || 0) + totalAddOde;
+                    if (char.ode < targetOde) {
+                        if (targetOde > 840) targetOde = 840;
+                        char.ode = targetOde;
+                    }
+                });
+            });
+            
+            localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
+            render();
+        }
+
+        setTimeout(() => { isOdeUpdating = false; }, 1000);
+    }
+    
+    function updateTimerDisplay() {
+        const now = Date.now();
+        const nextReset = getNextOdeResetTime();
+        const diffMs = nextReset - now;
+        
+        const hours = String(Math.floor(diffMs / (1000 * 60 * 60))).padStart(2, '0');
+        const minutes = String(Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+        const seconds = String(Math.floor((diffMs % (1000 * 60)) / 1000)).padStart(2, '0');
+        const timeString = `${hours}:${minutes}:${seconds} 남음`;
+        
+        gameData.forEach(acc => {
+            if(!acc.characters) return;
+            acc.characters.forEach(char => {
+                const timerEl = document.getElementById(`timer-${char.id}`);
+                if (timerEl) {
+                    if (char.ode >= 840) {
+                        timerEl.innerText = "[MAX]";
+                        timerEl.style.color = "var(--text-muted)";
+                    } else {
+                        timerEl.innerText = `[${timeString}]`;
+                        timerEl.style.color = "var(--timer-color)";
+                    }
+                }
+            });
+        });
+        
+        updateTopAlertTimers();
+    }
+
+    function checkAndReduceMembershipTime() {
+        let isChanged = false;
+        const now = Date.now();
+
+        gameData.forEach(acc => {
+            if (acc.membership === 'O') {
+                if (!acc.membershipUpdatedAt) {
+                    acc.membershipUpdatedAt = now;
+                    isChanged = true;
+                    return;
+                }
+
+                const diffMs = now - acc.membershipUpdatedAt;
+                const diffMins = Math.floor(diffMs / (1000 * 60)); 
+
+                if (diffMins >= 60) {
+                    let totalHours = ((acc.membershipDays || 0) * 24) + (acc.membershipHours || 0);
+                    const passedHours = Math.floor(diffMins / 60);
+
+                    totalHours -= passedHours;
+
+                    if (totalHours <= 0) {
+                        acc.membership = 'X';
+                        acc.membershipDays = 0;
+                        acc.membershipHours = 0;
+                        acc.membershipUpdatedAt = now;
+                    } else {
+                        acc.membershipDays = Math.floor(totalHours / 24);
+                        acc.membershipHours = totalHours % 24;
+                        acc.membershipUpdatedAt = acc.membershipUpdatedAt + (passedHours * 60 * 60 * 1000);
+                    }
+                    isChanged = true;
+                }
+            }
+        });
+
+        if (isChanged) {
+            localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
+            render();
+        }
+    }
+
+    function checkAbyssReset() {
+        const now = new Date();
+        function getPreviousResetTime(d) {
+            let target = new Date(d.getTime());
+            target.setHours(22, 0, 0, 0);
+            if (d.getTime() < target.getTime()) d.setDate(d.getDate() - 1);
+            while (target.getDay() !== 3 && target.getDay() !== 6) { target.setDate(target.setDate() - 1); }
+            return target.getTime();
+        }
+        const currentTargetReset = getPreviousResetTime(now);
+        if (parseInt(lastAbyssReset) < currentTargetReset) {
+            gameData.forEach(acc => {
+                if(!acc.characters) return;
+                acc.characters.forEach(char => { char.abyssChecked = false; });
+            });
+            localStorage.setItem('lastAbyssResetTime_v15', currentTargetReset.toString());
+            lastAbyssReset = currentTargetReset.toString();
+            saveData();
+        }
+    }
+
+    function checkDailyReset() {
+        const now = new Date();
+        let targetReset = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
+        if (now.getTime() < targetReset.getTime()) {
+            targetReset.setDate(targetReset.getDate() - 1);
+        }
+        const currentTargetReset = targetReset.getTime();
+
+        if (parseInt(lastDailyReset) < currentTargetReset) {
+            gameData.forEach(acc => {
+                let newShugo = (acc.shugo || 0) + 2;
+                if (newShugo > 14) newShugo = 14;
+                acc.shugo = newShugo;
+
+                let newDimension = (acc.dimension || 0) + 1;
+                if (newDimension > 7) newDimension = 7;
+                acc.dimension = newDimension;
+
+                if(!acc.characters) return;
+                acc.characters.forEach(char => {
+                    let newNightmareTicket = (char.nightmareTicket !== undefined ? char.nightmareTicket : 2) + 2;
+                    if (newNightmareTicket > 14) newNightmareTicket = 14;
+                    char.nightmareTicket = newNightmareTicket;
+
+                    char.homeworks.forEach(hw => {
+                        if (hw.type === 'daily') hw.checked = false;
+                    });
+                });
+            });
+            localStorage.setItem('lastDailyResetTime_v15', currentTargetReset.toString());
+            lastDailyReset = currentTargetReset.toString();
+            saveData();
+        }
+    }
+
+    function checkWeeklyReset() {
+        const now = new Date();
+        let targetReset = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
+        if (now.getTime() < targetReset.getTime()) targetReset.setDate(targetReset.getDate() - 1);
+        
+        while (targetReset.getDay() !== 3) { 
+            targetReset.setDate(targetReset.getDate() - 1); 
+        }
+        const currentTargetReset = targetReset.getTime();
+
+        if (parseInt(lastWeeklyReset) < currentTargetReset) {
+            gameData.forEach(acc => {
+                acc.odeBuyChecked = false;
+                acc.villageOrderChecked = false; 
+                acc.abyssOrderChecked = false;   
+                acc.dailyDungeonChecked = false; 
+
+                if(!acc.characters) return;
+                acc.characters.forEach(char => {
+                    char.charBuyChecked = false;
+                    char.nightmareChecked = false; 
+                    char.awakeningChecked = false; 
+                    
+                    char.homeworks.forEach(hw => {
+                        if (hw.type === 'weekly') hw.checked = false;
+                    });
+                });
+            });
+            localStorage.setItem('lastWeeklyResetTime_v15', currentTargetReset.toString());
+            lastWeeklyReset = currentTargetReset.toString();
+            saveData();
+        }
+    }
+
+    function saveData() {
+        localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
+        render();
+    }
+
+    function toggleAccordion(accId) {
+        if (accordionStatus[accId] === undefined) accordionStatus[accId] = true;
+        accordionStatus[accId] = !accordionStatus[accId];
+        localStorage.setItem('accordionStatus_v15', JSON.stringify(accordionStatus));
+        
+        const bodyEl = document.getElementById(`acc-body-${accId}`);
+        const iconEl = document.getElementById(`acc-icon-${accId}`);
+        if (bodyEl && iconEl) {
+            if (accordionStatus[accId]) {
+                bodyEl.classList.remove('collapsed');
+                iconEl.innerText = '▲';
+            } else {
+                bodyEl.classList.add('collapsed');
+                iconEl.innerText = '▼';
+            }
+        }
+    }
+
+    function openCharModal(accId, event) {
+        event.stopPropagation();
+        document.getElementById('modalAccId').value = accId;
+        document.getElementById('charForm').reset();
+        document.getElementById('charModal').style.display = 'flex';
+    }
+
+    let editMode = false;
+    let editAccId = null;
+    let editCharId = null;
+
+    function openEditCharModal(accId, charId, event) {
+        if (event) event.stopPropagation();
+        
+        const acc = gameData.find(a => a.id === accId);
+        const char = acc.characters.find(c => c.id === charId);
+        
+        editMode = true;
+        editAccId = accId;
+        editCharId = charId;
+        
+        document.getElementById('modalAccId').value = accId;
+        document.getElementById('modalCharName').value = char.name;
+        document.getElementById('modalCharJob').value = char.job;
+        document.getElementById('modalCharPower').value = char.power;
+        
+        const modalTitle = document.querySelector('#charModal h3'); 
+        if (modalTitle) modalTitle.innerText = "캐릭터 정보 수정";
+        
+        document.getElementById('charModal').style.display = 'flex'; 
+
+        const modalBtn = document.querySelector('#charModal button[type="submit"]');
+        if (modalBtn) modalBtn.innerText = "완료";
+    }
+
+    function closeCharModal() { 
+        document.getElementById('charModal').style.display = 'none'; 
+        editMode = false;
+        editAccId = null;
+        editCharId = null;
+        
+        const modalTitle = document.querySelector('#charModal h3');
+        if (modalTitle) modalTitle.innerText = "새 캐릭터 추가";
+    }
+
+    function submitCharacterForm(e) {
+        e.preventDefault();
+        const accId = parseInt(document.getElementById('modalAccId').value);
+        const name = document.getElementById('modalCharName').value.trim();
+        const job = document.getElementById('modalCharJob').value;
+        const power = document.getElementById('modalCharPower').value;
+
+        const acc = gameData.find(a => a.id === accId);
+        
+        if (editMode) {
+            const char = acc.characters.find(c => c.id === editCharId);
+            if (char) {
+                char.name = name;
+                char.job = job;
+                char.power = power;
+            }
+        } else {
+            if(!acc.characters) acc.characters = [];
+            acc.characters.push({
+                id: Date.now(), 
+                name: name, 
+                job: job, 
+                power: power, 
+                ode: 0, 
+                extraOde: 0,
+                nightmareTicket: 2, 
+                memo: '', 
+                charBuyChecked: false, 
+                charCraftChecked: false, 
+                abyssChecked: false,     
+                nightmareChecked: false,  
+                awakeningChecked: false,  
+                hidden: false, // 💡 캐릭터 기본 상태 변수에 숨김 여부 속성(hidden) 디폴트 설정 추가
+                homeworks: [
+                    { name: '시즌주간미션', type: 'weekly', checked: false },
+                    { name: '투기장', type: 'weekly', checked: false },
+                    { name: '루드라', type: 'weekly', checked: false },
+                ]
+            });
+        }
+
+        closeCharModal(); 
+        saveData();       
+    }
+
+    let memoAccId = null;
+    let memoCharId = null;
+
+    function openMemoModal(accId, charId, event) {
+        if (event) event.stopPropagation();
+        
+        memoAccId = accId;
+        memoCharId = charId;
+        
+        const acc = gameData.find(a => a.id === accId);
+        const char = acc.characters.find(c => c.id === charId);
+        
+        document.getElementById('memoAccId').value = accId;
+        document.getElementById('memoCharId').value = charId;
+        document.getElementById('modalMemoText').value = char.memo || '';
+        
+        const memoTitleEl = document.getElementById('memoModalTitle');
+        if (memoTitleEl && char) {
+            memoTitleEl.innerText = `[${char.name}] 메모 관리`;
+        }
+        
+        document.getElementById('memoModal').style.display = 'flex';
+    }
+
+    function closeMemoModal() {
+        document.getElementById('memoModal').style.display = 'none';
+        memoAccId = null;
+        memoCharId = null;
+    }
+
+    function submitMemoForm(e) {
+        e.preventDefault();
+        const accId = parseInt(document.getElementById('memoAccId').value);
+        const charId = parseInt(document.getElementById('memoCharId').value);
+        const memoText = document.getElementById('modalMemoText').value;
+
+        const acc = gameData.find(a => a.id === accId);
+        const char = acc.characters.find(c => c.id === charId);
+        
+        if (char) {
+            char.memo = memoText; 
+        }
+        
+        closeMemoModal();
+        saveData(); 
+    }
+
+    function removeAccount(accId, event) {
+        event.stopPropagation();
+        if(confirm("이 계정과 포함된 모든 데이터가 삭제됩니다. 진행하시겠습니까?")) {
+            gameData = gameData.filter(acc => acc.id !== accId);
+            delete accordionStatus[accId];
+            localStorage.setItem('accordionStatus_v15', JSON.stringify(accordionStatus));
+            saveData();
+        }
+    }
+
+    function removeCharacter(accId, charId) {
+        if(confirm("캐릭터를 삭제하시겠습니까?")) {
+            const acc = gameData.find(a => a.id === accId);
+            acc.characters = acc.characters.filter(c => c.id !== charId);
+            saveData();
+        }
+    }
+
+    function useSmartOde(accId, charId) {
+        const odeInput = document.getElementById(`input-ode-${charId}`);
+        const extraOdeInput = document.getElementById(`input-extraOde-${charId}`);
+        if (!odeInput || !extraOdeInput) return;
+
+        let baseOde = parseInt(odeInput.value) || 0;
+        let extraOde = parseInt(extraOdeInput.value) || 0;
+        const amountToUse = 80;
+
+        if ((baseOde + extraOde) < amountToUse) {
+            alert("❌ 오드에너지가 부족합니다!");
+            return;
+        }
+
+        if (baseOde >= amountToUse) {
+            baseOde -= amountToUse;
+        } else {
+            let remainder = amountToUse - baseOde;
+            baseOde = 0;
+            extraOde -= remainder;
+        }
+
+        odeInput.value = baseOde;
+        extraOdeInput.value = extraOde;
+
+        if (typeof setDirectVal === 'function') {
+            setDirectVal(accId, charId, 'ode', baseOde);
+            setDirectVal(accId, charId, 'extraOde', extraOde);
+        }
+    }
+
+    function changeVal(accId, charId, key, diff) {
+        const acc = gameData.find(a => a.id === accId);
+        
+        if (charId === null) {
+            let newVal = (acc[key] || 0) + diff;
+            if (newVal < 0) newVal = 0; 
+
+            if (key === 'shugo' && newVal > 14) newVal = 14;
+            if (key === 'dimension' && newVal > 7) newVal = 7;
+
+            acc[key] = newVal;
+        } else {
+            const char = acc.characters.find(c => c.id === charId);
+            let newVal = (char[key] || 0) + diff;
+            if (newVal < 0) newVal = 0;
+            
+            if (key === 'nightmareTicket' && newVal > 14) newVal = 14;
+            
+            char[key] = newVal;
+        }
+        
+        render();
+        saveData();
+    }
+
+    function setDirectVal(accId, charId, key, val) {
+        const acc = gameData.find(a => a.id === accId);
+        let numVal = parseInt(val) || 0;
+        if (numVal < 0) numVal = 0; 
+
+        if (charId === null) {
+            if (key === 'shugo' && numVal > 14) numVal = 14;
+            if (key === 'dimension' && numVal > 7) numVal = 7;
+
+            acc[key] = numVal;
+        } else {
+            const char = acc.characters.find(c => c.id === charId);
+            if (key === 'nightmareTicket' && numVal > 14) numVal = 14;
+            char[key] = numVal;
+        }
+
+        render();
+        saveData();
+    }
+
+    function toggleCheckbox(accId, charId, field, index = null) {
+        const acc = gameData.find(a => a.id === accId);
+        if (charId === null) { acc[field] = !acc[field]; } 
+        else {
+            const char = acc.characters.find(c => c.id === charId);
+            if (index !== null) {
+                char.homeworks[index].checked = !char.homeworks[index].checked;
+                
+                if (char.homeworks[index].type === 'once' && char.homeworks[index].checked) {
+                    char.homeworks.splice(index, 1);
+                }
+            }
+            else char[field] = !char[field];
+        }
+        saveData();
+    }
+
+    function createCustomHomework(e, accId, charId) {
+        e.preventDefault();
+        const form = e.target;
+        const name = form.hwName.value.trim();
+        const type = form.hwType.value;
+        if(!name) return;
+        const acc = gameData.find(a => a.id === accId);
+        const char = acc.characters.find(c => c.id === charId);
+        char.homeworks.push({ name, type, checked: false });
+        saveData();
+    }
+
+    function createBatchHomework(e, accId) {
+        e.preventDefault();
+        const form = e.target;
+        const name = form.batchHwName.value.trim();
+        const type = form.batchHwType.value;
+        if (!name) return;
+
+        const acc = gameData.find(a => a.id === accId);
+        if (!acc.characters || acc.characters.length === 0) {
+            alert("이 계정에는 생성된 캐릭터가 없습니다. 캐릭터를 먼저 생성해 주세요.");
+            return;
+        }
+
+        acc.characters.forEach(char => {
+            char.homeworks.push({ name, type, checked: false });
+        });
+
+        let typeText = '일일';
+        if (type === 'weekly') typeText = '주간';
+        if (type === 'once') typeText = '일회성';
+
+        alert(`✅ [${typeText}] "${name}" 숙제가 이 계정의 모든 캐릭터(${acc.characters.length}명)에게 일괄 추가되었습니다.`);
+        saveData();
+    }
+
+    function deleteCustomHomework(accId, charId, index) {
+        if (confirm("이 커스텀 숙제를 삭제하시겠습니까?")) {
+            const acc = gameData.find(a => a.id === accId);
+            const char = acc.characters.find(c => c.id === charId);
+            char.homeworks.splice(index, 1);
+            saveData();
+        }
+    }
+
+    let isHideCompleted = JSON.parse(localStorage.getItem('isHideCompleted_v15')) || false;
+    let isShowHiddenChars = JSON.parse(localStorage.getItem('isShowHiddenChars_v15')) || false; // 💡 숨긴 캐릭터 노출용 상태값
+
+    function toggleHideCompleted() {
+        isHideCompleted = !isHideCompleted;
+        localStorage.setItem('isHideCompleted_v15', JSON.stringify(isHideCompleted));
+        
+        const btn = document.getElementById('btnToggleHide');
+        const desc = document.getElementById('hideToggleDescription'); 
+        
+        if (isHideCompleted) {
+            document.body.classList.add('hide-completed-mode');
+            if (btn) {
+                btn.classList.add('active');
+                btn.innerText = '👀 모든 숙제 보기';
+            }
+            if (desc) {
+                desc.innerText = '숨겨진 숙제를 모두 표시합니다.';
+            }
+        } else {
+            document.body.classList.remove('hide-completed-mode');
+            if (btn) {
+                btn.classList.remove('active');
+                btn.innerText = '✅ 완료된 숙제 숨기기';
+            }
+            if (desc) {
+                desc.innerText = '완료된 숙제를 대시보드에서 숨깁니다.';
+            }
+        }
+    }
+
+    // 💡 글로벌 액션 바에서 '숨긴 캐릭터 표시 토글' 처리 함수
+    function toggleShowHiddenChars() {
+        isShowHiddenChars = !isShowHiddenChars;
+        localStorage.setItem('isShowHiddenChars_v15', JSON.stringify(isShowHiddenChars));
+        render();
+    }
+
+    // 💡 특정 캐릭터를 숨김/해제 처리하는 함수
+    function toggleHideCharacter(accId, charId, event) {
+        if(event) event.stopPropagation();
+        const acc = gameData.find(a => a.id === accId);
+        const char = acc.characters.find(c => c.id === charId);
+        if(char) {
+            char.hidden = !char.hidden;
+            saveData();
+        }
+    }
+    
+    function render() {
+        const app = document.getElementById('app');
+        if (gameData.length === 0) {
+            app.innerHTML = `<p style="text-align:center; color:#fff; margin-top: 50px; font-weight:600;">우측 하단의 <span style="color:#ff7e36">메뉴 단추</span>를 눌러 새 계정을 추가해 주세요!</p>`;
+            return;
+        }
+
+        let html = '';
+        // 💡 글로벌 액션 바에 캐릭터 숨김 활성화 제어 버튼 동적 마크업 추가
+            html += `
+                <div class="global-action-bar" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
+                    <button id="btnToggleHide" class="btn-toggle-hide ${isHideCompleted ? 'active' : ''}" onclick="toggleHideCompleted()" 
+                            style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background-color: var(--bg-card, #fff); border: 1px solid var(--border-color, #ddd); border-radius: 20px; color: var(--text-color, #333); font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.2s ease;">
+                        ${isHideCompleted ? '👀 모든 숙제 보기' : '✅ 완료된 숙제 숨기기'}
+                    </button>
+                    
+                    <span id="hideToggleDescription" style="font-size: 11px; color: #94a3b8; font-weight: 400; letter-spacing: -0.3px; line-height: 1; margin-right: 20px;">
+                        ${isHideCompleted ? '숨겨진 숙제를 모두 표시합니다.' : '완료된 숙제를 대시보드에서 숨깁니다.'}
+                    </span>
+
+                    <button id="btnToggleHiddenChars" class="btn-toggle-hide ${isShowHiddenChars ? 'active' : ''}" onclick="toggleShowHiddenChars()" 
+                            style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background-color: var(--bg-card, #fff); border: 1px solid var(--border-color, #ddd); border-radius: 20px; color: var(--text-color, #333); font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.2s ease;">
+                        ${isShowHiddenChars ? '🙈 숨긴 캐릭터 감추기' : '👁️ 숨긴 캐릭터 편집/보기'}
+                    </button>
+                    <span style="font-size: 11px; color: #94a3b8; font-weight: 400; letter-spacing: -0.3px; line-height: 1;">
+                        ${isShowHiddenChars ? '숨김 처리된 캐릭터 카드가 점선으로 노출됩니다.' : '숨김 등록된 캐릭터들을 화면에서 제외합니다.'}
+                    </span>
+                </div>
+            `;
+
+        gameData.forEach(acc => {
+            if (accordionStatus[acc.id] === undefined) accordionStatus[acc.id] = true;
+            const isCollapsed = !accordionStatus[acc.id];
+     
+            let membershipText = '';
+            if (acc.membership === 'O') {
+                let d = acc.membershipDays || 0;
+                let h = acc.membershipHours || 0;
+                
+                if (acc.membershipUpdatedAt) {
+                    const diffMs = Date.now() - acc.membershipUpdatedAt;
+                    const diffMins = Math.floor(diffMs / (1000 * 60));
+                    if (diffMins > 0) {
+                        let totalHours = (d * 24) + h;
+                        let passedHours = Math.floor(diffMins / 60);
+                        totalHours = Math.max(0, totalHours - passedHours);
+                        d = Math.floor(totalHours / 24);
+                        h = totalHours % 24;
+                    }
+                }
+
+                if (d === 0 && h === 0) {
+                    membershipText = '멤버십 남은기간 : 0일';
+                } else {
+                    membershipText = `멤버십 남은기간 : ${d}일 ${h}시간`;
+                }
+            } else {
+                membershipText = '멤버십 남은기간 : 0일';
+            }
+
+            const membershipBadge = `<span style="font-size: 12px; background: rgba(255, 255, 255, 0.06); color: var(--text-muted, #94a3b8); padding: 3px 8px; border-radius: 4px; margin-left: 10px; font-weight: normal; vertical-align: middle;">${membershipText}</span>`;
+            
+            html += `
+            <div class="account-section">
+                <div class="account-header" onclick="toggleAccordion(${acc.id})">
+                    <div class="account-title-area" style="display: flex; align-items: center;">
+                        <span class="accordion-icon" id="acc-icon-${acc.id}">${isCollapsed ? '▼' : '▲'}</span>
+                        <h2 style="margin: 0; display: flex; align-items: center;">
+                            ${acc.name} ${membershipBadge}
+                        </h2>
+                    </div>
+                    <div onclick="event.stopPropagation();">
+                        <button class="btn btn-sm" onclick="openCharModal(${acc.id}, event)">+ 캐릭터 추가</button>
+                        <button class="btn btn-sm btn-char-edit" onclick="openAccountModal(${acc.id}, event)" title="계정 설정">⚙️</button>
+                        <button class="btn btn-sm btn-char-del" onclick="removeAccount(${acc.id}, event)" title="계정 삭제">🗑️</button>
+                    </div>
+                </div>
+                    
+                <div class="account-body ${isCollapsed ? 'collapsed' : ''}" id="acc-body-${acc.id}">
+                    <div class="account-contents">
+                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom: 10px;">
+                            <span class="account-contents-title" style="margin-bottom:0;">계정 공통 콘텐츠 및 상점 체크</span>
+                            <form class="batch-add-form" onclick="event.stopPropagation();" onsubmit="createBatchHomework(event, ${acc.id})">
+                                <span style="font-size:12px; color:var(--accent); font-weight:bold;">이 계정 전체에 숙제 일괄 추가 : </span>
+                                <input type="text" name="batchHwName" placeholder="일괄 숙제 이름" required>
+                                <select name="batchHwType">
+                                    <option value="daily">일일</option>
+                                    <option value="weekly">주간</option>
+                                    <option value="once">일회성</option>
+                                </select>
+                                <button type="submit" class="btn btn-xs btn-success" style="padding:4px 8px;">일괄 추가</button>
+                            </form>
+                        </div>
+                        <div class="account-resource-grid">
+                            <div class="resource-item" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                    <span class="resource-name">🎉 슈고 열쇠</span>
+                                    <div class="counter-controls">
+                                        <button class="btn btn-sm" onclick="changeVal(${acc.id}, null, 'shugo', -1)">-</button>
+                                        <input type="number" class="counter-input" value="${acc.shugo || 0}" max="14" onchange="setDirectVal(${acc.id}, null, 'shugo', this.value)">
+                                        <button class="btn btn-sm" onclick="changeVal(${acc.id}, null, 'shugo', 1)">+</button>
+                                    </div>
+                                </div>
+                                <span style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">(매일 +2개 자동충전 / 최대 14개)</span>
+                            </div>
+                        
+                            <div class="resource-item" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                    <span class="resource-name">⚔️ 차원침공 열쇠</span>
+                                    <div class="counter-controls">
+                                        <button class="btn btn-sm" onclick="changeVal(${acc.id}, null, 'dimension', -1)">-</button>
+                                        <input type="number" class="counter-input" value="${acc.dimension || 0}" max="7" onchange="setDirectVal(${acc.id}, null, 'dimension', this.value)">
+                                        <button class="btn btn-sm" onclick="changeVal(${acc.id}, null, 'dimension', 1)">+</button>
+                                    </div>
+                                </div>
+                                <span style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">(매일 +1개 자동충전 / 최대 7개)</span>
+                            </div>
+                        
+                            <div class="resource-item">
+                                <label class="hw-label">
+                                    <input type="checkbox" ${acc.odeBuyChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'odeBuyChecked')">
+                                    <span class="${acc.odeBuyChecked ? 'checked-text' : ''}">⚡ 오드구매,제작 (16)</span>
+                                </label>
+                            </div>
+                            <div class="resource-item">
+                                <label class="hw-label">
+                                    <input type="checkbox" ${acc.villageOrderChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'villageOrderChecked')">
+                                    <span class="${acc.villageOrderChecked ? 'checked-text' : ''}">📜 지령서 (마을)</span>
+                                </label>
+                            </div>
+                            <div class="resource-item">
+                                <label class="hw-label">
+                                    <input type="checkbox" ${acc.abyssOrderChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'abyssOrderChecked')">
+                                    <span class="${acc.abyssOrderChecked ? 'checked-text' : ''}">🌌 지령서 (어비스)</span>
+                                </label>
+                            </div>
+                            <div class="resource-item">
+                                <label class="hw-label">
+                                    <input type="checkbox" ${acc.dailyDungeonChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'dailyDungeonChecked')">
+                                    <span class="${acc.dailyDungeonChecked ? 'checked-text' : ''}">🏛️ 일일던전</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="char-grid">
+            `;
+
+            if (!acc.characters || acc.characters.length === 0) {
+                html += `
+                    <div class="empty-character-guide" style="grid-column: 1 / -1;">
+                        <p class="guide-text">💡 계정이름 우측의 <strong>[캐릭터 추가]</strong> 버튼을 클릭하여 캐릭터를 추가해주세요!</p>
+                    </div>
+                `;
+            } else {
+                acc.characters.forEach(char => {
+                const currentTicket = char.nightmareTicket !== undefined ? char.nightmareTicket : 2;
+                const isCharHidden = char.hidden || false; // 캐릭터 개별 숨김 플래그 바인딩
+                    
+                    // 💡 캐릭터 카드 동적 할당 클래스에 'is-hidden-char' 바인딩 조건 처리 추가
+                    html += `
+                        <div class="char-card ${isCharHidden ? 'is-hidden-char' : ''}">
+                            <div class="char-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <div class="char-info">
+                                    <span class="char-name">${char.name}</span>
+                                    <span class="char-sub-info">직업: ${char.job} | 투력: <span class="char-power">${Number(char.power).toLocaleString()}</span></span>
+                                </div>
+                                <button class="btn-char-hide" onclick="toggleHideCharacter(${acc.id}, ${char.id}, event)" title="${isCharHidden ? '숨김 해제' : '캐릭터 숨기기'}">
+                                    ${isCharHidden ? '👁️ 숨김해제' : '🙈 숨기기'}
+                                </button>
+                            </div>
+                            
+                            <div class="resource-group">
+                                <div class="ode-title-row" style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="display:flex; flex-direction:column;">
+                                        <span>오드에너지</span>
+                                        <span class="ode-timer" id="timer-${char.id}">[로딩중...]</span>
+                                    </div>
+                                </div>
+                                <div class="ode-row">
+                                    <span class="ode-label">기본오드 [ <input type="number" id="input-ode-${char.id}" class="counter-input" value="${char.ode || 0}" onchange="setDirectVal(${acc.id}, ${char.id}, 'ode', this.value)"> ] / 840</span>
+                                </div>
+                                <div class="ode-row">
+                                    <span class="ode-label">추가오드 [ <input type="number" id="input-extraOde-${char.id}" class="counter-input" value="${char.extraOde || 0}" onchange="setDirectVal(${acc.id}, ${char.id}, 'extraOde', this.value)"> ] / 2000</span>
+                                </div>
+                            </div>
+
+                            <div class="resource-group">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <span style="font-size:12px; font-weight:600; color:#cbd5e1;">악몽 티켓</span>
+                                    <div class="counter-controls">
+                                        <button class="btn btn-sm" onclick="changeVal(${acc.id}, ${char.id}, 'nightmareTicket', -1)">-</button>
+                                        <input type="number" class="counter-input" value="${currentTicket}" max="14" onchange="setDirectVal(${acc.id}, ${char.id}, 'nightmareTicket', this.value)">
+                                        <button class="btn btn-sm" onclick="changeVal(${acc.id}, ${char.id}, 'nightmareTicket', 1)">+</button>
+                                    </div>
+                                </div>
+                                <span style="font-size:10px; color:var(--text-muted); display:block; margin-top:2px;">(매일 +2개 자동충전 / 최대 14개)</span>
+                            </div>
+                
+                            <div class="homework-group">
+                                <strong style="font-size:11px; display:block; margin-bottom:4px; color:#a1a1aa;">📌 고정 숙제 리스트</strong>
+                                <div class="hw-item">
+                                    <label class="hw-label">
+                                        <input type="checkbox" ${char.charBuyChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'charBuyChecked')">
+                                        <span class="hw-text ${char.charBuyChecked ? 'checked-text' : ''}">오드구매,제작 (4)</span>
+                                    </label>
+                                </div>
+                                <div class="hw-item">
+                                    <label class="hw-label">
+                                        <input type="checkbox" ${char.awakeningChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'awakeningChecked')">
+                                        <span class="hw-text ${char.awakeningChecked ? 'checked-text' : ''}">각성전</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="homework-group" style="border-bottom: none; padding-bottom: 0;">
+                                <strong style="font-size:11px; display:block; margin-bottom:4px; color:#a1a1aa;">📝 커스텀 숙제 리스트</strong>
+                                ${(!char.homeworks || char.homeworks.length === 0) ? '<span style="font-size:11px; color:var(--text-muted);">추가된 숙제 없음</span>' : ''}
+                                ${(char.homeworks || []).map((hw, idx) => {
+                                    let typeLabel = '일';
+                                    if (hw.type === 'weekly') typeLabel = '주';
+                                    if (hw.type === 'once') typeLabel = '일회성';
+                                    
+                                    return `
+                                    <div class="hw-item">
+                                        <label class="hw-label">
+                                            <input type="checkbox" ${hw.checked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, null, ${idx})">
+                                            <span class="hw-text ${hw.checked ? 'checked-text' : ''}">
+                                                [${typeLabel}] ${hw.name}
+                                            </span>
+                                        </label>
+                                        <button class="btn btn-xs btn-danger2" style="padding: 1px 4px; font-size: 10px; filter:contrast(0.1);" onclick="deleteCustomHomework(${acc.id}, ${char.id}, ${idx})" title="삭제">❌</button>
+                                    </div>
+                                `;}).join('')}
+                            </div>
+                
+                            <form class="add-form" onsubmit="createCustomHomework(event, ${acc.id}, ${char.id})">
+                                <input type="text" name="hwName" placeholder="숙제 명" required>
+                                <select name="hwType">
+                                    <option value="daily">일일</option>
+                                    <option value="weekly">주간</option>
+                                    <option value="once">일회성</option>
+                                </select>
+                                <button type="submit" class="btn btn-xs">+</button>
+                            </form>
+                
+                            <div class="char-control-footer">
+                                <div class="char-memo-wrapper" style="position: relative; display: inline-block;">
+                                    <button class="btn btn-xs btn-char-memo" onclick="openMemoModal(${acc.id}, ${char.id}, event)">메모</button>
+                                    ${char.memo && char.memo.trim() !== '' ? '<span class="memo-red-dot"></span>' : ''}
+                                </div>
+                                <button class="btn btn-xs btn-char-edit" onclick="openEditCharModal(${acc.id}, ${char.id}, event)">설정</button>
+                                <button class="btn btn-xs btn-char-del" onclick="removeCharacter(${acc.id}, ${char.id}, event)">삭제</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            html += `
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        app.innerHTML = html;
+        updateTimerDisplay();
+
+        if (isHideCompleted) {
+            document.body.classList.add('hide-completed-mode');
+        } else {
+            document.body.classList.remove('hide-completed-mode');
+        }
+
+        // 💡 렌더링 끝난 시점에 body 클래스 변경을 주어 숨김 캐릭터의 표시/비표시 상태 적용
+        if (isShowHiddenChars) {
+            document.body.classList.add('show-hidden-chars-mode');
+        } else {
+            document.body.classList.remove('show-hidden-chars-mode');
+        }
+    }
+
+    checkAndReduceMembershipTime(); 
+    updateOdeAutomatically();
+    checkAbyssReset();
+    checkDailyReset();   
+    checkWeeklyReset();  
+    render();
+    initAlarmToggles();
+    
+    setInterval(updateTimerDisplay, 1000);
+    setInterval(() => {
+        checkAndReduceMembershipTime(); 
+        updateOdeAutomatically();
+        checkAbyssReset();
+        checkDailyReset();   
+        checkWeeklyReset();  
+    }, 60000);
+</script>
 
 <footer>
     © 당근. All rights reserved. (팬메이드 툴)<br>
-    본 사이트는 아이온2 공식과 무관하며, 모든 데이터는 서버 전송 없이 브라우저에 로컬 저장됩니다.
+    본 사이트는 아이온2 공식과 무관하며, 모든 데이터는 서버 전송 없이 브라우저에 로컬 저장됩니다.<br>
+    문의사항 : aksen5577@gmail.com
 </footer>
 </body>
 </html>
