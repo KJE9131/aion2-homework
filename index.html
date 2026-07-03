@@ -432,6 +432,7 @@
                 odeCraftChecked: false,
                 villageOrderChecked: false,
                 abyssOrderChecked: false,
+                dailyDungeonChecked: false, // 🌟 일일던전용 상태 변수 추가
                 characters: [] 
             });
             accordionStatus[newId] = true;
@@ -779,6 +780,7 @@
                 acc.odeBuyChecked = false;
                 acc.villageOrderChecked = false; 
                 acc.abyssOrderChecked = false;   
+                acc.dailyDungeonChecked = false; // 🌟 매주 수요일 아침 5시 초기화에 일일던전 동기화 추가
 
                 if(!acc.characters) return;
                 acc.characters.forEach(char => {
@@ -1271,6 +1273,13 @@
                                     <span class="${acc.abyssOrderChecked ? 'checked-text' : ''}">🌌 지령서 (어비스)</span>
                                 </label>
                             </div>
+                            <!-- 🌟 2번 요구사항: 계정 공통 영역에 '일일던전' 체크박스 추가 -->
+                            <div class="resource-item">
+                                <label class="hw-label">
+                                    <input type="checkbox" ${acc.dailyDungeonChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'dailyDungeonChecked')">
+                                    <span class="${acc.dailyDungeonChecked ? 'checked-text' : ''}">🏛️ 일일던전</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
 
@@ -1302,10 +1311,7 @@
                                         <span>오드에너지</span>
                                         <span class="ode-timer" id="timer-${char.id}">[로딩중...]</span>
                                     </div>
-                                    <div class="tooltip">
-                                        <button class="btn-use-total" onclick="useSmartOde(${acc.id}, ${char.id})">오드사용</button>
-                                        <span class="tooltip-text">💡 클릭 시 80씩 차감됩니다!</span>
-                                    </div>
+                                    <!-- 🌟 3번 요구사항: 오드사용 버튼 툴팁 돔(DOM) 영역 삭제 -->
                                 </div>
                                 <div class="ode-row">
                                     <span class="ode-label">기본오드 [ <input type="number" id="input-ode-${char.id}" class="counter-input" value="${char.ode || 0}" onchange="setDirectVal(${acc.id}, ${char.id}, 'ode', this.value)"> ] / 840</span>
@@ -1335,12 +1341,7 @@
                                         <span class="hw-text ${char.charBuyChecked ? 'checked-text' : ''}">오드구매,제작 (4)</span>
                                     </label>
                                 </div>
-                                <div class="hw-item">
-                                    <label class="hw-label">
-                                        <input type="checkbox" ${char.abyssChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'abyssChecked')">
-                                        <span class="hw-text ${char.abyssChecked ? 'checked-text' : ''}">회랑 [수/토 초기화]</span>
-                                    </label>
-                                </div>
+                                <!-- 🌟 1번 요구사항: 회랑 [수/토 초기화] 아이템 마크업 완전 삭제 완료 -->
                                 <div class="hw-item">
                                     <label class="hw-label">
                                         <input type="checkbox" ${char.awakeningChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'awakeningChecked')">
