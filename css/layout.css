@@ -276,6 +276,7 @@
             margin-bottom: 8px; 
             border-bottom: 1px solid var(--card-border);
             padding-bottom: 6px;
+                    flex-direction:column;
         }
         .char-info { display: flex; flex-direction: column; min-width: 0; }
         .char-name { font-weight: bold; font-size: 14px; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
