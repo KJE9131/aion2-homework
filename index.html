@@ -9,7 +9,31 @@
     <link rel="stylesheet" href="css/layout.css?ver=<?php echo time()?>">
     <link rel="stylesheet" href="css/PretendardVariable.ttf">
     <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
-
+    <style>
+        /* 💡 캐릭터 숨기기 모드를 위한 부가 CSS 스타일링 */
+        .char-card.is-hidden-char {
+            display: none !important; /* 기본적으로 숨김 처리 */
+        }
+        /* '숨긴 캐릭터 보기' 모드가 활성화되면 숨겨진 카드들을 반투명하게 시각적으로 표시 */
+        body.show-hidden-chars-mode .char-card.is-hidden-char {
+            display: flex !important;
+            opacity: 0.4;
+            filter: grayscale(0.6);
+            border: 1px dashed #ef4444 !important;
+        }
+        .btn-char-hide {
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            padding: 2px 6px;
+            font-size: 13px;
+            transition: color 0.2s;
+        }
+        .btn-char-hide:hover {
+            color: #f43f5e;
+        }
+    </style>
 </head>
 
 <body>
@@ -284,17 +308,15 @@
             const ctx = new AudioContext();
             const now = ctx.currentTime;
             
-            // 1. 전체 마스터 볼륨을 0.12 -> 0.08로 살짝 낮춰 귀의 피로감을 줄입니다.
             const mainGain = ctx.createGain();
             mainGain.connect(ctx.destination);
             mainGain.gain.setValueAtTime(0.08, now);
     
-            // 2. 각 음별로 개별 볼륨(volume) 설정을 추가했습니다.
             const sequence = [
-                { pitch: 523.25, start: 0.0,  duration: 0.8, type: 'sine',     volume: 0.4 }, // 🌟 첫 음 볼륨을 기존의 채 1/2 수준으로 줄이고 부드러운 sine파 유지
-                { pitch: 659.25, start: 0.2,  duration: 0.4, type: 'triangle', volume: 0.7 }, // 중간 화음
-                { pitch: 783.99, start: 0.35, duration: 0.4, type: 'triangle', volume: 0.7 }, // 중간 화음
-                { pitch: 1046.50, start: 0.5,  duration: 1.0, type: 'sine',     volume: 0.9 }  // 마지막 강조 음
+                { pitch: 523.25, start: 0.0,  duration: 0.8, type: 'sine',     volume: 0.4 }, 
+                { pitch: 659.25, start: 0.2,  duration: 0.4, type: 'triangle', volume: 0.7 }, 
+                { pitch: 783.99, start: 0.35, duration: 0.4, type: 'triangle', volume: 0.7 }, 
+                { pitch: 1046.50, start: 0.5,  duration: 1.0, type: 'sine',     volume: 0.9 }  
             ];
     
             sequence.forEach((note) => {
@@ -307,11 +329,9 @@
                 osc.type = note.type;
                 osc.frequency.setValueAtTime(note.pitch, startTime);
                 
-                // 3. 개별 지정된 볼륨(note.volume)을 곱해 페이드인/아웃을 처리합니다.
                 const targetVolume = note.volume;
     
                 gainNode.gain.setValueAtTime(0, startTime);
-                // 처음에 팍 터지지 않도록 페이드인 시간을 0.05초 -> 0.08초로 조금 더 늘려 부드럽게 시작합니다.
                 gainNode.gain.linearRampToValueAtTime(targetVolume, startTime + 0.08); 
                 gainNode.gain.setValueAtTime(targetVolume, startTime + (note.duration * 0.4)); 
                 gainNode.gain.exponentialRampToValueAtTime(0.001, stopTime); 
@@ -431,7 +451,7 @@
                 odeCraftChecked: false,
                 villageOrderChecked: false,
                 abyssOrderChecked: false,
-                dailyDungeonChecked: false, // 🌟 일일던전용 상태 변수 추가
+                dailyDungeonChecked: false, 
                 characters: [] 
             });
             accordionStatus[newId] = true;
@@ -714,7 +734,7 @@
             let target = new Date(d.getTime());
             target.setHours(22, 0, 0, 0);
             if (d.getTime() < target.getTime()) d.setDate(d.getDate() - 1);
-            while (target.getDay() !== 3 && target.getDay() !== 6) { target.setDate(target.getDate() - 1); }
+            while (target.getDay() !== 3 && target.getDay() !== 6) { target.setDate(target.setDate() - 1); }
             return target.getTime();
         }
         const currentTargetReset = getPreviousResetTime(now);
@@ -779,7 +799,7 @@
                 acc.odeBuyChecked = false;
                 acc.villageOrderChecked = false; 
                 acc.abyssOrderChecked = false;   
-                acc.dailyDungeonChecked = false; // 🌟 매주 수요일 아침 5시 초기화에 일일던전 동기화 추가
+                acc.dailyDungeonChecked = false; 
 
                 if(!acc.characters) return;
                 acc.characters.forEach(char => {
@@ -898,6 +918,7 @@
                 abyssChecked: false,     
                 nightmareChecked: false,  
                 awakeningChecked: false,  
+                hidden: false, // 💡 캐릭터 기본 상태 변수에 숨김 여부 속성(hidden) 디폴트 설정 추가
                 homeworks: [
                     { name: '시즌주간미션', type: 'weekly', checked: false },
                     { name: '투기장', type: 'weekly', checked: false },
@@ -1114,14 +1135,15 @@
         }
     }
 
-   let isHideCompleted = JSON.parse(localStorage.getItem('isHideCompleted_v15')) || false;
+    let isHideCompleted = JSON.parse(localStorage.getItem('isHideCompleted_v15')) || false;
+    let isShowHiddenChars = JSON.parse(localStorage.getItem('isShowHiddenChars_v15')) || false; // 💡 숨긴 캐릭터 노출용 상태값
 
     function toggleHideCompleted() {
         isHideCompleted = !isHideCompleted;
         localStorage.setItem('isHideCompleted_v15', JSON.stringify(isHideCompleted));
         
         const btn = document.getElementById('btnToggleHide');
-        const desc = document.getElementById('hideToggleDescription'); // 안내문구 요소 가져오기
+        const desc = document.getElementById('hideToggleDescription'); 
         
         if (isHideCompleted) {
             document.body.classList.add('hide-completed-mode');
@@ -1143,6 +1165,24 @@
             }
         }
     }
+
+    // 💡 글로벌 액션 바에서 '숨긴 캐릭터 표시 토글' 처리 함수
+    function toggleShowHiddenChars() {
+        isShowHiddenChars = !isShowHiddenChars;
+        localStorage.setItem('isShowHiddenChars_v15', JSON.stringify(isShowHiddenChars));
+        render();
+    }
+
+    // 💡 특정 캐릭터를 숨김/해제 처리하는 함수
+    function toggleHideCharacter(accId, charId, event) {
+        if(event) event.stopPropagation();
+        const acc = gameData.find(a => a.id === accId);
+        const char = acc.characters.find(c => c.id === charId);
+        if(char) {
+            char.hidden = !char.hidden;
+            saveData();
+        }
+    }
     
     function render() {
         const app = document.getElementById('app');
@@ -1152,16 +1192,24 @@
         }
 
         let html = '';
-        // 🌟 수정된 글로벌 액션 바 영역 (안내 문구 추가)
+        // 💡 글로벌 액션 바에 캐릭터 숨김 활성화 제어 버튼 동적 마크업 추가
             html += `
-                <div class="global-action-bar" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <div class="global-action-bar" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
                     <button id="btnToggleHide" class="btn-toggle-hide ${isHideCompleted ? 'active' : ''}" onclick="toggleHideCompleted()" 
                             style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background-color: var(--bg-card, #fff); border: 1px solid var(--border-color, #ddd); border-radius: 20px; color: var(--text-color, #333); font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.2s ease;">
                         ${isHideCompleted ? '👀 모든 숙제 보기' : '✅ 완료된 숙제 숨기기'}
                     </button>
                     
-                    <span id="hideToggleDescription" style="font-size: 11px; color: #94a3b8; font-weight: 400; letter-spacing: -0.3px; line-height: 1;">
+                    <span id="hideToggleDescription" style="font-size: 11px; color: #94a3b8; font-weight: 400; letter-spacing: -0.3px; line-height: 1; margin-right: 20px;">
                         ${isHideCompleted ? '숨겨진 숙제를 모두 표시합니다.' : '완료된 숙제를 대시보드에서 숨깁니다.'}
+                    </span>
+
+                    <button id="btnToggleHiddenChars" class="btn-toggle-hide ${isShowHiddenChars ? 'active' : ''}" onclick="toggleShowHiddenChars()" 
+                            style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background-color: var(--bg-card, #fff); border: 1px solid var(--border-color, #ddd); border-radius: 20px; color: var(--text-color, #333); font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.2s ease;">
+                        ${isShowHiddenChars ? '🙈 숨긴 캐릭터 감추기' : '🙉 숨긴 캐릭터 편집/보기'}
+                    </button>
+                    <span style="font-size: 11px; color: #94a3b8; font-weight: 400; letter-spacing: -0.3px; line-height: 1;">
+                        ${isShowHiddenChars ? '숨김 처리된 캐릭터 카드가 점선으로 노출됩니다.' : '숨김 등록된 캐릭터들을 화면에서 제외합니다.'}
                     </span>
                 </div>
             `;
@@ -1272,7 +1320,6 @@
                                     <span class="${acc.abyssOrderChecked ? 'checked-text' : ''}">🌌 지령서 (어비스)</span>
                                 </label>
                             </div>
-                            <!-- 🌟 2번 요구사항: 계정 공통 영역에 '일일던전' 체크박스 추가 -->
                             <div class="resource-item">
                                 <label class="hw-label">
                                     <input type="checkbox" ${acc.dailyDungeonChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'dailyDungeonChecked')">
@@ -1294,14 +1341,19 @@
             } else {
                 acc.characters.forEach(char => {
                 const currentTicket = char.nightmareTicket !== undefined ? char.nightmareTicket : 2;
+                const isCharHidden = char.hidden || false; // 캐릭터 개별 숨김 플래그 바인딩
                     
+                    // 💡 캐릭터 카드 동적 할당 클래스에 'is-hidden-char' 바인딩 조건 처리 추가
                     html += `
-                        <div class="char-card">
-                            <div class="char-header">
+                        <div class="char-card ${isCharHidden ? 'is-hidden-char' : ''}">
+                            <div class="char-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
                                 <div class="char-info">
                                     <span class="char-name">${char.name}</span>
                                     <span class="char-sub-info">직업: ${char.job} | 투력: <span class="char-power">${Number(char.power).toLocaleString()}</span></span>
                                 </div>
+                                <button class="btn-char-hide" onclick="toggleHideCharacter(${acc.id}, ${char.id}, event)" title="${isCharHidden ? '숨김 해제' : '캐릭터 숨기기'}">
+                                    ${isCharHidden ? '🙉 숨김해제' : '🙈 숨기기'}
+                                </button>
                             </div>
                             
                             <div class="resource-group">
@@ -1310,7 +1362,6 @@
                                         <span>오드에너지</span>
                                         <span class="ode-timer" id="timer-${char.id}">[로딩중...]</span>
                                     </div>
-                                    <!-- 🌟 3번 요구사항: 오드사용 버튼 툴팁 돔(DOM) 영역 삭제 -->
                                 </div>
                                 <div class="ode-row">
                                     <span class="ode-label">기본오드 [ <input type="number" id="input-ode-${char.id}" class="counter-input" value="${char.ode || 0}" onchange="setDirectVal(${acc.id}, ${char.id}, 'ode', this.value)"> ] / 840</span>
@@ -1406,6 +1457,13 @@
             document.body.classList.add('hide-completed-mode');
         } else {
             document.body.classList.remove('hide-completed-mode');
+        }
+
+        // 💡 렌더링 끝난 시점에 body 클래스 변경을 주어 숨김 캐릭터의 표시/비표시 상태 적용
+        if (isShowHiddenChars) {
+            document.body.classList.add('show-hidden-chars-mode');
+        } else {
+            document.body.classList.remove('show-hidden-chars-mode');
         }
     }
 
