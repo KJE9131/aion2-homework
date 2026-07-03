@@ -10,29 +10,55 @@
     <link rel="stylesheet" href="css/PretendardVariable.ttf">
     <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
     <style>
-        /* 💡 캐릭터 숨기기 모드를 위한 부가 CSS 스타일링 */
+        /* 💡 캐릭터 제외(숨기기) 모드를 위한 스타일링 */
         .char-card.is-hidden-char {
-            display: none !important; /* 기본적으로 숨김 처리 */
+            display: none !important; 
         }
-        /* '숨긴 캐릭터 보기' 모드가 활성화되면 숨겨진 카드들을 반투명하게 시각적으로 표시 */
+        /* 제외 캐릭터 관리 모드가 켜지면 제외된 카드들이 대시보드에 흐리게 표시됨 */
         body.show-hidden-chars-mode .char-card.is-hidden-char {
             display: flex !important;
-            opacity: 0.4;
-            filter: grayscale(0.6);
-            border: 1px dashed #ef4444 !important;
+            opacity: 0.35;
+            filter: grayscale(0.8);
+            border: 1px dashed #64748b !important;
         }
         .btn-char-hide {
             background: none;
             border: none;
-            color: #b77c30;
+            color: #64748b;
             cursor: pointer;
-            padding: 2px 0px;
+            padding: 2px 6px;
             font-size: 12px;
             transition: color 0.2s;
-            font-weight:600;
         }
         .btn-char-hide:hover {
             color: #f43f5e;
+        }
+
+        /* 💡 글로벌 액션 바 버튼 스타일 통일 (배경색, 글씨색 일치) */
+        .global-action-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .global-action-bar .btn-toggle-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background-color: #1e293b; /* 일관된 어두운 톤의 카드 배경색 혹은 브랜드 컬러 선택 가능 */
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            color: #cbd5e1; /* 일관된 글씨 톤 */
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .global-action-bar .btn-toggle-action:hover {
+            background-color: #2d3748;
+            color: #fff;
         }
     </style>
 </head>
@@ -254,7 +280,6 @@
         container.classList.toggle('active');
     }
 
-    // 외부 공간 클릭 시 열려있는 메뉴 닫기 핸들러
     window.addEventListener('click', function(e) {
         const container = document.getElementById('floatingMenu');
         if (container.classList.contains('active') && !container.contains(e.target)) {
@@ -343,13 +368,11 @@
                 osc.start(startTime);
                 osc.stop(stopTime + 0.1);
             });
-            
         } catch (error) {
             console.error("오디오 재생 중 오류 발생:", error);
         }
     }
     
-
     function toggleMembershipUI() {
         const isMembership = document.querySelector('input[name="modalAccMembership"]:checked').value === 'O';
         document.getElementById('membershipWarningArea').style.display = isMembership ? 'none' : 'block';
@@ -360,13 +383,11 @@
 
     function openAccountModal(accId = null, event = null) {
         if (event) event.stopPropagation();
-        
         document.getElementById('accountForm').reset();
         
         if (accId) {
             accEditMode = true;
             const acc = gameData.find(a => a.id === accId);
-            
             document.getElementById('modalAccId').value = accId;
             document.getElementById('modalAccName').value = acc.name;
             
@@ -376,7 +397,6 @@
                 document.getElementById('membershipHours').value = 0;
             } else {
                 document.querySelector('input[name="modalAccMembership"][value="O"]').checked = true;
-                
                 let displayDays = acc.membershipDays !== undefined ? acc.membershipDays : 30;
                 let displayHours = acc.membershipHours !== undefined ? acc.membershipHours : 0;
                 
@@ -391,11 +411,9 @@
                         displayHours = totalHours % 24;
                     }
                 }
-
                 document.getElementById('membershipDays').value = displayDays;
                 document.getElementById('membershipHours').value = displayHours;
             }
-            
             document.getElementById('accountModalTitle').innerText = "계정 설정 수정";
             document.getElementById('accountModalSubmitBtn').innerText = "수정 완료";
         } else {
@@ -404,11 +422,9 @@
             document.querySelector('input[name="modalAccMembership"][value="O"]').checked = true;
             document.getElementById('membershipDays').value = 30;
             document.getElementById('membershipHours').value = 0;
-            
             document.getElementById('accountModalTitle').innerText = "새 계정 추가";
             document.getElementById('accountModalSubmitBtn').innerText = "생성";
         }
-        
         toggleMembershipUI();
         document.getElementById('accountModal').style.display = 'flex';
     }
@@ -420,7 +436,6 @@
 
     function submitAccountForm(e) {
         e.preventDefault();
-        
         const accId = document.getElementById('modalAccId').value;
         const name = document.getElementById('modalAccName').value.trim();
         const membership = document.querySelector('input[name="modalAccMembership"]:checked').value;
@@ -440,25 +455,15 @@
         } else {
             const newId = Date.now();
             gameData.push({ 
-                id: newId, 
-                name: name, 
-                membership: membership,
-                membershipDays: days,
-                membershipHours: hours,
-                membershipUpdatedAt: nowTimestamp, 
-                shugo: 2, 
-                dimension: 1, 
-                odeBuyChecked: false, 
-                odeCraftChecked: false,
-                villageOrderChecked: false,
-                abyssOrderChecked: false,
-                dailyDungeonChecked: false, 
+                id: newId, name: name, membership: membership,
+                membershipDays: days, membershipHours: hours, membershipUpdatedAt: nowTimestamp, 
+                shugo: 2, dimension: 1, odeBuyChecked: false, odeCraftChecked: false,
+                villageOrderChecked: false, abyssOrderChecked: false, dailyDungeonChecked: false, 
                 characters: [] 
             });
             accordionStatus[newId] = true;
             localStorage.setItem('accordionStatus_v15', JSON.stringify(accordionStatus));
         }
-
         closeAccountModal();
         saveData(); 
     }
@@ -546,9 +551,7 @@
                 let festaMin = 59 - currentMin;
                 let festaSec = 59 - currentSec;
                 if (festaMin === 0 && festaSec === 0) playBeepSound();
-                
-                const festaStr = `${String(festaMin).padStart(2, '0')}:${String(festaSec).padStart(2, '0')} 남음`;
-                festaEl.innerText = festaStr; 
+                festaEl.innerText = `${String(festaMin).padStart(2, '0')}:${String(festaSec).padStart(2, '0')} 남음`; 
                 festaEl.className = "alarm-timer" + (festaMin < 5 ? " alarm-urgent" : "");
             }
         }
@@ -562,9 +565,7 @@
                 let invInMin = (currentMin < 30) ? (29 - currentMin) : (59 - currentMin + 30);
                 let invSec = 59 - currentSec;
                 if (invInMin === 0 && invSec === 0) playBeepSound();
-
-                const invStr = `${String(invInMin).padStart(2, '0')}:${String(invSec).padStart(2, '0')} 남음`;
-                invEl.innerText = invStr;
+                invEl.innerText = `${String(invInMin).padStart(2, '0')}:${String(invSec).padStart(2, '0')} 남음`;
                 invEl.className = "alarm-timer" + (invInMin < 5 ? " alarm-urgent" : "");
             }
         }
@@ -584,22 +585,13 @@
                 if (!nextTarget) {
                     nextTarget = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 2, 0, 0, 0);
                 }
-
                 const spaceDiffMs = nextTarget.getTime() - now.getTime();
                 const sHours = Math.floor(spaceDiffMs / (1000 * 60 * 60));
                 const sMinutes = Math.floor((spaceDiffMs % (1000 * 60 * 60)) / (1000 * 60));
                 const sSeconds = Math.floor((spaceDiffMs % (1000 * 60)) / 1000);
-                
                 if (sHours === 0 && sMinutes === 0 && sSeconds === 0) playBeepSound();
-
-                const spaceStr = `${String(sHours).padStart(2, '0')}:${String(sMinutes).padStart(2, '0')}:${String(sSeconds).padStart(2, '0')} 남음`;
-                spaceEl.innerText = spaceStr;
-                
-                if (sHours === 0 && sMinutes < 10) {
-                    spaceEl.className = "alarm-timer alarm-urgent";
-                } else {
-                    spaceEl.className = "alarm-timer";
-                }
+                spaceEl.innerText = `${String(sHours).padStart(2, '0')}:${String(sMinutes).padStart(2, '0')}:${String(sSeconds).padStart(2, '0')} 남음`;
+                spaceEl.className = "alarm-timer" + (sHours === 0 && sMinutes < 10 ? " alarm-urgent" : "");
             }
         }
     }
@@ -611,7 +603,6 @@
         let baseTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
         if (now.getTime() < baseTime.getTime()) baseTime.setDate(baseTime.getDate() - 1);
         let nextReset = baseTime.getTime();
-        
         const threeHoursMs = 3 * 60 * 60 * 1000; 
         while (nextReset <= now.getTime()) { nextReset += threeHoursMs; }
         return nextReset;
@@ -620,7 +611,6 @@
     function updateOdeAutomatically() {
         if (isOdeUpdating) return;
         isOdeUpdating = true;
-
         const now = Date.now();
         const nextReset = getNextOdeResetTime();
         const threeHoursMs = 3 * 60 * 60 * 1000; 
@@ -629,12 +619,8 @@
         if (parseInt(lastChecked) < lastExpectedReset) {
             const timeDiff = lastExpectedReset - parseInt(lastChecked);
             const chargeCycles = Math.round(timeDiff / threeHoursMs); 
-            if (chargeCycles < 1) {
-                isOdeUpdating = false;
-                return;
-            }
+            if (chargeCycles < 1) { isOdeUpdating = false; return; }
             const totalAddOde = chargeCycles * 15;
-            
             lastChecked = lastExpectedReset;
             localStorage.setItem('lastOdeUpdateTime_v15', lastChecked.toString());
             
@@ -642,7 +628,6 @@
                 if(!acc.characters) return;
                 acc.characters.forEach(char => {
                     if ((char.ode || 0) >= 840) return;
-
                     let targetOde = (char.ode || 0) + totalAddOde;
                     if (char.ode < targetOde) {
                         if (targetOde > 840) targetOde = 840;
@@ -650,11 +635,9 @@
                     }
                 });
             });
-            
             localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
             render();
         }
-
         setTimeout(() => { isOdeUpdating = false; }, 1000);
     }
     
@@ -683,14 +666,12 @@
                 }
             });
         });
-        
         updateTopAlertTimers();
     }
 
     function checkAndReduceMembershipTime() {
         let isChanged = false;
         const now = Date.now();
-
         gameData.forEach(acc => {
             if (acc.membership === 'O') {
                 if (!acc.membershipUpdatedAt) {
@@ -698,21 +679,14 @@
                     isChanged = true;
                     return;
                 }
-
                 const diffMs = now - acc.membershipUpdatedAt;
                 const diffMins = Math.floor(diffMs / (1000 * 60)); 
-
                 if (diffMins >= 60) {
                     let totalHours = ((acc.membershipDays || 0) * 24) + (acc.membershipHours || 0);
                     const passedHours = Math.floor(diffMins / 60);
-
                     totalHours -= passedHours;
-
                     if (totalHours <= 0) {
-                        acc.membership = 'X';
-                        acc.membershipDays = 0;
-                        acc.membershipHours = 0;
-                        acc.membershipUpdatedAt = now;
+                        acc.membership = 'X'; acc.membershipDays = 0; acc.membershipHours = 0; acc.membershipUpdatedAt = now;
                     } else {
                         acc.membershipDays = Math.floor(totalHours / 24);
                         acc.membershipHours = totalHours % 24;
@@ -722,7 +696,6 @@
                 }
             }
         });
-
         if (isChanged) {
             localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
             render();
@@ -753,30 +726,19 @@
     function checkDailyReset() {
         const now = new Date();
         let targetReset = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
-        if (now.getTime() < targetReset.getTime()) {
-            targetReset.setDate(targetReset.getDate() - 1);
-        }
+        if (now.getTime() < targetReset.getTime()) targetReset.setDate(targetReset.getDate() - 1);
         const currentTargetReset = targetReset.getTime();
 
         if (parseInt(lastDailyReset) < currentTargetReset) {
             gameData.forEach(acc => {
-                let newShugo = (acc.shugo || 0) + 2;
-                if (newShugo > 14) newShugo = 14;
-                acc.shugo = newShugo;
-
-                let newDimension = (acc.dimension || 0) + 1;
-                if (newDimension > 7) newDimension = 7;
-                acc.dimension = newDimension;
-
+                let newShugo = (acc.shugo || 0) + 2; if (newShugo > 14) newShugo = 14; acc.shugo = newShugo;
+                let newDimension = (acc.dimension || 0) + 1; if (newDimension > 7) newDimension = 7; acc.dimension = newDimension;
                 if(!acc.characters) return;
                 acc.characters.forEach(char => {
                     let newNightmareTicket = (char.nightmareTicket !== undefined ? char.nightmareTicket : 2) + 2;
                     if (newNightmareTicket > 14) newNightmareTicket = 14;
                     char.nightmareTicket = newNightmareTicket;
-
-                    char.homeworks.forEach(hw => {
-                        if (hw.type === 'daily') hw.checked = false;
-                    });
+                    char.homeworks.forEach(hw => { if (hw.type === 'daily') hw.checked = false; });
                 });
             });
             localStorage.setItem('lastDailyResetTime_v15', currentTargetReset.toString());
@@ -789,28 +751,16 @@
         const now = new Date();
         let targetReset = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
         if (now.getTime() < targetReset.getTime()) targetReset.setDate(targetReset.getDate() - 1);
-        
-        while (targetReset.getDay() !== 3) { 
-            targetReset.setDate(targetReset.getDate() - 1); 
-        }
+        while (targetReset.getDay() !== 3) { targetReset.setDate(targetReset.getDate() - 1); }
         const currentTargetReset = targetReset.getTime();
 
         if (parseInt(lastWeeklyReset) < currentTargetReset) {
             gameData.forEach(acc => {
-                acc.odeBuyChecked = false;
-                acc.villageOrderChecked = false; 
-                acc.abyssOrderChecked = false;   
-                acc.dailyDungeonChecked = false; 
-
+                acc.odeBuyChecked = false; acc.villageOrderChecked = false; acc.abyssOrderChecked = false; acc.dailyDungeonChecked = false; 
                 if(!acc.characters) return;
                 acc.characters.forEach(char => {
-                    char.charBuyChecked = false;
-                    char.nightmareChecked = false; 
-                    char.awakeningChecked = false; 
-                    
-                    char.homeworks.forEach(hw => {
-                        if (hw.type === 'weekly') hw.checked = false;
-                    });
+                    char.charBuyChecked = false; char.nightmareChecked = false; char.awakeningChecked = false; 
+                    char.homeworks.forEach(hw => { if (hw.type === 'weekly') hw.checked = false; });
                 });
             });
             localStorage.setItem('lastWeeklyResetTime_v15', currentTargetReset.toString());
@@ -832,13 +782,8 @@
         const bodyEl = document.getElementById(`acc-body-${accId}`);
         const iconEl = document.getElementById(`acc-icon-${accId}`);
         if (bodyEl && iconEl) {
-            if (accordionStatus[accId]) {
-                bodyEl.classList.remove('collapsed');
-                iconEl.innerText = '▲';
-            } else {
-                bodyEl.classList.add('collapsed');
-                iconEl.innerText = '▼';
-            }
+            if (accordionStatus[accId]) { bodyEl.classList.remove('collapsed'); iconEl.innerText = '▲'; } 
+            else { bodyEl.classList.add('collapsed'); iconEl.innerText = '▼'; }
         }
     }
 
@@ -855,36 +800,24 @@
 
     function openEditCharModal(accId, charId, event) {
         if (event) event.stopPropagation();
-        
         const acc = gameData.find(a => a.id === accId);
         const char = acc.characters.find(c => c.id === charId);
         
-        editMode = true;
-        editAccId = accId;
-        editCharId = charId;
-        
+        editMode = true; editAccId = accId; editCharId = charId;
         document.getElementById('modalAccId').value = accId;
         document.getElementById('modalCharName').value = char.name;
         document.getElementById('modalCharJob').value = char.job;
         document.getElementById('modalCharPower').value = char.power;
         
-        const modalTitle = document.querySelector('#charModal h3'); 
-        if (modalTitle) modalTitle.innerText = "캐릭터 정보 수정";
-        
+        const modalTitle = document.querySelector('#charModal h3'); if (modalTitle) modalTitle.innerText = "캐릭터 정보 수정";
         document.getElementById('charModal').style.display = 'flex'; 
-
-        const modalBtn = document.querySelector('#charModal button[type="submit"]');
-        if (modalBtn) modalBtn.innerText = "완료";
+        const modalBtn = document.querySelector('#charModal button[type="submit"]'); if (modalBtn) modalBtn.innerText = "완료";
     }
 
     function closeCharModal() { 
         document.getElementById('charModal').style.display = 'none'; 
-        editMode = false;
-        editAccId = null;
-        editCharId = null;
-        
-        const modalTitle = document.querySelector('#charModal h3');
-        if (modalTitle) modalTitle.innerText = "새 캐릭터 추가";
+        editMode = false; editAccId = null; editCharId = null;
+        const modalTitle = document.querySelector('#charModal h3'); if (modalTitle) modalTitle.innerText = "새 캐릭터 추가";
     }
 
     function submitCharacterForm(e) {
@@ -893,33 +826,17 @@
         const name = document.getElementById('modalCharName').value.trim();
         const job = document.getElementById('modalCharJob').value;
         const power = document.getElementById('modalCharPower').value;
-
         const acc = gameData.find(a => a.id === accId);
         
         if (editMode) {
             const char = acc.characters.find(c => c.id === editCharId);
-            if (char) {
-                char.name = name;
-                char.job = job;
-                char.power = power;
-            }
+            if (char) { char.name = name; char.job = job; char.power = power; }
         } else {
             if(!acc.characters) acc.characters = [];
             acc.characters.push({
-                id: Date.now(), 
-                name: name, 
-                job: job, 
-                power: power, 
-                ode: 0, 
-                extraOde: 0,
-                nightmareTicket: 2, 
-                memo: '', 
-                charBuyChecked: false, 
-                charCraftChecked: false, 
-                abyssChecked: false,     
-                nightmareChecked: false,  
-                awakeningChecked: false,  
-                hidden: false, // 💡 캐릭터 기본 상태 변수에 숨김 여부 속성(hidden) 디폴트 설정 추가
+                id: Date.now(), name: name, job: job, power: power, ode: 0, extraOde: 0, nightmareTicket: 2, memo: '', 
+                charBuyChecked: false, charCraftChecked: false, abyssChecked: false, nightmareChecked: false, awakeningChecked: false,  
+                hidden: false, 
                 homeworks: [
                     { name: '시즌주간미션', type: 'weekly', checked: false },
                     { name: '투기장', type: 'weekly', checked: false },
@@ -927,9 +844,7 @@
                 ]
             });
         }
-
-        closeCharModal(); 
-        saveData();       
+        closeCharModal(); saveData();       
     }
 
     let memoAccId = null;
@@ -937,46 +852,28 @@
 
     function openMemoModal(accId, charId, event) {
         if (event) event.stopPropagation();
-        
-        memoAccId = accId;
-        memoCharId = charId;
-        
+        memoAccId = accId; memoCharId = charId;
         const acc = gameData.find(a => a.id === accId);
         const char = acc.characters.find(c => c.id === charId);
         
         document.getElementById('memoAccId').value = accId;
         document.getElementById('memoCharId').value = charId;
         document.getElementById('modalMemoText').value = char.memo || '';
-        
-        const memoTitleEl = document.getElementById('memoModalTitle');
-        if (memoTitleEl && char) {
-            memoTitleEl.innerText = `[${char.name}] 메모 관리`;
-        }
-        
+        const memoTitleEl = document.getElementById('memoModalTitle'); if (memoTitleEl && char) memoTitleEl.innerText = `[${char.name}] 메모 관리`;
         document.getElementById('memoModal').style.display = 'flex';
     }
 
-    function closeMemoModal() {
-        document.getElementById('memoModal').style.display = 'none';
-        memoAccId = null;
-        memoCharId = null;
-    }
+    function closeMemoModal() { document.getElementById('memoModal').style.display = 'none'; memoAccId = null; memoCharId = null; }
 
     function submitMemoForm(e) {
         e.preventDefault();
         const accId = parseInt(document.getElementById('memoAccId').value);
         const charId = parseInt(document.getElementById('memoCharId').value);
         const memoText = document.getElementById('modalMemoText').value;
-
         const acc = gameData.find(a => a.id === accId);
         const char = acc.characters.find(c => c.id === charId);
-        
-        if (char) {
-            char.memo = memoText; 
-        }
-        
-        closeMemoModal();
-        saveData(); 
+        if (char) char.memo = memoText; 
+        closeMemoModal(); saveData(); 
     }
 
     function removeAccount(accId, event) {
@@ -997,60 +894,22 @@
         }
     }
 
-    function useSmartOde(accId, charId) {
-        const odeInput = document.getElementById(`input-ode-${charId}`);
-        const extraOdeInput = document.getElementById(`input-extraOde-${charId}`);
-        if (!odeInput || !extraOdeInput) return;
-
-        let baseOde = parseInt(odeInput.value) || 0;
-        let extraOde = parseInt(extraOdeInput.value) || 0;
-        const amountToUse = 80;
-
-        if ((baseOde + extraOde) < amountToUse) {
-            alert("❌ 오드에너지가 부족합니다!");
-            return;
-        }
-
-        if (baseOde >= amountToUse) {
-            baseOde -= amountToUse;
-        } else {
-            let remainder = amountToUse - baseOde;
-            baseOde = 0;
-            extraOde -= remainder;
-        }
-
-        odeInput.value = baseOde;
-        extraOdeInput.value = extraOde;
-
-        if (typeof setDirectVal === 'function') {
-            setDirectVal(accId, charId, 'ode', baseOde);
-            setDirectVal(accId, charId, 'extraOde', extraOde);
-        }
-    }
-
     function changeVal(accId, charId, key, diff) {
         const acc = gameData.find(a => a.id === accId);
-        
         if (charId === null) {
             let newVal = (acc[key] || 0) + diff;
             if (newVal < 0) newVal = 0; 
-
             if (key === 'shugo' && newVal > 14) newVal = 14;
             if (key === 'dimension' && newVal > 7) newVal = 7;
-
             acc[key] = newVal;
         } else {
             const char = acc.characters.find(c => c.id === charId);
             let newVal = (char[key] || 0) + diff;
             if (newVal < 0) newVal = 0;
-            
             if (key === 'nightmareTicket' && newVal > 14) newVal = 14;
-            
             char[key] = newVal;
         }
-        
-        render();
-        saveData();
+        render(); saveData();
     }
 
     function setDirectVal(accId, charId, key, val) {
@@ -1061,16 +920,13 @@
         if (charId === null) {
             if (key === 'shugo' && numVal > 14) numVal = 14;
             if (key === 'dimension' && numVal > 7) numVal = 7;
-
             acc[key] = numVal;
         } else {
             const char = acc.characters.find(c => c.id === charId);
             if (key === 'nightmareTicket' && numVal > 14) numVal = 14;
             char[key] = numVal;
         }
-
-        render();
-        saveData();
+        render(); saveData();
     }
 
     function toggleCheckbox(accId, charId, field, index = null) {
@@ -1080,10 +936,7 @@
             const char = acc.characters.find(c => c.id === charId);
             if (index !== null) {
                 char.homeworks[index].checked = !char.homeworks[index].checked;
-                
-                if (char.homeworks[index].type === 'once' && char.homeworks[index].checked) {
-                    char.homeworks.splice(index, 1);
-                }
+                if (char.homeworks[index].type === 'once' && char.homeworks[index].checked) char.homeworks.splice(index, 1);
             }
             else char[field] = !char[field];
         }
@@ -1091,98 +944,56 @@
     }
 
     function createCustomHomework(e, accId, charId) {
-        e.preventDefault();
-        const form = e.target;
-        const name = form.hwName.value.trim();
-        const type = form.hwType.value;
-        if(!name) return;
-        const acc = gameData.find(a => a.id === accId);
-        const char = acc.characters.find(c => c.id === charId);
-        char.homeworks.push({ name, type, checked: false });
-        saveData();
+        e.preventDefault(); const form = e.target; const name = form.hwName.value.trim(); const type = form.hwType.value; if(!name) return;
+        const acc = gameData.find(a => a.id === accId); const char = acc.characters.find(c => c.id === charId);
+        char.homeworks.push({ name, type, checked: false }); saveData();
     }
 
     function createBatchHomework(e, accId) {
-        e.preventDefault();
-        const form = e.target;
-        const name = form.batchHwName.value.trim();
-        const type = form.batchHwType.value;
-        if (!name) return;
-
+        e.preventDefault(); const form = e.target; const name = form.batchHwName.value.trim(); const type = form.batchHwType.value; if (!name) return;
         const acc = gameData.find(a => a.id === accId);
-        if (!acc.characters || acc.characters.length === 0) {
-            alert("이 계정에는 생성된 캐릭터가 없습니다. 캐릭터를 먼저 생성해 주세요.");
-            return;
-        }
-
-        acc.characters.forEach(char => {
-            char.homeworks.push({ name, type, checked: false });
-        });
-
-        let typeText = '일일';
-        if (type === 'weekly') typeText = '주간';
-        if (type === 'once') typeText = '일회성';
-
-        alert(`✅ [${typeText}] "${name}" 숙제가 이 계정의 모든 캐릭터(${acc.characters.length}명)에게 일괄 추가되었습니다.`);
+        if (!acc.characters || acc.characters.length === 0) { alert("이 계정에는 생성된 캐릭터가 없습니다."); return; }
+        acc.characters.forEach(char => { char.homeworks.push({ name, type, checked: false }); });
+        let typeText = type === 'weekly' ? '주간' : (type === 'once' ? '일회성' : '일일');
+        alert(`✅ [${typeText}] "${name}" 숙제가 이 계정의 모든 캐릭터에게 일괄 추가되었습니다.`);
         saveData();
     }
 
     function deleteCustomHomework(accId, charId, index) {
         if (confirm("이 커스텀 숙제를 삭제하시겠습니까?")) {
-            const acc = gameData.find(a => a.id === accId);
-            const char = acc.characters.find(c => c.id === charId);
-            char.homeworks.splice(index, 1);
-            saveData();
+            const acc = gameData.find(a => a.id === accId); const char = acc.characters.find(c => c.id === charId);
+            char.homeworks.splice(index, 1); saveData();
         }
     }
 
     let isHideCompleted = JSON.parse(localStorage.getItem('isHideCompleted_v15')) || false;
-    let isShowHiddenChars = JSON.parse(localStorage.getItem('isShowHiddenChars_v15')) || false; // 💡 숨긴 캐릭터 노출용 상태값
+    let isShowHiddenChars = JSON.parse(localStorage.getItem('isShowHiddenChars_v15')) || false; 
 
     function toggleHideCompleted() {
         isHideCompleted = !isHideCompleted;
         localStorage.setItem('isHideCompleted_v15', JSON.stringify(isHideCompleted));
         
         const btn = document.getElementById('btnToggleHide');
-        const desc = document.getElementById('hideToggleDescription'); 
-        
         if (isHideCompleted) {
             document.body.classList.add('hide-completed-mode');
-            if (btn) {
-                btn.classList.add('active');
-                btn.innerText = '👀 모든 숙제 보기';
-            }
-            if (desc) {
-                desc.innerText = '숨겨진 숙제를 모두 표시합니다.';
-            }
+            if (btn) btn.innerText = '👀 모든 숙제 보기';
         } else {
             document.body.classList.remove('hide-completed-mode');
-            if (btn) {
-                btn.classList.remove('active');
-                btn.innerText = '✅ 완료된 숙제 숨기기';
-            }
-            if (desc) {
-                desc.innerText = '완료된 숙제를 대시보드에서 숨깁니다.';
-            }
+            if (btn) btn.innerText = '✅ 완료 숙제 제외';
         }
     }
 
-    // 💡 글로벌 액션 바에서 '숨긴 캐릭터 표시 토글' 처리 함수
     function toggleShowHiddenChars() {
         isShowHiddenChars = !isShowHiddenChars;
         localStorage.setItem('isShowHiddenChars_v15', JSON.stringify(isShowHiddenChars));
         render();
     }
 
-    // 💡 특정 캐릭터를 숨김/해제 처리하는 함수
     function toggleHideCharacter(accId, charId, event) {
         if(event) event.stopPropagation();
         const acc = gameData.find(a => a.id === accId);
         const char = acc.characters.find(c => c.id === charId);
-        if(char) {
-            char.hidden = !char.hidden;
-            saveData();
-        }
+        if(char) { char.hidden = !char.hidden; saveData(); }
     }
     
     function render() {
@@ -1193,27 +1004,18 @@
         }
 
         let html = '';
-        // 💡 글로벌 액션 바에 캐릭터 숨김 활성화 제어 버튼 동적 마크업 추가
-            html += `
-                <div class="global-action-bar" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
-                    <button id="btnToggleHide" class="btn-toggle-hide ${isHideCompleted ? 'active' : ''}" onclick="toggleHideCompleted()" 
-                            style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background-color: var(--bg-card, #fff); border: 1px solid var(--border-color, #ddd); border-radius: 20px; color: var(--text-color, #333); font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.2s ease;">
-                        ${isHideCompleted ? '👀 모든 숙제 보기' : '✅ 완료된 숙제 숨기기'}
-                    </button>
-                    
-                    <span id="hideToggleDescription" style="font-size: 11px; color: #94a3b8; font-weight: 400; letter-spacing: -0.3px; line-height: 1; margin-right: 20px;">
-                        ${isHideCompleted ? '숨겨진 숙제를 모두 표시합니다.' : '완료된 숙제를 대시보드에서 숨깁니다.'}
-                    </span>
-
-                    <button id="btnToggleHiddenChars" class="btn-toggle-hide ${isShowHiddenChars ? 'active' : ''}" onclick="toggleShowHiddenChars()" 
-                            style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background-color: var(--bg-card, #fff); border: 1px solid var(--border-color, #ddd); border-radius: 20px; color: var(--text-color, #333); font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.2s ease;">
-                        ${isShowHiddenChars ? '🙈 숨긴 캐릭터 감추기' : '🙉 숨긴 캐릭터 편집/보기'}
-                    </button>
-                    <span style="font-size: 11px; color: #94a3b8; font-weight: 400; letter-spacing: -0.3px; line-height: 1;">
-                        ${isShowHiddenChars ? '숨김 처리된 캐릭터 카드가 점선으로 노출됩니다.' : '숨김 등록된 캐릭터들을 화면에서 제외합니다.'}
-                    </span>
-                </div>
-            `;
+        // 💡 글로벌 액션 바 마크업 수정 (설명글 제거, 버튼 스타일 그룹화, 대체 단어 반영)
+        html += `
+            <div class="global-action-bar">
+                <button id="btnToggleHide" class="btn-toggle-action" onclick="toggleHideCompleted()">
+                    ${isHideCompleted ? '👀 모든 숙제 보기' : '✅ 완료 숙제 제외'}
+                </button>
+                
+                <button id="btnToggleHiddenChars" class="btn-toggle-action" onclick="toggleShowHiddenChars()">
+                    ${isShowHiddenChars ? '🙈 제외 캐릭터 감추기' : '🙉 제외 캐릭터 관리'}
+                </button>
+            </div>
+        `;
 
         gameData.forEach(acc => {
             if (accordionStatus[acc.id] === undefined) accordionStatus[acc.id] = true;
@@ -1221,26 +1023,16 @@
      
             let membershipText = '';
             if (acc.membership === 'O') {
-                let d = acc.membershipDays || 0;
-                let h = acc.membershipHours || 0;
-                
+                let d = acc.membershipDays || 0; let h = acc.membershipHours || 0;
                 if (acc.membershipUpdatedAt) {
                     const diffMs = Date.now() - acc.membershipUpdatedAt;
                     const diffMins = Math.floor(diffMs / (1000 * 60));
                     if (diffMins > 0) {
-                        let totalHours = (d * 24) + h;
-                        let passedHours = Math.floor(diffMins / 60);
-                        totalHours = Math.max(0, totalHours - passedHours);
-                        d = Math.floor(totalHours / 24);
-                        h = totalHours % 24;
+                        let totalHours = (d * 24) + h; let passedHours = Math.floor(diffMins / 60);
+                        totalHours = Math.max(0, totalHours - passedHours); d = Math.floor(totalHours / 24); h = totalHours % 24;
                     }
                 }
-
-                if (d === 0 && h === 0) {
-                    membershipText = '멤버십 남은기간 : 0일';
-                } else {
-                    membershipText = `멤버십 남은기간 : ${d}일 ${h}시간`;
-                }
+                membershipText = d === 0 && h === 0 ? '멤버십 남은기간 : 0일' : `멤버십 남은기간 : ${d}일 ${h}시간`;
             } else {
                 membershipText = '멤버십 남은기간 : 0일';
             }
@@ -1341,10 +1133,9 @@
                 `;
             } else {
                 acc.characters.forEach(char => {
-                const currentTicket = char.nightmareTicket !== undefined ? char.nightmareTicket : 2;
-                const isCharHidden = char.hidden || false; // 캐릭터 개별 숨김 플래그 바인딩
+                    const currentTicket = char.nightmareTicket !== undefined ? char.nightmareTicket : 2;
+                    const isCharHidden = char.hidden || false;
                     
-                    // 💡 캐릭터 카드 동적 할당 클래스에 'is-hidden-char' 바인딩 조건 처리 추가
                     html += `
                         <div class="char-card ${isCharHidden ? 'is-hidden-char' : ''}">
                             <div class="char-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
@@ -1352,8 +1143,8 @@
                                     <span class="char-name">${char.name}</span>
                                     <span class="char-sub-info">직업: ${char.job} | 투력: <span class="char-power">${Number(char.power).toLocaleString()}</span></span>
                                 </div>
-                                <button class="btn-char-hide" onclick="toggleHideCharacter(${acc.id}, ${char.id}, event)" title="${isCharHidden ? '숨김 해제' : '캐릭터 숨기기'}">
-                                    ${isCharHidden ? '🙉 화면에서 보임' : '🙈 화면에서 숨김'}
+                                <button class="btn-char-hide" onclick="toggleHideCharacter(${acc.id}, ${char.id}, event)" title="${isCharHidden ? '리스트에 포함' : '대시보드에서 제외'}">
+                                    ${isCharHidden ? '🙉캐릭터 포함' : '🙈 캐릭터 제외'}
                                 </button>
                             </div>
                             
@@ -1404,10 +1195,7 @@
                                 <strong style="font-size:11px; display:block; margin-bottom:4px; color:#a1a1aa;">📝 커스텀 숙제 리스트</strong>
                                 ${(!char.homeworks || char.homeworks.length === 0) ? '<span style="font-size:11px; color:var(--text-muted);">추가된 숙제 없음</span>' : ''}
                                 ${(char.homeworks || []).map((hw, idx) => {
-                                    let typeLabel = '일';
-                                    if (hw.type === 'weekly') typeLabel = '주';
-                                    if (hw.type === 'once') typeLabel = '일회성';
-                                    
+                                    let typeLabel = hw.type === 'weekly' ? '주' : (hw.type === 'once' ? '일회성' : '일');
                                     return `
                                     <div class="hw-item">
                                         <label class="hw-label">
@@ -1454,18 +1242,11 @@
         app.innerHTML = html;
         updateTimerDisplay();
 
-        if (isHideCompleted) {
-            document.body.classList.add('hide-completed-mode');
-        } else {
-            document.body.classList.remove('hide-completed-mode');
-        }
+        if (isHideCompleted) document.body.classList.add('hide-completed-mode');
+        else document.body.classList.remove('hide-completed-mode');
 
-        // 💡 렌더링 끝난 시점에 body 클래스 변경을 주어 숨김 캐릭터의 표시/비표시 상태 적용
-        if (isShowHiddenChars) {
-            document.body.classList.add('show-hidden-chars-mode');
-        } else {
-            document.body.classList.remove('show-hidden-chars-mode');
-        }
+        if (isShowHiddenChars) document.body.classList.add('show-hidden-chars-mode');
+        else document.body.classList.remove('show-hidden-chars-mode');
     }
 
     checkAndReduceMembershipTime(); 
