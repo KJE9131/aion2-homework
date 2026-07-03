@@ -24,11 +24,12 @@
         .btn-char-hide {
             background: none;
             border: none;
-            color: #64748b;
+            color: #b77c30;
             cursor: pointer;
-            padding: 2px 6px;
-            font-size: 13px;
+            padding: 2px 0px;
+            font-size: 12px;
             transition: color 0.2s;
+            font-weight:600;
         }
         .btn-char-hide:hover {
             color: #f43f5e;
@@ -1352,7 +1353,7 @@
                                     <span class="char-sub-info">직업: ${char.job} | 투력: <span class="char-power">${Number(char.power).toLocaleString()}</span></span>
                                 </div>
                                 <button class="btn-char-hide" onclick="toggleHideCharacter(${acc.id}, ${char.id}, event)" title="${isCharHidden ? '숨김 해제' : '캐릭터 숨기기'}">
-                                    ${isCharHidden ? '🙉 숨김해제' : '🙈 숨기기'}
+                                    ${isCharHidden ? '🙉 화면에서 보임' : '🙈 화면에서 숨김'}
                                 </button>
                             </div>
                             
