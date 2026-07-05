@@ -1914,7 +1914,7 @@ color:var(--primary);
                             <strong style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">📝 커스텀 숙제</strong>
                             ${char.homeworks.map((hw, idx) => `
                                 <div class="hw-item"><label class="hw-label"><input type="checkbox" ${hw.checked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, null, ${idx})"><span class="hw-text ${hw.checked ? 'checked-text' : ''}">[${hw.type==='weekly'?'주':hw.type==='once'?'일회':'일'}] ${hw.name}</span></label>
-                                <button class="btn-danger2" onclick="deleteCustomHomework(${acc.id}, ${char.id}, ${idx})">❌</button></div>
+                                <button class="btn-danger2" tyle="padding: 1px 4px; font-size: 10px; filter:contrast(0.1);" onclick="deleteCustomHomework(${acc.id}, ${char.id}, ${idx})">❌</button></div>
                             `).join('')}
                         </div>
                         <form class="add-form" onsubmit="createCustomHomework(event, ${acc.id}, ${char.id})">
