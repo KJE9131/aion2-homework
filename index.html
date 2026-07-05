@@ -360,6 +360,9 @@
             padding-bottom: 8px; 
             border-bottom: 1px solid var(--card-border); 
         }
+        .resource-group {
+            padding:8px 0;
+        }
         
         .hw-item { display: flex; align-items: center; justify-content: space-between; margin: 5px 0; font-size: 13px; }
         .hw-label { display: flex; align-items: center; gap: 6px; cursor: pointer; width: 100%; min-width: 0; }
@@ -1894,8 +1897,8 @@ color:var(--primary);
                     const ticket = char.nightmareTicket !== undefined ? char.nightmareTicket : 2;
                     const isHidden = char.hidden || false;
                     html += `<div class="char-card ${isHidden ? 'is-hidden-char' : ''}">
-                        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-direction:column; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
-                            <div style="display:flex; flex-direction:column;"><span class="char-name">${char.name}</span><span class="char-sub-info">${char.job} | <span class="char-power">${Number(char.power).toLocaleString()}</span></span></div>
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+                            <div style="display:flex; flex-direction:column; max-width:130px;"><span class="char-name">${char.name}</span><span class="char-sub-info">${char.job} | <span class="char-power">${Number(char.power).toLocaleString()}</span></span></div>
                             <button class="btn-char-hide" onclick="toggleHideCharacter(${acc.id}, ${char.id}, event)">${isHidden ? '🙉 포함' : '🙈 숨김'}</button>
                         </div>
                         <div class="resource-group">
