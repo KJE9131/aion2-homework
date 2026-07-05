@@ -609,37 +609,60 @@
     }
 
     function updateOdeAutomatically() {
-        if (isOdeUpdating) return;
-        isOdeUpdating = true;
-        const now = Date.now();
-        const nextReset = getNextOdeResetTime();
-        const threeHoursMs = 3 * 60 * 60 * 1000; 
-        const lastExpectedReset = nextReset - threeHoursMs;
+    if (isOdeUpdating) return;
+    isOdeUpdating = true;
+    
+    // 1. gameData나 lastChecked가 비어있을 때를 대비한 안전장치
+    if (!gameData) {
+        isOdeUpdating = false;
+        return;
+    }
+    
+    const now = Date.now();
+    const nextReset = getNextOdeResetTime();
+    const threeHoursMs = 3 * 60 * 60 * 1000; 
+    const lastExpectedReset = nextReset - threeHoursMs;
+    
+    // 2. lastChecked가 없거나 숫자가 아니면(NaN) 현재 시간 기준으로 초기화
+    let parsedLastChecked = parseInt(lastChecked);
+    if (isNaN(parsedLastChecked) || !parsedLastChecked) {
+        parsedLastChecked = lastExpectedReset - threeHoursMs; // 기본 1사이클 전으로 세팅
+        lastChecked = parsedLastChecked;
+        localStorage.setItem('lastOdeUpdateTime_v15', lastChecked.toString());
+    }
+    
+    if (parsedLastChecked < lastExpectedReset) {
+        const timeDiff = lastExpectedReset - parsedLastChecked;
+        const chargeCycles = Math.round(timeDiff / threeHoursMs); 
         
-        if (parseInt(lastChecked) < lastExpectedReset) {
-            const timeDiff = lastExpectedReset - parseInt(lastChecked);
-            const chargeCycles = Math.round(timeDiff / threeHoursMs); 
-            if (chargeCycles < 1) { isOdeUpdating = false; return; }
-            const totalAddOde = chargeCycles * 15;
-            lastChecked = lastExpectedReset;
-            localStorage.setItem('lastOdeUpdateTime_v15', lastChecked.toString());
-            
-            gameData.forEach(acc => {
-                if(!acc.characters) return;
-                acc.characters.forEach(char => {
-                    if ((char.ode || 0) >= 840) return;
-                    let targetOde = (char.ode || 0) + totalAddOde;
-                    if (char.ode < targetOde) {
-                        if (targetOde > 840) targetOde = 840;
-                        char.ode = targetOde;
-                    }
-                });
+        if (chargeCycles < 1) { isOdeUpdating = false; return; }
+        const totalAddOde = chargeCycles * 15;
+        
+        lastChecked = lastExpectedReset;
+        localStorage.setItem('lastOdeUpdateTime_v15', lastChecked.toString());
+        
+        gameData.forEach(acc => {
+            if(!acc || !acc.characters) return; // acc 자체 방어코드 추가
+            acc.characters.forEach(char => {
+                if ((char.ode || 0) >= 840) return;
+                let targetOde = (char.ode || 0) + totalAddOde;
+                if (char.ode < targetOde) {
+                    if (targetOde > 840) targetOde = 840;
+                    char.ode = targetOde;
+                }
             });
-            localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
+        });
+        
+        localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
+        
+        // render 함수가 무한 루프를 유발하지 않도록 안전하게 실행
+        if (typeof render === 'function') {
             render();
         }
-        setTimeout(() => { isOdeUpdating = false; }, 1000);
     }
+    setTimeout(() => { isOdeUpdating = false; }, 1000);
+}
+    
     
     function updateTimerDisplay() {
         const now = Date.now();
