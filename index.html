@@ -1105,38 +1105,6 @@ color:var(--primary);
             justify-content: center; 
             z-index: 2000; 
         }
-        .modal-content { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 20px; width: 90%; max-width: 400px; color: #fff; }
-        .modal-field { margin-bottom: 12px; }
-        .modal-field label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
-        .modal-field input, .modal-field select { width: 100%; background: var(--input-bg); border: 1px solid var(--input-border); border-radius: 6px; color: #fff; padding: 8px; box-sizing: border-box; }
-        .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
-
-        /* 플로팅 메뉴 */
-        .floating-menu-container { position: fixed; bottom: 25px; right: 25px; z-index: 1500; display: flex; flex-direction: column-reverse; align-items: center; gap: 12px; }
-        .floating-toggle-btn { width: 50px; height: 50px; border-radius: 50%; background: var(--primary); border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: all 0.2s; }
-        .floating-toggle-btn:hover { background: var(--primary-hover); transform: scale(1.05); }
-        .floating-items { display: none; flex-direction: column; gap: 10px; align-items: center; }
-        .floating-menu-container.active .floating-items { display: flex; }
-        .floating-menu-container.active .icon-menu { display: none; }
-        .floating-menu-container:not(.active) .icon-close { display: none; }
-        .floating-item-wrapper { position: relative; }
-        .floating-sub-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text); cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: all 0.2s; }
-        .floating-sub-btn:hover { background: var(--input-bg); color: #fff; }
-        .floating-tooltip { position: absolute; right: 55px; top: 10px; background: var(--bg); border: 1px solid var(--card-border); padding: 4px 8px; border-radius: 4px; font-size: 11px; white-space: nowrap; color: var(--text-muted); pointer-events: none; opacity: 0; transition: opacity 0.15s; }
-        .floating-item-wrapper:hover .floating-tooltip { opacity: 1; }
-
-        /* 캐릭터 제외/숨기기 모드 */
-        .char-card.is-hidden-char { display: none !important; }
-        body.show-hidden-chars-mode .char-card.is-hidden-char { display: flex !important; opacity: 0.35; filter: grayscale(0.8); border: 1px dashed var(--input-border) !important; }
-        .btn-char-hide { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 2px 6px; font-size: 12px; transition: color 0.2s; }
-        .btn-char-hide:hover { color: var(--danger); }
-
-        /* 완료 제외 모드 */
-        body.hide-completed-mode .resource-item:has(input:checked) { display: none !important; }
-        body.hide-completed-mode .hw-item:has(input:checked) { display: none !important; }
-
-        footer { text-align: center; font-size: 11px; color: var(--text-muted); padding: 40px 20px; line-height: 1.6; border-top: 1px solid var(--card-border); margin-top: 60px; }
-        @keyframes blink { from { opacity: 1; } to { opacity: 0.4; } }
     </style>
 </head>
 
