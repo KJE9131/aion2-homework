@@ -7,13 +7,12 @@
     <title>아이온2 숙제 관리 대시보드</title>
 
     <link rel="stylesheet" href="css/layout.css">
-    <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <style>
         /* 💡 캐릭터 제외(숨기기) 모드를 위한 스타일링  */
         .char-card.is-hidden-char {
             display: none !important; 
         }
-        /* 제외 캐릭터 관리 모드가 켜지면 제외된 카드들이 대시보드에 흐리게 표시됨 */
         body.show-hidden-chars-mode .char-card.is-hidden-char {
             display: flex !important;
             opacity: 0.35;
@@ -33,7 +32,6 @@
             color: #f43f5e;
         }
 
-        /* 💡 글로벌 액션 바 버튼 스타일 통일 (배경색, 글씨색 일치) */
         .global-action-bar {
             display: flex;
             align-items: center;
@@ -56,7 +54,7 @@
             transition: all 0.2s ease;
         }
         .global-action-bar .btn-toggle-action:hover {
-            background-color: #6f5239; /* 💡 브라운 톤에 맞춘 호버 색상 */
+            background-color: #6f5239; 
             color: #fff;
         }
     </style>
@@ -479,7 +477,6 @@
         document.getElementById('toggle-space').checked = alarmSettings.space;
     }
 
-    // --- [ 수학적 연산으로 무한루프를 완전히 방지한 핵심 로직 ] ---
     function getNextOdeResetTime() {
         const now = new Date();
         let baseTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
@@ -491,7 +488,6 @@
         const nowMs = now.getTime();
         const threeHoursMs = 3 * 60 * 60 * 1000; 
         
-        // 💡 while 루프 대신 수학적 수식으로 변경해 0.00001초 만에 무한 연산 없이 결과 도출
         const elapsedCycles = Math.ceil((nowMs - baseTimeMs) / threeHoursMs);
         return baseTimeMs + (elapsedCycles * threeHoursMs);
     }
@@ -834,7 +830,7 @@
         document.getElementById('modalCharJob').value = char.job;
         document.getElementById('modalCharPower').value = char.power;
         
-        const modalTitle = document.querySelector('#charModal h3'); if (modalTitle) modalTitle.innerText = "キャラクター 정보 수정";
+        const modalTitle = document.querySelector('#charModal h3'); if (modalTitle) modalTitle.innerText = "캐릭터 정보 수정";
         document.getElementById('charModal').style.display = 'flex'; 
         const modalBtn = document.querySelector('#charModal button[type="submit"]'); if (modalBtn) modalBtn.innerText = "완료";
     }
@@ -1275,6 +1271,7 @@
         else document.body.classList.remove('show-hidden-chars-mode');
     }
 
+    // --- [ 초기 실행 안전 제어 ] ---
     checkAndReduceMembershipTime(); 
     updateOdeAutomatically();
     checkAbyssReset();
