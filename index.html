@@ -7,9 +7,15 @@
     <title>아이온2 숙제 관리 대시보드</title>
 
     <link rel="stylesheet" href="css/layout.css">
-    <link rel="stylesheet" href="css/PretendardVariable.ttf">
+    <!-- 폰트 호출 방식 수정: CDN을 통한 올바른 CSS 스타일시트 호출 -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
     <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
     <style>
+        /* 폰트 기본 적용 */
+        body {
+            font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+        }
+
         /* 💡 캐릭터 제외(숨기기) 모드를 위한 스타일링  */
         .char-card.is-hidden-char {
             display: none !important; 
@@ -32,6 +38,13 @@
         }
         .btn-char-hide:hover {
             color: #f43f5e;
+        }
+
+        /* 💡 [수정/추가] 완료 숙제 제외(숨기기) 모드를 위한 CSS 스타일 규칙 */
+        /* 체크박스가 체크되어 완료 상태(checked)인 숙제 항목이나 리소스를 숨깁니다 */
+        body.hide-completed-mode .resource-item:has(input[type="checkbox"]:checked),
+        body.hide-completed-mode .hw-item:has(input[type="checkbox"]:checked) {
+            display: none !important;
         }
 
         /* 💡 글로벌 액션 바 버튼 스타일 통일 (배경색, 글씨색 일치) */
@@ -59,6 +72,13 @@
         .global-action-bar .btn-toggle-action:hover {
             background-color: #6f5239; /* 💡 브라운 톤에 맞춘 호버 색상 */
             color: #fff;
+        }
+
+        /* 체크된 텍스트 가로줄 및 흐리게 처리 효과 */
+        .checked-text {
+            text-decoration: line-through;
+            color: #64748b !important;
+            opacity: 0.6;
         }
     </style>
 </head>
@@ -609,60 +629,37 @@
     }
 
     function updateOdeAutomatically() {
-    if (isOdeUpdating) return;
-    isOdeUpdating = true;
-    
-    // 1. gameData나 lastChecked가 비어있을 때를 대비한 안전장치
-    if (!gameData) {
-        isOdeUpdating = false;
-        return;
-    }
-    
-    const now = Date.now();
-    const nextReset = getNextOdeResetTime();
-    const threeHoursMs = 3 * 60 * 60 * 1000; 
-    const lastExpectedReset = nextReset - threeHoursMs;
-    
-    // 2. lastChecked가 없거나 숫자가 아니면(NaN) 현재 시간 기준으로 초기화
-    let parsedLastChecked = parseInt(lastChecked);
-    if (isNaN(parsedLastChecked) || !parsedLastChecked) {
-        parsedLastChecked = lastExpectedReset - threeHoursMs; // 기본 1사이클 전으로 세팅
-        lastChecked = parsedLastChecked;
-        localStorage.setItem('lastOdeUpdateTime_v15', lastChecked.toString());
-    }
-    
-    if (parsedLastChecked < lastExpectedReset) {
-        const timeDiff = lastExpectedReset - parsedLastChecked;
-        const chargeCycles = Math.round(timeDiff / threeHoursMs); 
+        if (isOdeUpdating) return;
+        isOdeUpdating = true;
+        const now = Date.now();
+        const nextReset = getNextOdeResetTime();
+        const threeHoursMs = 3 * 60 * 60 * 1000; 
+        const lastExpectedReset = nextReset - threeHoursMs;
         
-        if (chargeCycles < 1) { isOdeUpdating = false; return; }
-        const totalAddOde = chargeCycles * 15;
-        
-        lastChecked = lastExpectedReset;
-        localStorage.setItem('lastOdeUpdateTime_v15', lastChecked.toString());
-        
-        gameData.forEach(acc => {
-            if(!acc || !acc.characters) return; // acc 자체 방어코드 추가
-            acc.characters.forEach(char => {
-                if ((char.ode || 0) >= 840) return;
-                let targetOde = (char.ode || 0) + totalAddOde;
-                if (char.ode < targetOde) {
-                    if (targetOde > 840) targetOde = 840;
-                    char.ode = targetOde;
-                }
+        if (parseInt(lastChecked) < lastExpectedReset) {
+            const timeDiff = lastExpectedReset - parseInt(lastChecked);
+            const chargeCycles = Math.round(timeDiff / threeHoursMs); 
+            if (chargeCycles < 1) { isOdeUpdating = false; return; }
+            const totalAddOde = chargeCycles * 15;
+            lastChecked = lastExpectedReset;
+            localStorage.setItem('lastOdeUpdateTime_v15', lastChecked.toString());
+            
+            gameData.forEach(acc => {
+                if(!acc.characters) return;
+                acc.characters.forEach(char => {
+                    if ((char.ode || 0) >= 840) return;
+                    let targetOde = (char.ode || 0) + totalAddOde;
+                    if (char.ode < targetOde) {
+                        if (targetOde > 840) targetOde = 840;
+                        char.ode = targetOde;
+                    }
+                });
             });
-        });
-        
-        localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
-        
-        // render 함수가 무한 루프를 유발하지 않도록 안전하게 실행
-        if (typeof render === 'function') {
+            localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
             render();
         }
+        setTimeout(() => { isOdeUpdating = false; }, 1000);
     }
-    setTimeout(() => { isOdeUpdating = false; }, 1000);
-}
-    
     
     function updateTimerDisplay() {
         const now = Date.now();
@@ -1027,7 +1024,6 @@
         }
 
         let html = '';
-        // 💡 글로벌 액션 바 마크업 수정 (설명글 제거, 버튼 스타일 그룹화, 대체 단어 반영)
         html += `
             <div class="global-action-bar">
                 <button id="btnToggleHide" class="btn-toggle-action" onclick="toggleHideCompleted()">
@@ -1272,6 +1268,7 @@
         else document.body.classList.remove('show-hidden-chars-mode');
     }
 
+    // --- 초기 호출 및 렌더링 세팅 ---
     checkAndReduceMembershipTime(); 
     updateOdeAutomatically();
     checkAbyssReset();
@@ -1279,7 +1276,10 @@
     checkWeeklyReset();  
     render();
     initAlarmToggles();
-    
+
+    // 완료 숙제 보기 단추의 토글 상태에 맞는 초기 레이아웃 바인딩을 위한 호출
+    if (isHideCompleted) { document.body.classList.add('hide-completed-mode'); const btn = document.getElementById('btnToggleHide'); if (btn) btn.innerText = '👀 모든 숙제 보기'; }
+
     setInterval(updateTimerDisplay, 1000);
     setInterval(() => {
         checkAndReduceMembershipTime(); 
