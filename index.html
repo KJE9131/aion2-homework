@@ -1105,6 +1105,59 @@ color:var(--primary);
             justify-content: center; 
             z-index: 2000; 
         }
+
+        /* 💡 캐릭터 제외(숨기기) 모드를 위한 스타일링  */
+        .char-card.is-hidden-char {
+            display: none !important; 
+        }
+        /* 제외 캐릭터 관리 모드가 켜지면 제외된 카드들이 대시보드에 흐리게 표시됨 */
+        body.show-hidden-chars-mode .char-card.is-hidden-char {
+            display: flex !important;
+            opacity: 0.35;
+            filter: grayscale(0.8);
+            border: 1px dashed #64748b !important;
+        }
+        .btn-char-hide {
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            padding: 2px 6px;
+            font-size: 12px;
+            transition: color 0.2s;
+        }
+        .btn-char-hide:hover {
+            color: #f43f5e;
+        }
+
+        /* 💡 글로벌 액션 바 버튼 스타일 통일 (배경색, 글씨색 일치) */
+        .global-action-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .global-action-bar .btn-toggle-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background-color: #412d1c;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            color: #d3d3d3; 
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .global-action-bar .btn-toggle-action:hover {
+            background-color: #6f5239; /* 💡 브라운 톤에 맞춘 호버 색상 */
+            color: #fff;
+        }
+
+        
     </style>
 </head>
 
