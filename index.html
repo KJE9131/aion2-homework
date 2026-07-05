@@ -1805,14 +1805,14 @@ color:var(--primary);
         render(); saveData();
     }
 
-    function toggleCheckbox(accId, charId, field, index = null) {
+    function toggleCheckbox(accId, charId, field, origIndex = null) {
         const acc = gameData.find(a => a.id === accId);
         if (charId === null) acc[field] = !acc[field];
         else {
             const char = acc.characters.find(c => c.id === charId);
-            if (index !== null) {
-                char.homeworks[index].checked = !char.homeworks[index].checked;
-                if (char.homeworks[index].type === 'once' && char.homeworks[index].checked) char.homeworks.splice(index, 1);
+            if (origIndex !== null) {
+                char.homeworks[origIndex].checked = !char.homeworks[origIndex].checked;
+                if (char.homeworks[origIndex].type === 'once' && char.homeworks[origIndex].checked) char.homeworks.splice(origIndex, 1);
             } else char[field] = !char[field];
         }
         saveData();
@@ -1829,7 +1829,7 @@ color:var(--primary);
         acc.characters.forEach(c => c.homeworks.push({ name, type, checked: false })); saveData();
     }
 
-    function deleteCustomHomework(accId, charId, index) { if (confirm("이 숙제를 삭제하시겠습니까?")) { gameData.find(a => a.id === accId).characters.find(c => c.id === charId).homeworks.splice(index, 1); saveData(); } }
+    function deleteCustomHomework(accId, charId, origIndex) { if (confirm("이 숙제를 삭제하시겠습니까?")) { gameData.find(a => a.id === accId).characters.find(c => c.id === charId).homeworks.splice(origIndex, 1); saveData(); } }
 
     let isHideCompleted = JSON.parse(localStorage.getItem('isHideCompleted_v15')) || false;
     let isShowHiddenChars = JSON.parse(localStorage.getItem('isShowHiddenChars_v15')) || false;
@@ -1916,15 +1916,29 @@ color:var(--primary);
                             <div class="hw-item"><label class="hw-label"><input type="checkbox" ${char.awakeningChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'awakeningChecked')"><span class="hw-text ${char.awakeningChecked ? 'checked-text' : ''}">각성전</span></label></div>
                         </div>
                         <div class="homework-group" style="border:none; padding:0;">
-                            <strong style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">📝 커스텀 숙제</strong>
-                            ${char.homeworks.map((hw, idx) => `
-                                <div class="hw-item"><label class="hw-label"><input type="checkbox" ${hw.checked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, null, ${idx})"><span class="hw-text ${hw.checked ? 'checked-text' : ''}">[${hw.type==='weekly'?'주':hw.type==='once'?'일회':'일'}] ${hw.name}</span></label>
-                                <button class="btn-danger2" style="padding: 1px 4px; font-size: 10px; filter:contrast(0.1); border:none;" onclick="deleteCustomHomework(${acc.id}, ${char.id}, ${idx})">❌</button></div>
-                            `).join('')}
-                        </div>
+                            <strong style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">📝 커스텀 숙제</strong>`;
+
+                    // 원래 배열 구조와 인덱스를 유지하면서 정렬하여 HTML 출력
+                    const typeOrder = { 'weekly': 1, 'daily': 2, 'once': 3 };
+                    const mappedHomeworks = char.homeworks.map((hw, index) => ({ hw, index }));
+                    
+                    mappedHomeworks.sort((a, b) => typeOrder[a.hw.type] - typeOrder[b.hw.type]);
+
+                    mappedHomeworks.forEach(({ hw, index }) => {
+                        html += `
+                            <div class="hw-item">
+                                <label class="hw-label">
+                                    <input type="checkbox" ${hw.checked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, null, ${index})">
+                                    <span class="hw-text ${hw.checked ? 'checked-text' : ''}">[${hw.type==='weekly'?'주':hw.type==='once'?'일회':'일'}] ${hw.name}</span>
+                                </label>
+                                <button class="btn-danger2" style="padding: 1px 4px; font-size: 10px; filter:contrast(0.1); border:none;" onclick="deleteCustomHomework(${acc.id}, ${char.id}, ${index})">❌</button>
+                            </div>`;
+                    });
+
+                    html += `</div>
                         <form class="add-form" onsubmit="createCustomHomework(event, ${acc.id}, ${char.id})">
                             <input type="text" name="hwName" placeholder="숙제 명" required>
-                            <select name="hwType"><option value="daily">일일</option><option value="weekly">주간</option><option value="once">일회성</option></select>
+                            <select name="hwType"><option value="weekly">주간</option><option value="daily">일일</option><option value="once">일회성</option></select>
                             <button type="submit" class="btn btn-xs">+</button>
                         </form>
                         <div class="char-control-footer">
