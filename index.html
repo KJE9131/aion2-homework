@@ -6,57 +6,204 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <title>아이온2 숙제 관리 대시보드</title>
 
-    <link rel="stylesheet" href="css/layout.css">
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
     <style>
-        /* 💡 캐릭터 제외(숨기기) 모드를 위한 스타일링  */
-        .char-card.is-hidden-char {
-            display: none !important; 
-        }
-        body.show-hidden-chars-mode .char-card.is-hidden-char {
-            display: flex !important;
-            opacity: 0.35;
-            filter: grayscale(0.8);
-            border: 1px dashed #64748b !important;
-        }
-        .btn-char-hide {
-            background: none;
-            border: none;
-            color: #64748b;
-            cursor: pointer;
-            padding: 2px 6px;
-            font-size: 12px;
-            transition: color 0.2s;
-        }
-        .btn-char-hide:hover {
-            color: #f43f5e;
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css');
+
+        :root {
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #ff7e36;
+            --accent-hover: #f26a1d;
+            --timer-color: #38bdf8;
+            --danger: #ef4444;
+            --success: #10b981;
         }
 
-        .global-action-bar {
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+        }
+
+        .site-header {
+            background-color: #1e293b;
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 20px;
+        }
+        .header-container {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
-        .global-action-bar .btn-toggle-action {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
-            background-color: #412d1c;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 6px;
-            color: #d3d3d3; 
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .global-action-bar .btn-toggle-action:hover {
-            background-color: #6f5239; 
+        .site-logo {
             color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 18px;
         }
+        .made-by { font-size: 12px; color: var(--text-muted); margin-left: 5px; }
+        .gnb ul { display: flex; list-style: none; margin: 0; padding: 0; gap: 15px; }
+        .gnb-link { color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500; }
+        .gnb-link.active { color: var(--accent); font-weight: 700; }
+
+        header { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
+        h1 { font-size: 24px; margin-bottom: 15px; color: #fff; }
+        
+        .top_box {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        @media (max-width: 768px) {
+            .top_box { grid-template-columns: 1fr; }
+        }
+
+        .info-box {
+            background-color: #1e293b;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px 20px;
+        }
+        .info-box ul { margin: 0; padding-left: 20px; color: #cbd5e1; font-size: 13.5px; }
+        .info-box li { margin-bottom: 8px; }
+        .info-box li:last-child { margin-bottom: 0; }
+        .info-highlight { color: var(--accent); font-weight: 600; }
+        .info-alert { color: #f87171; font-weight: 600; }
+
+        .alarm-container {
+            background-color: #1e293b;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .alarm-container p { margin: 0 0 12px 0; font-size: 14px; font-weight: 700; color: #cbd5e1; }
+        .alarm-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.15);
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        .alarm-item:last-child { margin-bottom: 0; }
+        .alarm-title { font-weight: 600; }
+        .alarm-timer-wrapper { display: flex; align-items: center; gap: 10px; }
+        .alarm-timer { font-family: monospace; font-weight: bold; color: #cbd5e1; }
+        .alarm-timer.alarm-urgent { color: #ef4444; animation: blink 1s infinite alternate; }
+        .alarm-timer.disabled { color: #64748b; }
+
+        /* 스위치 스타일 */
+        .switch { position: relative; display: inline-block; width: 34px; height: 20px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #475569; transition: .2s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .2s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--accent); }
+        input:checked + .slider:before { transform: translateX(14px); }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 6px 20px; }
+        
+        .global-action-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+        .btn-toggle-action { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background-color: #412d1c; border: 1px solid var(--border-color); border-radius: 6px; color: #d3d3d3; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-toggle-action:hover { background-color: #6f5239; color: #fff; }
+
+        .account-section { background-color: rgba(30, 41, 59, 0.4); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 25px; overflow: hidden; }
+        .account-header { background-color: #1e293b; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; }
+        .account-body { padding: 20px; transition: max-height 0.3s ease; }
+        .account-body.collapsed { display: none; }
+        .accordion-icon { margin-right: 10px; font-size: 14px; color: var(--text-muted); }
+
+        .account-contents-title { display: block; font-size: 14px; font-weight: 700; color: #cbd5e1; margin-bottom: 12px; }
+        .account-resource-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-bottom: 20px; background: rgba(0,0,0,0.12); padding: 15px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.03); }
+        .resource-item { background: #1e293b; padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+
+        .char-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 15px; }
+        .char-card { background: #1e293b; border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 12px; position: relative; }
+        .char-name { font-size: 16px; font-weight: 700; color: #fff; display: block; }
+        .char-sub-info { font-size: 12px; color: var(--text-muted); display: block; margin-top: 2px; }
+        .char-power { color: #fcd34d; font-weight: 600; }
+
+        .resource-group { background: rgba(0,0,0,0.15); padding: 10px; border-radius: 6px; font-size: 12px; }
+        .ode-timer { font-family: monospace; color: var(--timer-color); font-weight: bold; }
+        .ode-row { display: flex; align-items: center; justify-content: space-between; margin-top: 5px; color: #cbd5e1; }
+
+        .counter-controls { display: flex; align-items: center; gap: 4px; }
+        .counter-input { width: 45px; background: #0f172a; border: 1px solid var(--border-color); border-radius: 4px; color: #fff; text-align: center; padding: 3px 0; font-size: 12px; -moz-appearance: textfield; }
+        .counter-input::-webkit-outer-spin-button, .counter-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+        .homework-group { border-bottom: 1px dashed rgba(255,255,255,0.08); padding-bottom: 10px; }
+        .hw-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 13px; }
+        .hw-label { display: flex; align-items: center; gap: 8px; cursor: pointer; width: 100%; user-select: none; }
+        .hw-text { color: #cbd5e1; }
+        .checked-text { text-decoration: line-through; color: #64748b !important; opacity: 0.7; }
+
+        /* 버튼 및 기타 공통 스타일 */
+        .btn { background: var(--accent); color: #fff; border: none; border-radius: 4px; padding: 6px 12px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+        .btn:hover { background: var(--accent-hover); }
+        .btn-sm { padding: 4px 8px; font-size: 12px; margin-left: 4px; }
+        .btn-xs { padding: 2px 6px; font-size: 11px; background: #475569; }
+        .btn-xs:hover { background: #64748b; }
+        .btn-danger { background: var(--danger); }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-danger2 { background: none; border: none; color: #ef4444; cursor: pointer; }
+        .btn-char-edit { background: #334155; }
+        .btn-char-edit:hover { background: #475569; }
+        .btn-char-del { background: #451a1a; color: #f87171; border: 1px solid #7f1d1d; }
+        .btn-char-del:hover { background: #7f1d1d; color: #fff; }
+
+        .add-form, .batch-add-form { display: flex; gap: 4px; margin-top: 8px; }
+        .add-form input, .batch-add-form input { flex: 1; background: #0f172a; border: 1px solid var(--border-color); border-radius: 4px; color: #fff; padding: 4px 8px; font-size: 12px; }
+        .add-form select, .batch-add-form select { background: #0f172a; border: 1px solid var(--border-color); border-radius: 4px; color: #fff; font-size: 12px; padding: 0 4px; }
+
+        .char-control-footer { display: flex; justify-content: flex-end; gap: 4px; margin-top: auto; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.04); }
+        .memo-red-dot { position: absolute; top: -2px; right: -2px; width: 6px; height: 6px; background-color: #ef4444; border-radius: 50%; }
+
+        /* 모달 인라인 스타일 보완 */
+        .modal-overlay, .modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:none; align-items:center; justify-content:center; z-index:2000; }
+        .modal-content { background:#0f172a; border:1px solid var(--border-color); border-radius:8px; padding:20px; width:90%; max-width:400px; color:#fff; box-shadow: 0 20px 25px -5px cubic-bezier(0, 0, 0.1, 1); }
+        .modal-field { margin-bottom: 12px; }
+        .modal-field label { display:block; font-size:12px; color:var(--text-muted); margin-bottom:4px; }
+        .modal-field input, .modal-field select { width:100%; background:#1e293b; border:1px solid var(--border-color); border-radius:6px; color:#fff; padding:8px; box-sizing:border-box; }
+        .modal-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:16px; }
+
+        /* 플로팅 메뉴 */
+        .floating-menu-container { position: fixed; bottom: 25px; right: 25px; z-index: 1500; display: flex; flex-direction: column-reverse; align-items: center; gap: 12px; }
+        .floating-toggle-btn { width: 50px; height: 50px; border-radius: 50%; background: var(--accent); border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: all 0.2s; }
+        .floating-toggle-btn:hover { background: var(--accent-hover); transform: scale(1.05); }
+        .floating-items { display: none; flex-direction: column; gap: 10px; align-items: center; }
+        .floating-menu-container.active .floating-items { display: flex; }
+        .floating-menu-container.active .icon-menu { display: none; }
+        .floating-menu-container:not(.active) .icon-close { display: none; }
+        .floating-item-wrapper { position: relative; }
+        .floating-sub-btn { width: 42px; height: 42px; border-radius: 50%; background: #1e293b; border: 1px solid var(--border-color); color: #cbd5e1; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: all 0.2s; }
+        .floating-sub-btn:hover { background: #334155; color: #fff; }
+        .floating-tooltip { position: absolute; right: 55px; top: 10px; background: #0f172a; border: 1px solid var(--border-color); padding: 4px 8px; border-radius: 4px; font-size: 11px; white-space: nowrap; color: #cbd5e1; pointer-events: none; opacity: 0; transition: opacity 0.15s; }
+        .floating-item-wrapper:hover .floating-tooltip { opacity: 1; }
+
+        /* 캐릭터 제외/숨기기 모드 */
+        .char-card.is-hidden-char { display: none !important; }
+        body.show-hidden-chars-mode .char-card.is-hidden-char { display: flex !important; opacity: 0.35; filter: grayscale(0.8); border: 1px dashed #64748b !important; }
+        .btn-char-hide { background: none; border: none; color: #64748b; cursor: pointer; padding: 2px 6px; font-size: 12px; transition: color 0.2s; }
+        .btn-char-hide:hover { color: #f43f5e; }
+
+        /* 완료 제외 모드 전용 */
+        body.hide-completed-mode .resource-item:has(input:checked) { display: none !important; }
+        body.hide-completed-mode .hw-item:has(input:checked) { display: none !important; }
+
+        footer { text-align: center; font-size: 11px; color: var(--text-muted); padding: 40px 20px; line-height: 1.6; border-top: 1px solid var(--border-color); margin-top: 60px; }
+        @keyframes blink { from { opacity: 1; } to { opacity: 0.4; } }
     </style>
 </head>
 
@@ -203,7 +350,7 @@
     </div>
 </div>
 
-<div id="memoModal" class="modal" style="display: none;">
+<div id="memoModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
             <h2 id="memoModalTitle">캐릭터 메모 관리</h2>
@@ -218,15 +365,15 @@
             </div>
             
             <div class="modal-footer" style="display:flex; gap:10px; margin-top:15px;">
-                <button type="button" class="btn" onclick="closeMemoModal()" style="background:#334155; color:#fff; padding:10px 15px;">취소</button>
+                <button type="button" class="btn" onclick="closeMemoModal()" style="background:#334155; color:#fff; padding:10px 15px; border:none; border-radius:4px; cursor:pointer;">취소</button>
                 <button type="submit" class="btn btn-success" style="flex:1; padding:10px 0;">완료</button>
             </div>
         </form>
     </div>
 </div>
 
-<div id="accountModal" class="modal" style="display: none; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
-    <div class="modal-content" style="background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 20px; width: 100%; max-width: 400px; color: #fff;">
+<div id="accountModal" class="modal">
+    <div class="modal-content">
         <div class="modal-header" style="margin-bottom: 15px;">
             <h3 id="accountModalTitle" style="margin: 0; font-size: 18px;">새 계정 추가</h3>
         </div>
@@ -234,15 +381,15 @@
             <input type="hidden" id="modalAccId">
 
             <div class="form-group" style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-size: 13px; color: var(--text-muted, #94a3b8);">계정 이름</label>
+                <label style="display: block; margin-bottom: 5px; font-size: 13px; color: var(--text-muted);">계정 이름</label>
                 <input type="text" id="modalAccName" placeholder="계정 이름을 입력하세요" required style="width: 100%; background: #1e293b; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; color: #fff; padding: 8px; box-sizing: border-box;">
             </div>
 
             <div class="form-group" style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-size: 13px; color: var(--text-muted, #94a3b8);">멤버십 이용 여부</label>
-                <div style="display: flex; gap: 20px; padding: 5px 0;">
+                <label style="display: block; margin-bottom: 5px; font-size: 13px; color: var(--text-muted);">멤버십 이용 여부</label>
+                <div style="display: flex; gap: 20px; padding: 5px 0; font-size:13px;">
                     <label style="cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                        <input type="radio" name="modalAccMembership" value="O" checked onchange="toggleMembershipUI()"> 멤버십 이용 중 (O)
+                        <input type="radio" name="modalAccMembership" value="O" checked onchange="toggleMembershipUI()"> 이용 중 (O)
                     </label>
                     <label style="cursor: pointer; display: flex; align-items: center; gap: 6px;">
                         <input type="radio" name="modalAccMembership" value="X" onchange="toggleMembershipUI()"> 미이용 (X)
@@ -251,27 +398,26 @@
             </div>
 
             <div id="membershipWarningArea" style="display: none; background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-radius: 6px; padding: 10px; margin-bottom: 15px; color: #f87171; font-size: 12px; line-height: 1.5;">
-                ⚠️ 해당 사이트는 멤버십 기준으로 작동되어 멤버십 미이용자에게는 적합하지 않습니다. (계정 생성은 가능합니다.)
+                ⚠️ 해당 사이트는 멤버십 기준으로 작동되어 멤버십 미이용자에게는 적합하지 않습니다.
             </div>
 
             <div id="membershipTimeArea" style="display: block; margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-size: 13px; color: var(--text-muted, #94a3b8);">남은 멤버십 기간</label>
-                <div style="display: flex; gap: 10px; align-items: center;">
+                <label style="display: block; margin-bottom: 5px; font-size: 13px; color: var(--text-muted);">남은 멤버십 기간</label>
+                <div style="display: flex; gap: 10px; align-items: center; font-size:14px;">
                     <input type="number" id="membershipDays" min="0" value="30" style="width: 70px; background: #1e293b; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; color: #fff; padding: 8px; text-align: center;"> <span>일</span>
                     <input type="number" id="membershipHours" min="0" max="23" value="0" style="width: 70px; background: #1e293b; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; color: #fff; padding: 8px; text-align: center;"> <span>시간</span>
                 </div>
             </div>
 
             <div class="modal-footer" style="display: flex; gap: 10px; margin-top: 20px;">
-                <button type="button" class="btn" onclick="closeAccountModal()" style="background: #334155; color: #fff; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer;">취소</button>
-                <button type="submit" id="accountModalSubmitBtn" class="btn btn-success" style="flex: 1; padding: 10px 0; border: none; border-radius: 4px; cursor: pointer;">생성</button>
+                <button type="button" class="btn" onclick="closeAccountModal()" style="background: #334155; color: #fff; padding: 10px 15px;">취소</button>
+                <button type="submit" id="accountModalSubmitBtn" class="btn btn-success" style="flex: 1; padding: 10px 0;">생성</button>
             </div>
         </form>
     </div>
 </div>
 
 <script>
-    // --- [ 플로팅 메뉴 인터랙션 함수 ] ---
     function toggleFloatingMenu() {
         const container = document.getElementById('floatingMenu');
         container.classList.toggle('active');
@@ -279,12 +425,11 @@
 
     window.addEventListener('click', function(e) {
         const container = document.getElementById('floatingMenu');
-        if (container.classList.contains('active') && !container.contains(e.target)) {
+        if (container && container.classList.contains('active') && !container.contains(e.target)) {
             container.classList.remove('active');
         }
     });
 
-    // --- [ 데이터 구조 및 초기화 ] ---
     let gameData = JSON.parse(localStorage.getItem('gameHomeworkData_v15')) || [];
     let lastChecked = localStorage.getItem('lastOdeUpdateTime_v15') || Date.now();
     localStorage.setItem('lastOdeUpdateTime_v15', lastChecked);
@@ -293,10 +438,8 @@
     
     let lastDailyReset = localStorage.getItem('lastDailyResetTime_v15') || "0";
     let lastWeeklyReset = localStorage.getItem('lastWeeklyResetTime_v15') || "0";
-
     let alarmSettings = JSON.parse(localStorage.getItem('alarmSettings_v15')) || { festa: true, invasion: true, space: true };
 
-    // --- [ 현재 서버 시간 표시 ] ---
     function updateServerClock() {
         const now = new Date();
         const year = now.getFullYear();
@@ -304,16 +447,13 @@
         const date = String(now.getDate()).padStart(2, '0');
         const weekDays = ['일', '월', '화', '수', '목', '금', '토'];
         const dayOfWeek = weekDays[now.getDay()];
-        
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
         const seconds = String(now.getSeconds()).padStart(2, '0');
         
-        const timeString = `⏰ 현재 시간: ${year}-${month}-${date}(${dayOfWeek}) ${hours}:${minutes}:${seconds}`;
-        
         const clockElement = document.getElementById('server-clock');
         if (clockElement) {
-            clockElement.innerText = timeString;
+            clockElement.innerText = `⏰ 현재 시간: ${year}-${month}-${date}(${dayOfWeek}) ${hours}:${minutes}:${seconds}`;
         }
     }
     
@@ -322,52 +462,34 @@
         setInterval(updateServerClock, 1000);
     });
 
-    // --- [ 🔊 알람음 ] ---
     function playBeepSound() {
         try {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
             if (!AudioContext) return;
-            
             const ctx = new AudioContext();
             const now = ctx.currentTime;
-            
             const mainGain = ctx.createGain();
             mainGain.connect(ctx.destination);
-            mainGain.gain.setValueAtTime(0.08, now);
-    
+            mainGain.gain.setValueAtTime(0.05, now);
             const sequence = [
-                { pitch: 523.25, start: 0.0,  duration: 0.8, type: 'sine',     volume: 0.4 }, 
-                { pitch: 659.25, start: 0.2,  duration: 0.4, type: 'triangle', volume: 0.7 }, 
-                { pitch: 783.99, start: 0.35, duration: 0.4, type: 'triangle', volume: 0.7 }, 
-                { pitch: 1046.50, start: 0.5,  duration: 1.0, type: 'sine',     volume: 0.9 }  
+                { pitch: 523.25, start: 0.0,  duration: 0.4, type: 'sine', volume: 0.4 }, 
+                { pitch: 659.25, start: 0.15, duration: 0.3, type: 'triangle', volume: 0.6 }, 
+                { pitch: 1046.50, start: 0.3,  duration: 0.6, type: 'sine', volume: 0.8 }
             ];
-    
             sequence.forEach((note) => {
                 const startTime = now + note.start;
                 const stopTime = startTime + note.duration;
-                
                 const osc = ctx.createOscillator();
                 const gainNode = ctx.createGain();
-                
                 osc.type = note.type;
                 osc.frequency.setValueAtTime(note.pitch, startTime);
-                
-                const targetVolume = note.volume;
-    
                 gainNode.gain.setValueAtTime(0, startTime);
-                gainNode.gain.linearRampToValueAtTime(targetVolume, startTime + 0.08); 
-                gainNode.gain.setValueAtTime(targetVolume, startTime + (note.duration * 0.4)); 
-                gainNode.gain.exponentialRampToValueAtTime(0.001, stopTime); 
-                
-                osc.connect(gainNode);
-                gainNode.connect(mainGain);
-                
-                osc.start(startTime);
-                osc.stop(stopTime + 0.1);
+                gainNode.gain.linearRampToValueAtTime(note.volume, startTime + 0.05);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, stopTime);
+                osc.connect(gainNode); gainNode.connect(mainGain);
+                osc.start(startTime); osc.stop(stopTime + 0.1);
             });
-        } catch (error) {
-            console.error("오디오 재생 중 오류 발생:", error);
-        }
+        } catch (e) { console.error(e); }
     }
     
     function toggleMembershipUI() {
@@ -387,32 +509,23 @@
             const acc = gameData.find(a => a.id === accId);
             document.getElementById('modalAccId').value = accId;
             document.getElementById('modalAccName').value = acc.name;
-            
             if (acc.membership === 'X') {
                 document.querySelector('input[name="modalAccMembership"][value="X"]').checked = true;
-                document.getElementById('membershipDays').value = 30;
-                document.getElementById('membershipHours').value = 0;
             } else {
                 document.querySelector('input[name="modalAccMembership"][value="O"]').checked = true;
-                let displayDays = acc.membershipDays !== undefined ? acc.membershipDays : 30;
-                let displayHours = acc.membershipHours !== undefined ? acc.membershipHours : 0;
-                
+                let d = acc.membershipDays !== undefined ? acc.membershipDays : 30;
+                let h = acc.membershipHours !== undefined ? acc.membershipHours : 0;
                 if (acc.membershipUpdatedAt) {
-                    const diffMs = Date.now() - acc.membershipUpdatedAt;
-                    const diffMins = Math.floor(diffMs / (1000 * 60));
+                    const diffMins = Math.floor((Date.now() - acc.membershipUpdatedAt) / 60000);
                     if (diffMins > 0) {
-                        let totalHours = (displayDays * 24) + displayHours;
-                        let passedHours = Math.floor(diffMins / 60);
-                        totalHours = Math.max(0, totalHours - passedHours);
-                        displayDays = Math.floor(totalHours / 24);
-                        displayHours = totalHours % 24;
+                        let tot = (d * 24) + h - Math.floor(diffMins / 60);
+                        tot = Math.max(0, tot); d = Math.floor(tot / 24); h = tot % 24;
                     }
                 }
-                document.getElementById('membershipDays').value = displayDays;
-                document.getElementById('membershipHours').value = displayHours;
+                document.getElementById('membershipDays').value = d;
+                document.getElementById('membershipHours').value = h;
             }
             document.getElementById('accountModalTitle').innerText = "계정 설정 수정";
-            document.getElementById('accountModalSubmitBtn').innerText = "수정 완료";
         } else {
             accEditMode = false;
             document.getElementById('modalAccId').value = "";
@@ -420,16 +533,12 @@
             document.getElementById('membershipDays').value = 30;
             document.getElementById('membershipHours').value = 0;
             document.getElementById('accountModalTitle').innerText = "새 계정 추가";
-            document.getElementById('accountModalSubmitBtn').innerText = "생성";
         }
         toggleMembershipUI();
         document.getElementById('accountModal').style.display = 'flex';
     }
 
-    function closeAccountModal() {
-        document.getElementById('accountModal').style.display = 'none';
-        accEditMode = false;
-    }
+    function closeAccountModal() { document.getElementById('accountModal').style.display = 'none'; accEditMode = false; }
 
     function submitAccountForm(e) {
         e.preventDefault();
@@ -438,31 +547,20 @@
         const membership = document.querySelector('input[name="modalAccMembership"]:checked').value;
         const days = membership === 'O' ? parseInt(document.getElementById('membershipDays').value) || 0 : 0;
         const hours = membership === 'O' ? parseInt(document.getElementById('membershipHours').value) || 0 : 0;
-        const nowTimestamp = Date.now();
 
         if (accEditMode) {
             const acc = gameData.find(a => a.id === parseInt(accId));
-            if (acc) {
-                acc.name = name;
-                acc.membership = membership;
-                acc.membershipDays = days;
-                acc.membershipHours = hours;
-                acc.membershipUpdatedAt = nowTimestamp; 
-            }
+            if (acc) { acc.name = name; acc.membership = membership; acc.membershipDays = days; acc.membershipHours = hours; acc.membershipUpdatedAt = Date.now(); }
         } else {
             const newId = Date.now();
             gameData.push({ 
-                id: newId, name: name, membership: membership,
-                membershipDays: days, membershipHours: hours, membershipUpdatedAt: nowTimestamp, 
-                shugo: 2, dimension: 1, odeBuyChecked: false, odeCraftChecked: false,
-                villageOrderChecked: false, abyssOrderChecked: false, dailyDungeonChecked: false, 
-                characters: [] 
+                id: newId, name: name, membership: membership, membershipDays: days, membershipHours: hours, membershipUpdatedAt: Date.now(), 
+                shugo: 2, dimension: 1, odeBuyChecked: false, villageOrderChecked: false, abyssOrderChecked: false, dailyDungeonChecked: false, characters: [] 
             });
             accordionStatus[newId] = true;
             localStorage.setItem('accordionStatus_v15', JSON.stringify(accordionStatus));
         }
-        closeAccountModal();
-        saveData(); 
+        closeAccountModal(); saveData(); 
     }
 
     function toggleAlarmSetting(type) {
@@ -480,56 +578,32 @@
     function getNextOdeResetTime() {
         const now = new Date();
         let baseTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
-        if (now.getTime() < baseTime.getTime()) {
-            baseTime.setDate(baseTime.getDate() - 1);
-        }
-        
-        const baseTimeMs = baseTime.getTime();
-        const nowMs = now.getTime();
-        const threeHoursMs = 3 * 60 * 60 * 1000; 
-        
-        const elapsedCycles = Math.ceil((nowMs - baseTimeMs) / threeHoursMs);
-        return baseTimeMs + (elapsedCycles * threeHoursMs);
+        if (now.getTime() < baseTime.getTime()) baseTime.setDate(baseTime.getDate() - 1);
+        const cycles = Math.ceil((now.getTime() - baseTime.getTime()) / 10800000);
+        return baseTime.getTime() + (cycles * 10800000);
     }
 
     function exportBackup() {
-        if (gameData.length === 0) {
-            alert("백업할 데이터가 없습니다. 먼저 계정을 생성해 주세요.");
-            return;
-        }
-        const backupData = { gameData, lastChecked, lastAbyssReset, lastDailyReset, lastWeeklyReset, accordionStatus, alarmSettings };
-        const jsonString = JSON.stringify(backupData, null, 2);
-        const blob = new Blob([jsonString], { type: "application/json" });
+        if (gameData.length === 0) { alert("백업할 데이터가 없습니다."); return; }
+        const bData = { gameData, lastChecked, lastAbyssReset, lastDailyReset, lastWeeklyReset, accordionStatus, alarmSettings };
+        const blob = new Blob([JSON.stringify(bData, null, 2)], { type: "application/json" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
-        const dateStr = new Date().toISOString().slice(0, 10);
-        a.href = url;
-        a.download = `homework_backup_${dateStr}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        a.href = url; a.download = `homework_backup_${new Date().toISOString().slice(0, 10)}.json`;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
     }
 
     function importBackup(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        if (!confirm("⚠️ 주의: 파일을 불러오면 현재 모든 데이터가 덮어씌워집니다. 진행하시겠습니까?")) {
-            event.target.value = '';
-            return;
-        }
+        const file = event.target.files[0]; if (!file) return;
+        if (!confirm("⚠️ 주의: 파일을 불러오면 현재 데이터가 덮어씌워집니다.")) return;
         const reader = new FileReader();
         reader.onload = function(e) {
             try {
                 const parsed = JSON.parse(e.target.result);
                 if (parsed.gameData && Array.isArray(parsed.gameData)) {
-                    gameData = parsed.gameData;
-                    lastChecked = parsed.lastChecked || Date.now().toString();
-                    lastAbyssReset = parsed.lastAbyssReset || "0";
-                    lastDailyReset = parsed.lastDailyReset || "0";
-                    lastWeeklyReset = parsed.lastWeeklyReset || "0";
-                    accordionStatus = parsed.accordionStatus || {};
-                    alarmSettings = parsed.alarmSettings || { festa: true, invasion: true, space: true };
+                    gameData = parsed.gameData; lastChecked = parsed.lastChecked || Date.now();
+                    lastAbyssReset = parsed.lastAbyssReset || "0"; lastDailyReset = parsed.lastDailyReset || "0"; lastWeeklyReset = parsed.lastWeeklyReset || "0";
+                    accordionStatus = parsed.accordionStatus || {}; alarmSettings = parsed.alarmSettings || { festa: true, invasion: true, space: true };
                     
                     localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
                     localStorage.setItem('lastOdeUpdateTime_v15', lastChecked);
@@ -538,152 +612,90 @@
                     localStorage.setItem('lastWeeklyResetTime_v15', lastWeeklyReset);
                     localStorage.setItem('accordionStatus_v15', JSON.stringify(accordionStatus));
                     localStorage.setItem('alarmSettings_v15', JSON.stringify(alarmSettings));
-                    
-                    alert("✅ 성공: 데이터를 안정적으로 불러왔습니다!");
-                    initAlarmToggles();
-                    render();
-                } else { alert("❌ 실패: 올바른 백업 파일 형식이 아닙니다."); }
-            } catch (err) { alert("❌ 오류: 파일 해석 중 문제가 발생했습니다."); }
-            event.target.value = '';
+                    alert("✅ 성공: 데이터를 정상적으로 불러왔습니다!"); initAlarmToggles(); render();
+                } else { alert("❌ 파일 형식이 올바르지 않습니다."); }
+            } catch (err) { alert("❌ 해석 중 오류 발생"); }
         };
         reader.readAsText(file);
     }
 
     function updateTopAlertTimers() {
-        const now = new Date();
-        const currentMin = now.getMinutes();
-        const currentSec = now.getSeconds();
-
-        const festaEl = document.getElementById('timer-festa');
-        if(festaEl) {
-            if (!alarmSettings.festa) {
-                festaEl.innerText = "OFF";
-                festaEl.className = "alarm-timer disabled";
-            } else {
-                let festaMin = 59 - currentMin;
-                let festaSec = 59 - currentSec;
-                if (festaMin === 0 && festaSec === 0) playBeepSound();
-                festaEl.innerText = `${String(festaMin).padStart(2, '0')}:${String(festaSec).padStart(2, '0')} 남음`; 
-                festaEl.className = "alarm-timer" + (festaMin < 5 ? " alarm-urgent" : "");
+        const now = new Date(); const currentMin = now.getMinutes(); const currentSec = now.getSeconds();
+        const fEl = document.getElementById('timer-festa');
+        if(fEl) {
+            if (!alarmSettings.festa) { fEl.innerText = "OFF"; fEl.className = "alarm-timer disabled"; }
+            else {
+                let m = 59 - currentMin; let s = 59 - currentSec; if (m === 0 && s === 0) playBeepSound();
+                fEl.innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')} 남음`;
+                fEl.className = "alarm-timer" + (m < 5 ? " alarm-urgent" : "");
             }
         }
-
-        const invEl = document.getElementById('timer-invasion');
-        if(invEl) {
-            if (!alarmSettings.invasion) {
-                invEl.innerText = "OFF";
-                invEl.className = "alarm-timer disabled";
-            } else {
-                let invInMin = (currentMin < 30) ? (29 - currentMin) : (59 - currentMin + 30);
-                let invSec = 59 - currentSec;
-                if (invInMin === 0 && invSec === 0) playBeepSound();
-                invEl.innerText = `${String(invInMin).padStart(2, '0')}:${String(invSec).padStart(2, '0')} 남음`;
-                invEl.className = "alarm-timer" + (invInMin < 5 ? " alarm-urgent" : "");
+        const iEl = document.getElementById('timer-invasion');
+        if(iEl) {
+            if (!alarmSettings.invasion) { iEl.innerText = "OFF"; iEl.className = "alarm-timer disabled"; }
+            else {
+                let m = (currentMin < 30) ? (29 - currentMin) : (59 - currentMin + 30); let s = 59 - currentSec; if (m === 0 && s === 0) playBeepSound();
+                iEl.innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')} 남음`;
+                iEl.className = "alarm-timer" + (m < 5 ? " alarm-urgent" : "");
             }
         }
-
-        const spaceEl = document.getElementById('timer-space');
-        if(spaceEl) {
-            if (!alarmSettings.space) {
-                spaceEl.innerText = "OFF";
-                spaceEl.className = "alarm-timer disabled";
-            } else {
-                const targetHours = [2, 5, 8, 11, 14, 17, 20, 23];
-                let nextTarget = null;
-                for (let h of targetHours) {
+        const sEl = document.getElementById('timer-space');
+        if(sEl) {
+            if (!alarmSettings.space) { sEl.innerText = "OFF"; sEl.className = "alarm-timer disabled"; }
+            else {
+                const targets = [2, 5, 8, 11, 14, 17, 20, 23]; let nextT = null;
+                for (let h of targets) {
                     let t = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, 0, 0, 0);
-                    if (t.getTime() > now.getTime()) { nextTarget = t; break; }
+                    if (t.getTime() > now.getTime()) { nextT = t; break; }
                 }
-                if (!nextTarget) {
-                    nextTarget = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 2, 0, 0, 0);
-                }
-                const spaceDiffMs = nextTarget.getTime() - now.getTime();
-                const sHours = Math.floor(spaceDiffMs / (1000 * 60 * 60));
-                const sMinutes = Math.floor((spaceDiffMs % (1000 * 60 * 60)) / (1000 * 60));
-                const sSeconds = Math.floor((spaceDiffMs % (1000 * 60)) / 1000);
-                if (sHours === 0 && sMinutes === 0 && sSeconds === 0) playBeepSound();
-                spaceEl.innerText = `${String(sHours).padStart(2, '0')}:${String(sMinutes).padStart(2, '0')}:${String(sSeconds).padStart(2, '0')} 남음`;
-                spaceEl.className = "alarm-timer" + (sHours === 0 && sMinutes < 10 ? " alarm-urgent" : "");
+                if (!nextT) nextT = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 2, 0, 0, 0);
+                const diff = nextT.getTime() - now.getTime();
+                const h = Math.floor(diff / 3600000); const m = Math.floor((diff % 3600000) / 60000); const s = Math.floor((diff % 60000) / 1000);
+                if (h === 0 && m === 0 && s === 0) playBeepSound();
+                sEl.innerText = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')} 남음`;
+                sEl.className = "alarm-timer" + (h === 0 && m < 10 ? " alarm-urgent" : "");
             }
         }
     }
 
     let isOdeUpdating = false;
-
     function updateOdeAutomatically() {
-        if (isOdeUpdating) return;
+        if (isOdeUpdating || !gameData) return;
         isOdeUpdating = true;
+        const lastExpected = getNextOdeResetTime() - 10800000;
+        let pChecked = parseInt(lastChecked);
+        if (isNaN(pChecked) || !pChecked) { pChecked = lastExpected - 10800000; lastChecked = pChecked; }
         
-        if (!gameData) {
-            isOdeUpdating = false;
-            return;
-        }
-        
-        const now = Date.now();
-        const nextReset = getNextOdeResetTime();
-        const threeHoursMs = 3 * 60 * 60 * 1000; 
-        const lastExpectedReset = nextReset - threeHoursMs;
-        
-        let parsedLastChecked = parseInt(lastChecked);
-        if (isNaN(parsedLastChecked) || !parsedLastChecked) {
-            parsedLastChecked = lastExpectedReset - threeHoursMs;
-            lastChecked = parsedLastChecked;
-            localStorage.setItem('lastOdeUpdateTime_v15', lastChecked.toString());
-        }
-        
-        if (parsedLastChecked < lastExpectedReset) {
-            const timeDiff = lastExpectedReset - parsedLastChecked;
-            const chargeCycles = Math.round(timeDiff / threeHoursMs); 
-            
-            if (chargeCycles < 1) { isOdeUpdating = false; return; }
-            const totalAddOde = chargeCycles * 15;
-            
-            lastChecked = lastExpectedReset;
-            localStorage.setItem('lastOdeUpdateTime_v15', lastChecked.toString());
-            
-            gameData.forEach(acc => {
-                if(!acc || !acc.characters) return;
-                acc.characters.forEach(char => {
-                    if ((char.ode || 0) >= 840) return;
-                    let targetOde = (char.ode || 0) + totalAddOde;
-                    if (char.ode < targetOde) {
-                        if (targetOde > 840) targetOde = 840;
-                        char.ode = targetOde;
-                    }
+        if (pChecked < lastExpected) {
+            const cycles = Math.round((lastExpected - pChecked) / 10800000);
+            if (cycles >= 1) {
+                const addOde = cycles * 15; lastChecked = lastExpected;
+                localStorage.setItem('lastOdeUpdateTime_v15', lastChecked.toString());
+                gameData.forEach(acc => {
+                    if(acc.characters) acc.characters.forEach(char => {
+                        if ((char.ode || 0) < 840) char.ode = Math.min(840, (char.ode || 0) + addOde);
+                    });
                 });
-            });
-            
-            localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
-            
-            if (typeof render === 'function') {
+                localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
                 render();
             }
         }
-        setTimeout(() => { isOdeUpdating = false; }, 1000);
+        setTimeout(() => { isOdeUpdating = false; }, 500);
     }
     
     function updateTimerDisplay() {
-        const now = Date.now();
-        const nextReset = getNextOdeResetTime();
-        const diffMs = nextReset - now;
-        
-        const hours = String(Math.floor(diffMs / (1000 * 60 * 60))).padStart(2, '0');
-        const minutes = String(Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
-        const seconds = String(Math.floor((diffMs % (1000 * 60)) / 1000)).padStart(2, '0');
-        const timeString = `${hours}:${minutes}:${seconds} 남음`;
+        const diff = getNextOdeResetTime() - Date.now();
+        const h = String(Math.floor(diff / 3600000)).padStart(2, '0');
+        const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+        const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+        const tStr = `${h}:${m}:${s} 남음`;
         
         gameData.forEach(acc => {
-            if(!acc.characters) return;
-            acc.characters.forEach(char => {
-                const timerEl = document.getElementById(`timer-${char.id}`);
-                if (timerEl) {
-                    if (char.ode >= 840) {
-                        timerEl.innerText = "[MAX]";
-                        timerEl.style.color = "var(--text-muted)";
-                    } else {
-                        timerEl.innerText = `[${timeString}]`;
-                        timerEl.style.color = "var(--timer-color)";
-                    }
+            if(acc.characters) acc.characters.forEach(char => {
+                const el = document.getElementById(`timer-${char.id}`);
+                if (el) {
+                    if (char.ode >= 840) { el.innerText = "[MAX]"; el.style.color = "var(--text-muted)"; }
+                    else { el.innerText = `[${tStr}]`; el.style.color = "var(--timer-color)"; }
                 }
             });
         });
@@ -691,603 +703,297 @@
     }
 
     function checkAndReduceMembershipTime() {
-        let isChanged = false;
-        const now = Date.now();
+        let changed = false; const now = Date.now();
         gameData.forEach(acc => {
             if (acc.membership === 'O') {
-                if (!acc.membershipUpdatedAt) {
-                    acc.membershipUpdatedAt = now;
-                    isChanged = true;
-                    return;
-                }
-                const diffMs = now - acc.membershipUpdatedAt;
-                const diffMins = Math.floor(diffMs / (1000 * 60)); 
+                if (!acc.membershipUpdatedAt) { acc.membershipUpdatedAt = now; changed = true; return; }
+                const diffMins = Math.floor((now - acc.membershipUpdatedAt) / 60000);
                 if (diffMins >= 60) {
-                    let totalHours = ((acc.membershipDays || 0) * 24) + (acc.membershipHours || 0);
-                    const passedHours = Math.floor(diffMins / 60);
-                    totalHours -= passedHours;
-                    if (totalHours <= 0) {
-                        acc.membership = 'X'; acc.membershipDays = 0; acc.membershipHours = 0; acc.membershipUpdatedAt = now;
-                    } else {
-                        acc.membershipDays = Math.floor(totalHours / 24);
-                        acc.membershipHours = totalHours % 24;
-                        acc.membershipUpdatedAt = acc.membershipUpdatedAt + (passedHours * 60 * 60 * 1000);
-                    }
-                    isChanged = true;
+                    let tot = ((acc.membershipDays || 0) * 24) + (acc.membershipHours || 0) - Math.floor(diffMins / 60);
+                    if (tot <= 0) { acc.membership = 'X'; acc.membershipDays = 0; acc.membershipHours = 0; }
+                    else { acc.membershipDays = Math.floor(tot / 24); acc.membershipHours = tot % 24; }
+                    acc.membershipUpdatedAt = now; changed = true;
                 }
             }
         });
-        if (isChanged) {
-            localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
-            render();
-        }
+        if (changed) { localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData)); render(); }
     }
 
     function checkAbyssReset() {
         const now = new Date();
-        function getPreviousResetTime(d) {
-            let target = new Date(d.getTime());
-            target.setHours(22, 0, 0, 0);
-            if (d.getTime() < target.getTime()) d.setDate(d.getDate() - 1);
-            while (target.getDay() !== 3 && target.getDay() !== 6) { target.setDate(target.setDate() - 1); }
-            return target.getTime();
+        function getPrev(d) {
+            let t = new Date(d.getTime()); t.setHours(22, 0, 0, 0);
+            if (d.getTime() < t.getTime()) d.setDate(d.getDate() - 1);
+            while (t.getDay() !== 3 && t.getDay() !== 6) t.setDate(t.getDate() - 1);
+            return t.getTime();
         }
-        const currentTargetReset = getPreviousResetTime(now);
-        if (parseInt(lastAbyssReset) < currentTargetReset) {
-            gameData.forEach(acc => {
-                if(!acc.characters) return;
-                acc.characters.forEach(char => { char.abyssChecked = false; });
-            });
-            localStorage.setItem('lastAbyssResetTime_v15', currentTargetReset.toString());
-            lastAbyssReset = currentTargetReset.toString();
-            saveData();
+        const currentTarget = getPrev(now);
+        if (parseInt(lastAbyssReset) < currentTarget) {
+            gameData.forEach(acc => { if(acc.characters) acc.characters.forEach(char => { char.abyssChecked = false; }); });
+            localStorage.setItem('lastAbyssResetTime_v15', currentTarget.toString()); lastAbyssReset = currentTarget.toString(); saveData();
         }
     }
 
     function checkDailyReset() {
-        const now = new Date();
-        let targetReset = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
-        if (now.getTime() < targetReset.getTime()) targetReset.setDate(targetReset.getDate() - 1);
-        const currentTargetReset = targetReset.getTime();
-
-        if (parseInt(lastDailyReset) < currentTargetReset) {
+        const now = new Date(); let t = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
+        if (now.getTime() < t.getTime()) t.setDate(t.getDate() - 1);
+        if (parseInt(lastDailyReset) < t.getTime()) {
             gameData.forEach(acc => {
-                let newShugo = (acc.shugo || 0) + 2; if (newShugo > 14) newShugo = 14; acc.shugo = newShugo;
-                let newDimension = (acc.dimension || 0) + 1; if (newDimension > 7) newDimension = 7; acc.dimension = newDimension;
-                if(!acc.characters) return;
-                acc.characters.forEach(char => {
-                    let newNightmareTicket = (char.nightmareTicket !== undefined ? char.nightmareTicket : 2) + 2;
-                    if (newNightmareTicket > 14) newNightmareTicket = 14;
-                    char.nightmareTicket = newNightmareTicket;
+                acc.shugo = Math.min(14, (acc.shugo || 0) + 2); acc.dimension = Math.min(7, (acc.dimension || 0) + 1);
+                if(acc.characters) acc.characters.forEach(char => {
+                    char.nightmareTicket = Math.min(14, (char.nightmareTicket !== undefined ? char.nightmareTicket : 2) + 2);
                     char.homeworks.forEach(hw => { if (hw.type === 'daily') hw.checked = false; });
                 });
             });
-            localStorage.setItem('lastDailyResetTime_v15', currentTargetReset.toString());
-            lastDailyReset = currentTargetReset.toString();
-            saveData();
+            localStorage.setItem('lastDailyResetTime_v15', t.getTime().toString()); lastDailyReset = t.getTime().toString(); saveData();
         }
     }
 
     function checkWeeklyReset() {
-        const now = new Date();
-        let targetReset = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
-        if (now.getTime() < targetReset.getTime()) targetReset.setDate(targetReset.getDate() - 1);
-        while (targetReset.getDay() !== 3) { targetReset.setDate(targetReset.getDate() - 1); }
-        const currentTargetReset = targetReset.getTime();
-
-        if (parseInt(lastWeeklyReset) < currentTargetReset) {
+        const now = new Date(); let t = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
+        if (now.getTime() < t.getTime()) t.setDate(t.getDate() - 1);
+        while (t.getDay() !== 3) t.setDate(t.getDate() - 1);
+        if (parseInt(lastWeeklyReset) < t.getTime()) {
             gameData.forEach(acc => {
-                acc.odeBuyChecked = false; acc.villageOrderChecked = false; acc.abyssOrderChecked = false; acc.dailyDungeonChecked = false; 
-                if(!acc.characters) return;
-                acc.characters.forEach(char => {
-                    char.charBuyChecked = false; char.nightmareChecked = false; char.awakeningChecked = false; 
+                acc.odeBuyChecked = false; acc.villageOrderChecked = false; acc.abyssOrderChecked = false; acc.dailyDungeonChecked = false;
+                if(acc.characters) acc.characters.forEach(char => {
+                    char.charBuyChecked = false; char.nightmareChecked = false; char.awakeningChecked = false;
                     char.homeworks.forEach(hw => { if (hw.type === 'weekly') hw.checked = false; });
                 });
             });
-            localStorage.setItem('lastWeeklyResetTime_v15', currentTargetReset.toString());
-            lastWeeklyReset = currentTargetReset.toString();
-            saveData();
+            localStorage.setItem('lastWeeklyResetTime_v15', t.getTime().toString()); lastWeeklyReset = t.getTime().toString(); saveData();
         }
     }
 
-    function saveData() {
-        localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
-        render();
-    }
+    function saveData() { localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData)); render(); }
 
     function toggleAccordion(accId) {
-        if (accordionStatus[accId] === undefined) accordionStatus[accId] = true;
-        accordionStatus[accId] = !accordionStatus[accId];
+        accordionStatus[accId] = accordionStatus[accId] === undefined ? false : !accordionStatus[accId];
         localStorage.setItem('accordionStatus_v15', JSON.stringify(accordionStatus));
-        
-        const bodyEl = document.getElementById(`acc-body-${accId}`);
-        const iconEl = document.getElementById(`acc-icon-${accId}`);
-        if (bodyEl && iconEl) {
-            if (accordionStatus[accId]) { bodyEl.classList.remove('collapsed'); iconEl.innerText = '▲'; } 
-            else { bodyEl.classList.add('collapsed'); iconEl.innerText = '▼'; }
+        const body = document.getElementById(`acc-body-${accId}`);
+        const icon = document.getElementById(`acc-icon-${accId}`);
+        if (body && icon) {
+            if (accordionStatus[accId]) { body.classList.remove('collapsed'); icon.innerText = '▲'; }
+            else { body.classList.add('collapsed'); icon.innerText = '▼'; }
         }
     }
 
-    function openCharModal(accId, event) {
-        event.stopPropagation();
-        document.getElementById('modalAccId').value = accId;
-        document.getElementById('charForm').reset();
-        document.getElementById('charModal').style.display = 'flex';
-    }
-
-    let editMode = false;
-    let editAccId = null;
-    let editCharId = null;
+    function openCharModal(accId, event) { event.stopPropagation(); document.getElementById('modalAccId').value = accId; document.getElementById('charForm').reset(); document.getElementById('charModal').style.display = 'flex'; }
+    let editMode = false, editAccId = null, editCharId = null;
 
     function openEditCharModal(accId, charId, event) {
-        if (event) event.stopPropagation();
-        const acc = gameData.find(a => a.id === accId);
-        const char = acc.characters.find(c => c.id === charId);
-        
+        if (event) event.stopPropagation(); const char = gameData.find(a => a.id === accId).characters.find(c => c.id === charId);
         editMode = true; editAccId = accId; editCharId = charId;
-        document.getElementById('modalAccId').value = accId;
-        document.getElementById('modalCharName').value = char.name;
-        document.getElementById('modalCharJob').value = char.job;
-        document.getElementById('modalCharPower').value = char.power;
-        
-        const modalTitle = document.querySelector('#charModal h3'); if (modalTitle) modalTitle.innerText = "캐릭터 정보 수정";
-        document.getElementById('charModal').style.display = 'flex'; 
-        const modalBtn = document.querySelector('#charModal button[type="submit"]'); if (modalBtn) modalBtn.innerText = "완료";
+        document.getElementById('modalAccId').value = accId; document.getElementById('modalCharName').value = char.name;
+        document.getElementById('modalCharJob').value = char.job; document.getElementById('modalCharPower').value = char.power;
+        document.querySelector('#charModal h3').innerText = "캐릭터 정보 수정"; document.getElementById('charModal').style.display = 'flex';
     }
 
-    function closeCharModal() { 
-        document.getElementById('charModal').style.display = 'none'; 
-        editMode = false; editAccId = null; editCharId = null;
-        const modalTitle = document.querySelector('#charModal h3'); if (modalTitle) modalTitle.innerText = "새 캐릭터 추가";
-    }
+    function closeCharModal() { document.getElementById('charModal').style.display = 'none'; editMode = false; document.querySelector('#charModal h3').innerText = "새 캐릭터 추가"; }
 
     function submitCharacterForm(e) {
-        e.preventDefault();
-        const accId = parseInt(document.getElementById('modalAccId').value);
-        const name = document.getElementById('modalCharName').value.trim();
-        const job = document.getElementById('modalCharJob').value;
-        const power = document.getElementById('modalCharPower').value;
+        e.preventDefault(); const accId = parseInt(document.getElementById('modalAccId').value);
+        const name = document.getElementById('modalCharName').value.trim(); const job = document.getElementById('modalCharJob').value; const power = document.getElementById('modalCharPower').value;
         const acc = gameData.find(a => a.id === accId);
-        
         if (editMode) {
-            const char = acc.characters.find(c => c.id === editCharId);
-            if (char) { char.name = name; char.job = job; char.power = power; }
+            const char = acc.characters.find(c => c.id === editCharId); if (char) { char.name = name; char.job = job; char.power = power; }
         } else {
             if(!acc.characters) acc.characters = [];
             acc.characters.push({
-                id: Date.now(), name: name, job: job, power: power, ode: 0, extraOde: 0, nightmareTicket: 2, memo: '', 
-                charBuyChecked: false, charCraftChecked: false, abyssChecked: false, nightmareChecked: false, awakeningChecked: false,  
-                hidden: false, 
-                homeworks: [
-                    { name: '시즌주간미션', type: 'weekly', checked: false },
-                    { name: '투기장', type: 'weekly', checked: false },
-                    { name: '루드라', type: 'weekly', checked: false },
-                ]
+                id: Date.now(), name, job, power, ode: 0, extraOde: 0, nightmareTicket: 2, memo: '', charBuyChecked: false, awakeningChecked: false, hidden: false,
+                homeworks: [{ name: '시즌주간미션', type: 'weekly', checked: false }, { name: '투기장', type: 'weekly', checked: false }, { name: '루드라', type: 'weekly', checked: false }]
             });
         }
-        closeCharModal(); saveData();       
+        closeCharModal(); saveData();
     }
 
-    let memoAccId = null;
-    let memoCharId = null;
-
+    let memoAccId = null, memoCharId = null;
     function openMemoModal(accId, charId, event) {
-        if (event) event.stopPropagation();
-        memoAccId = accId; memoCharId = charId;
-        const acc = gameData.find(a => a.id === accId);
-        const char = acc.characters.find(c => c.id === charId);
-        
-        document.getElementById('memoAccId').value = accId;
-        document.getElementById('memoCharId').value = charId;
+        if (event) event.stopPropagation(); memoAccId = accId; memoCharId = charId;
+        const char = gameData.find(a => a.id === accId).characters.find(c => c.id === charId);
+        document.getElementById('memoAccId').value = accId; document.getElementById('memoCharId').value = charId;
         document.getElementById('modalMemoText').value = char.memo || '';
-        const memoTitleEl = document.getElementById('memoModalTitle'); if (memoTitleEl && char) memoTitleEl.innerText = `[${char.name}] 메모 관리`;
-        document.getElementById('memoModal').style.display = 'flex';
+        document.getElementById('memoModalTitle').innerText = `[${char.name}] 메모 관리`; document.getElementById('memoModal').style.display = 'flex';
     }
-
-    function closeMemoModal() { document.getElementById('memoModal').style.display = 'none'; memoAccId = null; memoCharId = null; }
-
+    function closeMemoModal() { document.getElementById('memoModal').style.display = 'none'; }
     function submitMemoForm(e) {
-        e.preventDefault();
-        const accId = parseInt(document.getElementById('memoAccId').value);
-        const charId = parseInt(document.getElementById('memoCharId').value);
-        const memoText = document.getElementById('modalMemoText').value;
-        const acc = gameData.find(a => a.id === accId);
-        const char = acc.characters.find(c => c.id === charId);
-        if (char) char.memo = memoText; 
-        closeMemoModal(); saveData(); 
+        e.preventDefault(); const char = gameData.find(a => a.id === memoAccId).characters.find(c => c.id === memoCharId);
+        if (char) char.memo = document.getElementById('modalMemoText').value; closeMemoModal(); saveData();
     }
 
     function removeAccount(accId, event) {
-        event.stopPropagation();
-        if(confirm("이 계정과 포함된 모든 데이터가 삭제됩니다. 진행하시겠습니까?")) {
-            gameData = gameData.filter(acc => acc.id !== accId);
-            delete accordionStatus[accId];
-            localStorage.setItem('accordionStatus_v15', JSON.stringify(accordionStatus));
-            saveData();
+        event.stopPropagation(); if(confirm("계정의 모든 데이터가 영구 삭제됩니다.")) {
+            gameData = gameData.filter(a => a.id !== accId); delete accordionStatus[accId]; saveData();
         }
     }
-
-    function removeCharacter(accId, charId) {
-        if(confirm("캐릭터를 삭제하시겠습니까?")) {
-            const acc = gameData.find(a => a.id === accId);
-            acc.characters = acc.characters.filter(c => c.id !== charId);
-            saveData();
-        }
-    }
+    function removeCharacter(accId, charId) { if(confirm("캐릭터를 삭제하시겠습니까?")) { const acc = gameData.find(a => a.id === accId); acc.characters = acc.characters.filter(c => c.id !== charId); saveData(); } }
 
     function changeVal(accId, charId, key, diff) {
         const acc = gameData.find(a => a.id === accId);
         if (charId === null) {
-            let newVal = (acc[key] || 0) + diff;
-            if (newVal < 0) newVal = 0; 
-            if (key === 'shugo' && newVal > 14) newVal = 14;
-            if (key === 'dimension' && newVal > 7) newVal = 7;
-            acc[key] = newVal;
+            acc[key] = Math.max(0, (acc[key] || 0) + diff);
+            if (key === 'shugo') acc[key] = Math.min(14, acc[key]); if (key === 'dimension') acc[key] = Math.min(7, acc[key]);
         } else {
-            const char = acc.characters.find(c => c.id === charId);
-            let newVal = (char[key] || 0) + diff;
-            if (newVal < 0) newVal = 0;
-            if (key === 'nightmareTicket' && newVal > 14) newVal = 14;
-            char[key] = newVal;
+            const char = acc.characters.find(c => c.id === charId); char[key] = Math.max(0, (char[key] || 0) + diff);
+            if (key === 'nightmareTicket') char[key] = Math.min(14, char[key]);
         }
         render(); saveData();
     }
 
     function setDirectVal(accId, charId, key, val) {
-        const acc = gameData.find(a => a.id === accId);
-        let numVal = parseInt(val) || 0;
-        if (numVal < 0) numVal = 0; 
-
+        const acc = gameData.find(a => a.id === accId); let num = Math.max(0, parseInt(val) || 0);
         if (charId === null) {
-            if (key === 'shugo' && numVal > 14) numVal = 14;
-            if (key === 'dimension' && numVal > 7) numVal = 7;
-            acc[key] = numVal;
+            if (key === 'shugo') num = Math.min(14, num); if (key === 'dimension') num = Math.min(7, num); acc[key] = num;
         } else {
-            const char = acc.characters.find(c => c.id === charId);
-            if (key === 'nightmareTicket' && numVal > 14) numVal = 14;
-            char[key] = numVal;
+            const char = acc.characters.find(c => c.id === charId); if (key === 'nightmareTicket') num = Math.min(14, num); char[key] = num;
         }
         render(); saveData();
     }
 
     function toggleCheckbox(accId, charId, field, index = null) {
         const acc = gameData.find(a => a.id === accId);
-        if (charId === null) { acc[field] = !acc[field]; } 
+        if (charId === null) acc[field] = !acc[field];
         else {
             const char = acc.characters.find(c => c.id === charId);
             if (index !== null) {
                 char.homeworks[index].checked = !char.homeworks[index].checked;
                 if (char.homeworks[index].type === 'once' && char.homeworks[index].checked) char.homeworks.splice(index, 1);
-            }
-            else char[field] = !char[field];
+            } else char[field] = !char[field];
         }
         saveData();
     }
 
     function createCustomHomework(e, accId, charId) {
-        e.preventDefault(); const form = e.target; const name = form.hwName.value.trim(); const type = form.hwType.value; if(!name) return;
-        const acc = gameData.find(a => a.id === accId); const char = acc.characters.find(c => c.id === charId);
-        char.homeworks.push({ name, type, checked: false }); saveData();
+        e.preventDefault(); const name = e.target.hwName.value.trim(); const type = e.target.hwType.value;
+        gameData.find(a => a.id === accId).characters.find(c => c.id === charId).homeworks.push({ name, type, checked: false }); saveData();
     }
 
     function createBatchHomework(e, accId) {
-        e.preventDefault(); const form = e.target; const name = form.batchHwName.value.trim(); const type = form.batchHwType.value; if (!name) return;
-        const acc = gameData.find(a => a.id === accId);
-        if (!acc.characters || acc.characters.length === 0) { alert("이 계정에는 생성된 캐릭터가 없습니다."); return; }
-        acc.characters.forEach(char => { char.homeworks.push({ name, type, checked: false }); });
-        let typeText = type === 'weekly' ? '주간' : (type === 'once' ? '일회성' : '일일');
-        alert(`✅ [${typeText}] "${name}" 숙제가 이 계정의 모든 캐릭터에게 일괄 추가되었습니다.`);
-        saveData();
+        e.preventDefault(); const name = e.target.batchHwName.value.trim(); const type = e.target.batchHwType.value;
+        const acc = gameData.find(a => a.id === accId); if (!acc.characters || acc.characters.length === 0) return;
+        acc.characters.forEach(c => c.homeworks.push({ name, type, checked: false })); saveData();
     }
 
-    function deleteCustomHomework(accId, charId, index) {
-        if (confirm("이 커스텀 숙제를 삭제하시겠습니까?")) {
-            const acc = gameData.find(a => a.id === accId); const char = acc.characters.find(c => c.id === charId);
-            char.homeworks.splice(index, 1); saveData();
-        }
-    }
+    function deleteCustomHomework(accId, charId, index) { if (confirm("이 숙제를 삭제하시겠습니까?")) { gameData.find(a => a.id === accId).characters.find(c => c.id === charId).homeworks.splice(index, 1); saveData(); } }
 
     let isHideCompleted = JSON.parse(localStorage.getItem('isHideCompleted_v15')) || false;
-    let isShowHiddenChars = JSON.parse(localStorage.getItem('isShowHiddenChars_v15')) || false; 
+    let isShowHiddenChars = JSON.parse(localStorage.getItem('isShowHiddenChars_v15')) || false;
 
-    function toggleHideCompleted() {
-        isHideCompleted = !isHideCompleted;
-        localStorage.setItem('isHideCompleted_v15', JSON.stringify(isHideCompleted));
-        
-        const btn = document.getElementById('btnToggleHide');
-        if (isHideCompleted) {
-            document.body.classList.add('hide-completed-mode');
-            if (btn) btn.innerText = '👀 모든 숙제 보기';
-        } else {
-            document.body.classList.remove('hide-completed-mode');
-            if (btn) btn.innerText = '✅ 완료 숙제 제외';
-        }
-    }
+    function toggleHideCompleted() { isHideCompleted = !isHideCompleted; localStorage.setItem('isHideCompleted_v15', JSON.stringify(isHideCompleted)); render(); }
+    function toggleShowHiddenChars() { isShowHiddenChars = !isShowHiddenChars; localStorage.setItem('isShowHiddenChars_v15', JSON.stringify(isShowHiddenChars)); render(); }
+    function toggleHideCharacter(accId, charId, event) { event.stopPropagation(); const char = gameData.find(a => a.id === accId).characters.find(c => c.id === charId); char.hidden = !char.hidden; saveData(); }
 
-    function toggleShowHiddenChars() {
-        isShowHiddenChars = !isShowHiddenChars;
-        localStorage.setItem('isShowHiddenChars_v15', JSON.stringify(isShowHiddenChars));
-        render();
-    }
-
-    function toggleHideCharacter(accId, charId, event) {
-        if(event) event.stopPropagation();
-        const acc = gameData.find(a => a.id === accId);
-        const char = acc.characters.find(c => c.id === charId);
-        if(char) { char.hidden = !char.hidden; saveData(); }
-    }
-    
     function render() {
-        const app = document.getElementById('app');
-        if (!app) return;
-        
-        if (gameData.length === 0) {
-            app.innerHTML = `<p style="text-align:center; color:#fff; margin-top: 50px; font-weight:600;">우측 하단의 <span style="color:#ff7e36">메뉴 단추</span>를 눌러 새 계정을 추가해 주세요!</p>`;
-            return;
-        }
+        const app = document.getElementById('app'); if (!app) return;
+        if (gameData.length === 0) { app.innerHTML = `<p style="text-align:center; color:#fff; margin-top: 50px; font-weight:600;">우측 하단의 <span style="color:#ff7e36">메뉴 단추</span>를 눌러 새 계정을 추가해 주세요!</p>`; return; }
 
-        let html = '';
-        html += `
-            <div class="global-action-bar">
-                <button id="btnToggleHide" class="btn-toggle-action" onclick="toggleHideCompleted()">
-                    ${isHideCompleted ? '👀 모든 숙제 보기' : '✅ 완료 숙제 제외'}
-                </button>
-                
-                <button id="btnToggleHiddenChars" class="btn-toggle-action" onclick="toggleShowHiddenChars()">
-                    ${isShowHiddenChars ? '🙈 제외 캐릭터 감추기' : '🙉 제외 캐릭터 관리'}
-                </button>
-            </div>
-        `;
+        let html = `<div class="global-action-bar">
+            <button id="btnToggleHide" class="btn-toggle-action" onclick="toggleHideCompleted()">${isHideCompleted ? '👀 모든 숙제 보기' : '✅ 완료 숙제 제외'}</button>
+            <button id="btnToggleHiddenChars" class="btn-toggle-action" onclick="toggleShowHiddenChars()">${isShowHiddenChars ? '🙈 제외 캐릭터 감추기' : '🙉 제외 캐릭터 관리'}</button>
+        </div>`;
 
         gameData.forEach(acc => {
             if (accordionStatus[acc.id] === undefined) accordionStatus[acc.id] = true;
             const isCollapsed = !accordionStatus[acc.id];
-     
-            let membershipText = '';
-            if (acc.membership === 'O') {
-                let d = acc.membershipDays || 0; let h = acc.membershipHours || 0;
-                if (acc.membershipUpdatedAt) {
-                    const diffMs = Date.now() - acc.membershipUpdatedAt;
-                    const diffMins = Math.floor(diffMs / (1000 * 60));
-                    if (diffMins > 0) {
-                        let totalHours = (d * 24) + h; let passedHours = Math.floor(diffMins / 60);
-                        totalHours = Math.max(0, totalHours - passedHours); d = Math.floor(totalHours / 24); h = totalHours % 24;
-                    }
-                }
-                membershipText = d === 0 && h === 0 ? '멤버십 남은기간 : 0일' : `멤버십 남은기간 : ${d}일 ${h}시간`;
-            } else {
-                membershipText = '멤버십 남은기간 : 0일';
+            let d = acc.membershipDays || 0, h = acc.membershipHours || 0;
+            if (acc.membership === 'O' && acc.membershipUpdatedAt) {
+                const diffMins = Math.floor((Date.now() - acc.membershipUpdatedAt) / 60000);
+                if (diffMins > 0) { let tot = Math.max(0, (d * 24) + h - Math.floor(diffMins / 60)); d = Math.floor(tot / 24); h = tot % 24; }
             }
+            const mText = acc.membership === 'O' ? `멤버십 남은기간 : ${d}일 ${h}시간` : '멤버십 미이용';
 
-            const membershipBadge = `<span style="font-size: 12px; background: rgba(255, 255, 255, 0.06); color: var(--text-muted, #94a3b8); padding: 3px 8px; border-radius: 4px; margin-left: 10px; font-weight: normal; vertical-align: middle;">${membershipText}</span>`;
-            
-            html += `
-            <div class="account-section">
+            html += `<div class="account-section">
                 <div class="account-header" onclick="toggleAccordion(${acc.id})">
-                    <div class="account-title-area" style="display: flex; align-items: center;">
+                    <div style="display: flex; align-items: center;">
                         <span class="accordion-icon" id="acc-icon-${acc.id}">${isCollapsed ? '▼' : '▲'}</span>
-                        <h2 style="margin: 0; display: flex; align-items: center;">
-                            ${acc.name} ${membershipBadge}
-                        </h2>
+                        <h2 style="margin:0; font-size:16px;">${acc.name} <span style="font-size:12px; background:rgba(255,255,255,0.06); color:var(--text-muted); padding:2px 6px; border-radius:4px; margin-left:8px; font-weight:normal;">${mText}</span></h2>
                     </div>
                     <div onclick="event.stopPropagation();">
                         <button class="btn btn-sm" onclick="openCharModal(${acc.id}, event)">+ 캐릭터 추가</button>
-                        <button class="btn btn-sm btn-char-edit" onclick="openAccountModal(${acc.id}, event)" title="계정 설정">⚙️</button>
-                        <button class="btn btn-sm btn-char-del" onclick="removeAccount(${acc.id}, event)" title="계정 삭제">🗑️</button>
+                        <button class="btn btn-sm btn-char-edit" onclick="openAccountModal(${acc.id}, event)">⚙️</button>
+                        <button class="btn btn-sm btn-char-del" onclick="removeAccount(${acc.id}, event)">🗑️</button>
                     </div>
                 </div>
-                    
                 <div class="account-body ${isCollapsed ? 'collapsed' : ''}" id="acc-body-${acc.id}">
                     <div class="account-contents">
-                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom: 10px;">
-                            <span class="account-contents-title" style="margin-bottom:0;">계정 공통 콘텐츠 및 상점 체크</span>
+                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+                            <span class="account-contents-title">계정 공통 콘텐츠 체크</span>
                             <form class="batch-add-form" onclick="event.stopPropagation();" onsubmit="createBatchHomework(event, ${acc.id})">
-                                <span style="font-size:12px; color:var(--accent); font-weight:bold;">이 계정 전체에 숙제 일괄 추가 : </span>
-                                <input type="text" name="batchHwName" placeholder="일괄 숙제 이름" required>
-                                <select name="batchHwType">
-                                    <option value="daily">일일</option>
-                                    <option value="weekly">주간</option>
-                                    <option value="once">일회성</option>
-                                </select>
-                                <button type="submit" class="btn btn-xs btn-success" style="padding:4px 8px;">일괄 추가</button>
+                                <input type="text" name="batchHwName" placeholder="일괄 추가할 숙제 명" required>
+                                <select name="batchHwType"><option value="daily">일일</option><option value="weekly">주간</option><option value="once">일회성</option></select>
+                                <button type="submit" class="btn btn-xs">일괄 추가</button>
                             </form>
                         </div>
                         <div class="account-resource-grid">
-                            <div class="resource-item" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                                    <span class="resource-name">🎉 슈고 열쇠</span>
-                                    <div class="counter-controls">
-                                        <button class="btn btn-sm" onclick="changeVal(${acc.id}, null, 'shugo', -1)">-</button>
-                                        <input type="number" class="counter-input" value="${acc.shugo || 0}" max="14" onchange="setDirectVal(${acc.id}, null, 'shugo', this.value)">
-                                        <button class="btn btn-sm" onclick="changeVal(${acc.id}, null, 'shugo', 1)">+</button>
-                                    </div>
-                                </div>
-                                <span style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">(매일 +2개 자동충전 / 최대 14개)</span>
-                            </div>
-                        
-                            <div class="resource-item" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                                    <span class="resource-name">⚔️ 차원침공 열쇠</span>
-                                    <div class="counter-controls">
-                                        <button class="btn btn-sm" onclick="changeVal(${acc.id}, null, 'dimension', -1)">-</button>
-                                        <input type="number" class="counter-input" value="${acc.dimension || 0}" max="7" onchange="setDirectVal(${acc.id}, null, 'dimension', this.value)">
-                                        <button class="btn btn-sm" onclick="changeVal(${acc.id}, null, 'dimension', 1)">+</button>
-                                    </div>
-                                </div>
-                                <span style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">(매일 +1개 자동충전 / 최대 7개)</span>
-                            </div>
-                        
-                            <div class="resource-item">
-                                <label class="hw-label">
-                                    <input type="checkbox" ${acc.odeBuyChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'odeBuyChecked')">
-                                    <span class="${acc.odeBuyChecked ? 'checked-text' : ''}">⚡ 오드구매,제작 (16)</span>
-                                </label>
-                            </div>
-                            <div class="resource-item">
-                                <label class="hw-label">
-                                    <input type="checkbox" ${acc.villageOrderChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'villageOrderChecked')">
-                                    <span class="${acc.villageOrderChecked ? 'checked-text' : ''}">📜 지령서 (마을)</span>
-                                </label>
-                            </div>
-                            <div class="resource-item">
-                                <label class="hw-label">
-                                    <input type="checkbox" ${acc.abyssOrderChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'abyssOrderChecked')">
-                                    <span class="${acc.abyssOrderChecked ? 'checked-text' : ''}">🌌 지령서 (어비스)</span>
-                                </label>
-                            </div>
-                            <div class="resource-item">
-                                <label class="hw-label">
-                                    <input type="checkbox" ${acc.dailyDungeonChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'dailyDungeonChecked')">
-                                    <span class="${acc.dailyDungeonChecked ? 'checked-text' : ''}">🏛️ 일일던전</span>
-                                </label>
-                            </div>
+                            <div class="resource-item"><div><span class="char-name" style="font-size:13px;">🎉 슈고 열쇠</span><span style="font-size:10px; color:var(--text-muted);">(최대 14)</span></div>
+                                <div class="counter-controls"><button class="btn btn-xs" onclick="changeVal(${acc.id}, null, 'shugo', -1)">-</button><input type="number" class="counter-input" value="${acc.shugo || 0}" onchange="setDirectVal(${acc.id}, null, 'shugo', this.value)"><button class="btn btn-xs" onclick="changeVal(${acc.id}, null, 'shugo', 1)">+</button></div></div>
+                            <div class="resource-item"><div><span class="char-name" style="font-size:13px;">⚔️ 차원침공 열쇠</span><span style="font-size:10px; color:var(--text-muted);">(최대 7)</span></div>
+                                <div class="counter-controls"><button class="btn btn-xs" onclick="changeVal(${acc.id}, null, 'dimension', -1)">-</button><input type="number" class="counter-input" value="${acc.dimension || 0}" onchange="setDirectVal(${acc.id}, null, 'dimension', this.value)"><button class="btn btn-xs" onclick="changeVal(${acc.id}, null, 'dimension', 1)">+</button></div></div>
+                            <div class="resource-item"><label class="hw-label"><input type="checkbox" ${acc.odeBuyChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'odeBuyChecked')"><span class="${acc.odeBuyChecked ? 'checked-text' : ''}">⚡ 오드구매,제작 (16)</span></label></div>
+                            <div class="resource-item"><label class="hw-label"><input type="checkbox" ${acc.villageOrderChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'villageOrderChecked')"><span class="${acc.villageOrderChecked ? 'checked-text' : ''}">📜 지령서 (마을)</span></label></div>
+                            <div class="resource-item"><label class="hw-label"><input type="checkbox" ${acc.abyssOrderChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'abyssOrderChecked')"><span class="${acc.abyssOrderChecked ? 'checked-text' : ''}">🌌 지령서 (어비스)</span></label></div>
+                            <div class="resource-item"><label class="hw-label"><input type="checkbox" ${acc.dailyDungeonChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'dailyDungeonChecked')"><span class="${acc.dailyDungeonChecked ? 'checked-text' : ''}">🏛️ 일일던전</span></label></div>
                         </div>
                     </div>
+                    <div class="char-grid">`;
 
-                    <div class="char-grid">
-            `;
-
-            if (!acc.characters || acc.characters.length === 0) {
-                html += `
-                    <div class="empty-character-guide" style="grid-column: 1 / -1;">
-                        <p class="guide-text">💡 계정이름 우측의 <strong>[캐릭터 추가]</strong> 버튼을 클릭하여 캐릭터를 추가해주세요!</p>
-                    </div>
-                `;
-            } else {
+            if (acc.characters && acc.characters.length > 0) {
                 acc.characters.forEach(char => {
-                    const currentTicket = char.nightmareTicket !== undefined ? char.nightmareTicket : 2;
-                    const isCharHidden = char.hidden || false;
-                    
-                    html += `
-                        <div class="char-card ${isCharHidden ? 'is-hidden-char' : ''}">
-                            <div class="char-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
-                                <div class="char-info">
-                                    <span class="char-name">${char.name}</span>
-                                    <span class="char-sub-info">직업: ${char.job} | 투력: <span class="char-power">${Number(char.power).toLocaleString()}</span></span>
-                                </div>
-                                <button class="btn-char-hide" onclick="toggleHideCharacter(${acc.id}, ${char.id}, event)" title="${isCharHidden ? '리스트에 포함' : '대시보드에서 제외'}">
-                                    ${isCharHidden ? '🙉캐릭터 포함' : '🙈 캐릭터 숨김'}
-                                </button>
-                            </div>
-                            
-                            <div class="resource-group">
-                                <div class="ode-title-row" style="display: flex; justify-content: space-between; align-items: center;">
-                                    <div style="display:flex; flex-direction:column;">
-                                        <span>오드에너지</span>
-                                        <span class="ode-timer" id="timer-${char.id}">[로딩중...]</span>
-                                    </div>
-                                </div>
-                                <div class="ode-row">
-                                    <span class="ode-label">기본오드 [ <input type="number" id="input-ode-${char.id}" class="counter-input" value="${char.ode || 0}" onchange="setDirectVal(${acc.id}, ${char.id}, 'ode', this.value)"> ] / 840</span>
-                                </div>
-                                <div class="ode-row">
-                                    <span class="ode-label">추가오드 [ <input type="number" id="input-extraOde-${char.id}" class="counter-input" value="${char.extraOde || 0}" onchange="setDirectVal(${acc.id}, ${char.id}, 'extraOde', this.value)"> ] / 2000</span>
-                                </div>
-                            </div>
-
-                            <div class="resource-group">
-                                <div style="display:flex; justify-content:space-between; align-items:center;">
-                                    <span style="font-size:12px; font-weight:600; color:#cbd5e1;">악몽 티켓</span>
-                                    <div class="counter-controls">
-                                        <button class="btn btn-sm" onclick="changeVal(${acc.id}, ${char.id}, 'nightmareTicket', -1)">-</button>
-                                        <input type="number" class="counter-input" value="${currentTicket}" max="14" onchange="setDirectVal(${acc.id}, ${char.id}, 'nightmareTicket', this.value)">
-                                        <button class="btn btn-sm" onclick="changeVal(${acc.id}, ${char.id}, 'nightmareTicket', 1)">+</button>
-                                    </div>
-                                </div>
-                                <span style="font-size:10px; color:var(--text-muted); display:block; margin-top:2px;">(매일 +2개 자동충전 / 최대 14개)</span>
-                            </div>
-                
-                            <div class="homework-group">
-                                <strong style="font-size:11px; display:block; margin-bottom:4px; color:#a1a1aa;">📌 고정 숙제 리스트</strong>
-                                <div class="hw-item">
-                                    <label class="hw-label">
-                                        <input type="checkbox" ${char.charBuyChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'charBuyChecked')">
-                                        <span class="hw-text ${char.charBuyChecked ? 'checked-text' : ''}">오드구매,제작 (4)</span>
-                                    </label>
-                                </div>
-                                <div class="hw-item">
-                                    <label class="hw-label">
-                                        <input type="checkbox" ${char.awakeningChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'awakeningChecked')">
-                                        <span class="hw-text ${char.awakeningChecked ? 'checked-text' : ''}">각성전</span>
-                                    </label>
-                                </div>
-                            </div>
-                            
-                            <div class="homework-group" style="border-bottom: none; padding-bottom: 0;">
-                                <strong style="font-size:11px; display:block; margin-bottom:4px; color:#a1a1aa;">📝 커스텀 숙제 리스트</strong>
-                                ${(!char.homeworks || char.homeworks.length === 0) ? '<span style="font-size:11px; color:var(--text-muted);">추가된 숙제 없음</span>' : ''}
-                                ${(char.homeworks || []).map((hw, idx) => {
-                                    let typeLabel = hw.type === 'weekly' ? '주' : (hw.type === 'once' ? '일회성' : '일');
-                                    return `
-                                    <div class="hw-item">
-                                        <label class="hw-label">
-                                            <input type="checkbox" ${hw.checked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, null, ${idx})">
-                                            <span class="hw-text ${hw.checked ? 'checked-text' : ''}">
-                                                [${typeLabel}] ${hw.name}
-                                            </span>
-                                        </label>
-                                        <button class="btn btn-xs btn-danger2" style="padding: 1px 4px; font-size: 10px; filter:contrast(0.1);" onclick="deleteCustomHomework(${acc.id}, ${char.id}, ${idx})" title="삭제">❌</button>
-                                    </div>
-                                `;}).join('')}
-                            </div>
-                
-                            <form class="add-form" onsubmit="createCustomHomework(event, ${acc.id}, ${char.id})">
-                                <input type="text" name="hwName" placeholder="숙제 명" required>
-                                <select name="hwType">
-                                    <option value="daily">일일</option>
-                                    <option value="weekly">주간</option>
-                                    <option value="once">일회성</option>
-                                </select>
-                                <button type="submit" class="btn btn-xs">+</button>
-                            </form>
-                
-                            <div class="char-control-footer">
-                                <div class="char-memo-wrapper" style="position: relative; display: inline-block;">
-                                    <button class="btn btn-xs btn-char-memo" onclick="openMemoModal(${acc.id}, ${char.id}, event)">메모</button>
-                                    ${char.memo && char.memo.trim() !== '' ? '<span class="memo-red-dot"></span>' : ''}
-                                </div>
-                                <button class="btn btn-xs btn-char-edit" onclick="openEditCharModal(${acc.id}, ${char.id}, event)">설정</button>
-                                <button class="btn btn-xs btn-char-del" onclick="removeCharacter(${acc.id}, ${char.id}, event)">삭제</button>
-                            </div>
+                    const ticket = char.nightmareTicket !== undefined ? char.nightmareTicket : 2;
+                    const isHidden = char.hidden || false;
+                    html += `<div class="char-card ${isHidden ? 'is-hidden-char' : ''}">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                            <div><span class="char-name">${char.name}</span><span class="char-sub-info">${char.job} | <span class="char-power">${Number(char.power).toLocaleString()}</span></span></div>
+                            <button class="btn-char-hide" onclick="toggleHideCharacter(${acc.id}, ${char.id}, event)">${isHidden ? '🙉 포함' : '🙈 숨김'}</button>
                         </div>
-                    `;
+                        <div class="resource-group">
+                            <div style="display:flex; justify-content:space-between; align-items:center;"><strong>오드에너지</strong><span class="ode-timer" id="timer-${char.id}">[로딩중...]</span></div>
+                            <div class="ode-row"><span>기본오드</span><span>[ <input type="number" class="counter-input" value="${char.ode || 0}" onchange="setDirectVal(${acc.id}, ${char.id}, 'ode', this.value)"> ] / 840</span></div>
+                            <div class="ode-row"><span>추가오드</span><span>[ <input type="number" class="counter-input" value="${char.extraOde || 0}" onchange="setDirectVal(${acc.id}, ${char.id}, 'extraOde', this.value)"> ] / 2000</span></div>
+                        </div>
+                        <div class="resource-group" style="display:flex; justify-content:space-between; align-items:center;">
+                            <div><span>악몽 티켓</span><span style="font-size:10px; color:var(--text-muted); display:block;">(최대 14)</span></div>
+                            <div class="counter-controls"><button class="btn btn-xs" onclick="changeVal(${acc.id}, ${char.id}, 'nightmareTicket', -1)">-</button><input type="number" class="counter-input" value="${ticket}" onchange="setDirectVal(${acc.id}, ${char.id}, 'nightmareTicket', this.value)"><button class="btn btn-xs" onclick="changeVal(${acc.id}, ${char.id}, 'nightmareTicket', 1)">+</button></div>
+                        </div>
+                        <div class="homework-group">
+                            <strong style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">📌 고정 숙제</strong>
+                            <div class="hw-item"><label class="hw-label"><input type="checkbox" ${char.charBuyChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'charBuyChecked')"><span class="hw-text ${char.charBuyChecked ? 'checked-text' : ''}">오드구매,제작 (4)</span></label></div>
+                            <div class="hw-item"><label class="hw-label"><input type="checkbox" ${char.awakeningChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'awakeningChecked')"><span class="hw-text ${char.awakeningChecked ? 'checked-text' : ''}">각성전</span></label></div>
+                        </div>
+                        <div class="homework-group" style="border:none; padding:0;">
+                            <strong style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">📝 커스텀 숙제</strong>
+                            ${char.homeworks.map((hw, idx) => `
+                                <div class="hw-item"><label class="hw-label"><input type="checkbox" ${hw.checked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, null, ${idx})"><span class="hw-text ${hw.checked ? 'checked-text' : ''}">[${hw.type==='weekly'?'주':hw.type==='once'?'일회':'일'}] ${hw.name}</span></label>
+                                <button class="btn-danger2" onclick="deleteCustomHomework(${acc.id}, ${char.id}, ${idx})">❌</button></div>
+                            `).join('')}
+                        </div>
+                        <form class="add-form" onsubmit="createCustomHomework(event, ${acc.id}, ${char.id})">
+                            <input type="text" name="hwName" placeholder="숙제 명" required>
+                            <select name="hwType"><option value="daily">일일</option><option value="weekly">주간</option><option value="once">일회성</option></select>
+                            <button type="submit" class="btn btn-xs">+</button>
+                        </form>
+                        <div class="char-control-footer">
+                            <div style="position:relative;"><button class="btn btn-xs btn-char-edit" onclick="openMemoModal(${acc.id}, ${char.id}, event)">메모</button>${char.memo?'<span class="memo-red-dot"></span>':''}</div>
+                            <button class="btn btn-xs btn-char-edit" onclick="openEditCharModal(${acc.id}, ${char.id}, event)">설정</button>
+                            <button class="btn btn-xs btn-char-del" onclick="removeCharacter(${acc.id}, ${char.id}, event)">삭제</button>
+                        </div>
+                    </div>`;
                 });
+            } else {
+                html += `<div style="grid-column:1/-1; text-align:center; color:var(--text-muted); font-size:13px; padding:20px 0;">💡 캐릭터를 추가해 주세요!</div>`;
             }
 
-            html += `
-                        </div>
-                    </div>
-                </div>
-            `;
+            html += `</div></div></div>`;
         });
 
-        app.innerHTML = html;
-        updateTimerDisplay();
-
-        if (isHideCompleted) document.body.classList.add('hide-completed-mode');
-        else document.body.classList.remove('hide-completed-mode');
-
-        if (isShowHiddenChars) document.body.classList.add('show-hidden-chars-mode');
-        else document.body.classList.remove('show-hidden-chars-mode');
+        app.innerHTML = html; updateTimerDisplay();
+        if (isHideCompleted) document.body.classList.add('hide-completed-mode'); else document.body.classList.remove('hide-completed-mode');
+        if (isShowHiddenChars) document.body.classList.add('show-hidden-chars-mode'); else document.body.classList.remove('show-hidden-chars-mode');
     }
 
-    // --- [ 초기 실행 안전 제어 ] ---
-    checkAndReduceMembershipTime(); 
-    updateOdeAutomatically();
-    checkAbyssReset();
-    checkDailyReset();   
-    checkWeeklyReset();  
-    render();
-    initAlarmToggles();
-    
+    checkAndReduceMembershipTime(); updateOdeAutomatically(); checkAbyssReset(); checkDailyReset(); checkWeeklyReset(); render(); initAlarmToggles();
     setInterval(updateTimerDisplay, 1000);
-    setInterval(() => {
-        checkAndReduceMembershipTime(); 
-        updateOdeAutomatically();
-        checkAbyssReset();
-        checkDailyReset();   
-        checkWeeklyReset();  
-    }, 60000);
+    setInterval(() => { checkAndReduceMembershipTime(); updateOdeAutomatically(); checkAbyssReset(); checkDailyReset(); checkWeeklyReset(); }, 60000);
 </script>
 
 <footer>
