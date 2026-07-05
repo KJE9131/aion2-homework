@@ -1894,8 +1894,8 @@ color:var(--primary);
                     const ticket = char.nightmareTicket !== undefined ? char.nightmareTicket : 2;
                     const isHidden = char.hidden || false;
                     html += `<div class="char-card ${isHidden ? 'is-hidden-char' : ''}">
-                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                            <div><span class="char-name">${char.name}</span><span class="char-sub-info">${char.job} | <span class="char-power">${Number(char.power).toLocaleString()}</span></span></div>
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-direction:column;">
+                            <div style="display:flex; flex-direction:column;"><span class="char-name">${char.name}</span><span class="char-sub-info">${char.job} | <span class="char-power">${Number(char.power).toLocaleString()}</span></span></div>
                             <button class="btn-char-hide" onclick="toggleHideCharacter(${acc.id}, ${char.id}, event)">${isHidden ? '🙉 포함' : '🙈 숨김'}</button>
                         </div>
                         <div class="resource-group">
