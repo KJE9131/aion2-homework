@@ -1188,6 +1188,7 @@ color:var(--primary);
     display:flex;
         flex-wrap:wrap;
         gap:20px 0;
+        align-items:center;
 }
 
 .common-card{
@@ -1197,8 +1198,7 @@ color:var(--primary);
 .common-card-title{
     font-size:13px;
     font-weight:700;
-    color:#ffd66d;
-    margin-bottom:10px;
+    color:#dd950d;
 }
 
 .resource-item{
