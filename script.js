@@ -576,18 +576,16 @@ function toggleFloatingMenu() {
                             </div>
                         
                             <div class="counter-controls">
-                                <button class="btn btn-xs"
-                                    onclick="changeVal(${acc.id}, null, 'expedition', -1)">-</button>
-                        
-                                <input
-                                    type="number"
-                                    class="counter-input"
-                                    value="${acc.expedition}"
-                                    onchange="setDirectVal(${acc.id}, null, 'expedition', this.value)">
-                        
-                                <button class="btn btn-xs"
-                                    onclick="changeVal(${acc.id}, null, 'expedition', 1)">+</button>
-                            </div>
+                                    <button class="btn btn-xs"
+                                        onclick="changeVal(${acc.id}, null, 'expedition', -1)">-</button>
+                                
+                                    <span style="min-width:55px;text-align:center;font-weight:600;">
+                                        ${acc.expedition} / 84
+                                    </span>
+                                
+                                    <button class="btn btn-xs"
+                                        onclick="changeVal(${acc.id}, null, 'expedition', 1)">+</button>
+                                </div>
                         </div>
                         
                         <div class="resource-item">
@@ -600,18 +598,16 @@ function toggleFloatingMenu() {
                             </div>
                         
                             <div class="counter-controls">
-                                <button class="btn btn-xs"
-                                    onclick="changeVal(${acc.id}, null, 'transcend', -1)">-</button>
-                        
-                                <input
-                                    type="number"
-                                    class="counter-input"
-                                    value="${acc.transcend}"
-                                    onchange="setDirectVal(${acc.id}, null, 'transcend', this.value)">
-                        
-                                <button class="btn btn-xs"
-                                    onclick="changeVal(${acc.id}, null, 'transcend', 1)">+</button>
-                            </div>
+                                    <button class="btn btn-xs"
+                                        onclick="changeVal(${acc.id}, null, 'transcend', -1)">-</button>
+                                
+                                    <span style="min-width:55px;text-align:center;font-weight:600;">
+                                        ${acc.transcend} / 56
+                                    </span>
+                                
+                                    <button class="btn btn-xs"
+                                        onclick="changeVal(${acc.id}, null, 'transcend', 1)">+</button>
+                                </div>
                         </div>
                             <div class="resource-item"><label class="hw-label"><input type="checkbox" ${acc.odeBuyChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'odeBuyChecked')"><span class="${acc.odeBuyChecked ? 'checked-text' : ''}">⚡ 오드구매,제작 (16)</span></label></div>
                             <div class="resource-item"><label class="hw-label"><input type="checkbox" ${acc.villageOrderChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'villageOrderChecked')"><span class="${acc.villageOrderChecked ? 'checked-text' : ''}">📜 지령서 (마을)</span></label></div>
