@@ -208,7 +208,7 @@
             background: #1E1E1E;
             border: 1px solid var(--card-border);
             border-radius: 8px;
-            padding: 4px 10px;
+            padding: 10px;
             margin-bottom: 20px;
         }
         .account-contents-title {
@@ -1186,14 +1186,12 @@ color:var(--primary);
 
 .account-common-wrap{
     display:flex;
-    gap:14px;
+        flex-wrap:wrap;
+        gap:20px 0;
 }
 
 .common-card{
-    background:#262b34;
-    border:1px solid rgba(255,255,255,.08);
-    border-radius:12px;
-    padding:14px;
+    display:flex;
 }
 
 .common-card-title{
@@ -1207,12 +1205,12 @@ color:var(--primary);
     display:flex;
     justify-content:space-between;
     align-items:center;
-    padding:10px 0;
-    border-bottom:1px solid rgba(255,255,255,.05);
+    padding:0 14px;
+    border-right:1px solid rgba(255,255,255,.05);
 }
 
 .resource-item:last-child{
-    border-bottom:none;
+    border-right:none;
 }
 
 .counter-progress{
@@ -1220,11 +1218,13 @@ color:var(--primary);
     text-align:center;
     font-weight:700;
     color:#fff;
+        font-size:12px;
 }
 
 .counter-progress .max{
     color:#8d98aa;
     font-weight:400;
+        font-size:12px;
 }
 
 .common-card .hw-label{
@@ -1233,6 +1233,7 @@ color:var(--primary);
 
 .resource-item .char-name {
         font-size:12px;
+        margin-right:6px;
 }
 .common-card .resource-item .checked-text {
         font-size:12px;
