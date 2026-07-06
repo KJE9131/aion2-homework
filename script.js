@@ -668,7 +668,7 @@ function toggleFloatingMenu() {
                             ${acc.odeBuyChecked?'checked':''}
                             onchange="toggleCheckbox(${acc.id},null,'odeBuyChecked')">
 
-                        <span class="${acc.odeBuyChecked?'checked-text':''}">
+                        <span class="${acc.odeBuyChecked?'checked-text':''}" style="font-size:12px;">
                             ⚡ 오드구매·제작
                         </span>
                     </label>
@@ -680,7 +680,7 @@ function toggleFloatingMenu() {
                             ${acc.villageOrderChecked?'checked':''}
                             onchange="toggleCheckbox(${acc.id},null,'villageOrderChecked')">
 
-                        <span class="${acc.villageOrderChecked?'checked-text':''}">
+                        <span class="${acc.villageOrderChecked?'checked-text':''}" style="font-size:12px;">
                             📜 지령서 (마을)
                         </span>
                     </label>
@@ -692,7 +692,7 @@ function toggleFloatingMenu() {
                             ${acc.abyssOrderChecked?'checked':''}
                             onchange="toggleCheckbox(${acc.id},null,'abyssOrderChecked')">
 
-                        <span class="${acc.abyssOrderChecked?'checked-text':''}">
+                        <span class="${acc.abyssOrderChecked?'checked-text':''}" style="font-size:12px;">
                             🌌 지령서 (어비스)
                         </span>
                     </label>
@@ -704,7 +704,7 @@ function toggleFloatingMenu() {
                             ${acc.dailyDungeonChecked?'checked':''}
                             onchange="toggleCheckbox(${acc.id},null,'dailyDungeonChecked')">
 
-                        <span class="${acc.dailyDungeonChecked?'checked-text':''}">
+                        <span class="${acc.dailyDungeonChecked?'checked-text':''}" style="font-size:12px;">
                             🏛️ 일일던전
                         </span>
                     </label>
@@ -716,7 +716,7 @@ function toggleFloatingMenu() {
                             ${acc.dailyMissionChecked?'checked':''}
                             onchange="toggleCheckbox(${acc.id},null,'dailyMissionChecked')">
 
-                        <span class="${acc.dailyMissionChecked?'checked-text':''}">
+                        <span class="${acc.dailyMissionChecked?'checked-text':''}" style="font-size:12px;">
                             ⭐ 일일사명퀘
                         </span>
                     </label>
