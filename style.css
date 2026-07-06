@@ -1161,7 +1161,9 @@ color:var(--primary);
 }
 .drag-handle{
     cursor:grab;
-    color:#888;
-    margin-right:8px;
     user-select:none;
+    color:#999;
+    font-size:16px;
+    margin-right:8px;
+    font-weight:bold;
 }
