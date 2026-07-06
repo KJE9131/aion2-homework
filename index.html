@@ -53,7 +53,7 @@
           border-radius: 20px;
           letter-spacing: -0.3px;
         }
-                .container { 
+        .container { 
             max-width: 95%; 
             margin: 0 auto; 
         }
@@ -71,11 +71,11 @@
             flex-wrap: wrap;
             /* box-shadow: 0 4px 10px rgba(0,0,0,0.2); */
         }
-            .alarm-container > p {
+        .alarm-container > p {
             font-size:14px;
             font-weight:600;
             margin:0;
-            }
+        }
         .alarm-item {
             display: flex;
             align-items: center;
@@ -139,7 +139,7 @@
             display:flex;
             margin-bottom: 20px;
             justify-content: space-between;
-                    gap:10px;
+            gap:10px;
         }
         .info-box {
             max-width: 93%;
@@ -289,7 +289,7 @@
             margin-bottom: 8px; 
             border-bottom: 1px solid var(--card-border);
             padding-bottom: 6px;
-                    flex-direction:column;
+            flex-direction:column;
         }
         .char-info { display: flex; flex-direction: column; min-width: 0; }
         .char-name { font-weight: bold; font-size: 14px; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -448,1813 +448,1562 @@
           margin-top: 40px;      /* 본문과의 간격 */
           padding: 20px 0;
           border-top: 1px solid #3d3d3d; /* 상단에 얇은 구분선 */
-      }
+        }
 
-      .btn-use-total {
-        background-color: var(--primary);
-        color: #fff;
-        border: none;
-        padding: 2px 4px;
-        font-size: 12px;
-        font-weight: bold;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: background-color 0.2s;
-    }
-    .btn-use-total:hover {
-        background-color: var(--primary-hover);
-    }
+        .btn-use-total {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 2px 4px;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .btn-use-total:hover {
+            background-color: var(--primary-hover);
+        }
 
-    /* 툴팁 컨테이너 */
-.tooltip {
-    position: relative;
-    display: inline-block;
-}
+        /* 툴팁 컨테이너 */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
 
-/* 툴팁 텍스트 기본 상태 (숨김) */
-.tooltip .tooltip-text {
-    visibility: hidden;
-    width: 200px;
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 6px 0;
-    position: absolute;
-    z-index: 10;
-    bottom: 125%; /* 버튼의 상단에 위치 */
-    left: 50%;
-    transform: translateX(-50%);
-    opacity: 0;
-    transition: opacity 0.2s ease-in-out;
-    font-size: 12px;
-    font-weight: bold;
-    line-height: 1.4;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-}
+        /* 툴팁 텍스트 기본 상태 (숨김) */
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 6px 0;
+            position: absolute;
+            z-index: 10;
+            bottom: 125%; /* 버튼의 상단에 위치 */
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+            font-size: 12px;
+            font-weight: bold;
+            line-height: 1.4;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
 
-/* 말풍선 아래쪽 꼬리표 삼각형 만들기 */
-.tooltip .tooltip-text::after {
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    margin-left: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: #333333 transparent transparent transparent;
-}
+        /* 말풍선 아래쪽 꼬리표 삼각형 만들기 */
+        .tooltip .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333333 transparent transparent transparent;
+        }
 
-/* 마우스를 올리면(Hover) 부드럽게 나타남 */
-.tooltip:hover .tooltip-text {
-    visibility: visible;
-    opacity: 1;
-}
+        /* 마우스를 올리면(Hover) 부드럽게 나타남 */
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
 
+        /* --- 상단 헤더 & GNB 스타일 --- */
+        .site-header {
+            width: 100%;
+            max-width:100%;
+            padding:0 20px;
+            box-sizing:border-box;
+            backdrop-filter: blur(10px); /* 뒤 배경이 부드럽게 흐려지는 효과 */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000; /* 스크롤 시 최상단에 고정 */
+        }
 
-/* --- 상단 헤더 & GNB 스타일 --- */
-.site-header {
-    width: 100%;
-max-width:100%;
-padding:0 20px;
-box-sizing:border-box;
-    backdrop-filter: blur(10px); /* 뒤 배경이 부드럽게 흐려지는 효과 */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 1000; /* 스크롤 시 최상단에 고정 */
-}
+        .header-container {
+            margin: 0 auto;
+            padding: 0 12px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
 
-.header-container {
-    margin: 0 auto;
-    padding: 0 12px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
+        .site-logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+            letter-spacing: 0.5px;
+        }
 
-.site-logo {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #fff;
-    text-decoration: none;
-    letter-spacing: 0.5px;
-}
+        .gnb ul {
+            list-style: none;
+            display: flex;
+            gap: 30px; /* 메뉴 간격 */
+            margin: 0;
+            padding: 0;
+        }
 
-.gnb ul {
-    list-style: none;
-    display: flex;
-    gap: 30px; /* 메뉴 간격 */
-    margin: 0;
-    padding: 0;
-}
+        .gnb-link {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #94a3b8; /* 기본 흐린 텍스트 색상 */
+            text-decoration: none;
+            padding: 8px 4px;
+            position: relative;
+            transition: color 0.2s ease;
+        }
 
-.gnb-link {
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: #94a3b8; /* 기본 흐린 텍스트 색상 */
-    text-decoration: none;
-    padding: 8px 4px;
-    position: relative;
-    transition: color 0.2s ease;
-}
+        /* 마우스 올렸을 때 효과 */
+        .gnb-link:hover {
+            color: #fff;
+        }
 
-/* 마우스 올렸을 때 효과 */
-.gnb-link:hover {
-    color: #fff;
-}
+        /* 현재 활성화된 메뉴(Active) 스타일 */
+        .gnb-link.active {
+            color: #fff;
+            font-weight: 600;
+        }
 
-/* 현재 활성화된 메뉴(Active) 스타일 */
-.gnb-link.active {
-    color: #fff;
-    font-weight: 600;
-}
+        /* 현재 활성화된 메뉴 하단에 언더라인 포인트 효과 */
+        .gnb-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #fff; /* 포인트 언더라인 색상 */
+            border-radius: 2px;
+        }
 
-/* 현재 활성화된 메뉴 하단에 언더라인 포인트 효과 */
-.gnb-link.active::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: #fff; /* 포인트 언더라인 색상 */
-    border-radius: 2px;
-}
-
-/* 반응형 모바일 대응: 화면이 작아지면 여백 조절 */
-@media (max-width: 768px) {
-    .header-container {
-        padding: 0;
-    }
-    .gnb ul {
-        gap: 15px;
-    }
-    .gnb-link {
-        font-size: 0.85rem;
-    }
-.top_box {
-          flex-direction:column;
-            gap:8px;
-}
-            .alarm-container {
-                        max-width:100%;
-                        margin:0;
+        /* 반응형 모바일 대응: 화면이 작아지면 여백 조절 */
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 0;
+            }
+            .gnb ul {
+                gap: 15px;
+            }
+            .gnb-link {
+                font-size: 0.85rem;
+            }
+            .top_box {
+                flex-direction:column;
+                gap:8px;
             }
             .alarm-container {
-                        align-items:center;
-                        gap:4px;
+                max-width:100%;
+                margin:0;
+            }
+            .alarm-container {
+                align-items:center;
+                gap:4px;
             }
             .modal-content {
-                        max-width:96%;
-                        box-sizing:border-box;
+                max-width:96%;
+                box-sizing:border-box;
             }
-                        
+        }
 
-            
-}
+        /* --- 계정 생성 직후 캐릭터 비어있을 때의 가이드 가시화 --- */
+        .empty-character-guide {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 20px;
+            margin: 15px 0;
+            background-color: rgba(255, 255, 255, 0.02);
+            border: 2px dashed rgba(255, 255, 255, 0.08); /* 깔끔한 대시 그리드 형태 */
+            border-radius: 10px;
+            text-align: center;
+            animation: fadeInGuide 0.4s ease;
+        }
 
+        .empty-character-guide .guide-text {
+            color: var(--text-muted, #94a3b8);
+            font-size: 0.92rem;
+            line-height: 1.5;
+            margin: 0;
+        }
 
+        .empty-character-guide .guide-text strong {
+            color: #3b82f6; /* 캐릭터 추가 키워드 하이라이트 블루 */
+            font-weight: 600;
+        }
 
-/* --- 계정 생성 직후 캐릭터 비어있을 때의 가이드 가시화 --- */
-.empty-character-guide {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 30px 20px;
-    margin: 15px 0;
-    background-color: rgba(255, 255, 255, 0.02);
-    border: 2px dashed rgba(255, 255, 255, 0.08); /* 깔끔한 대시 그리드 형태 */
-    border-radius: 10px;
-    text-align: center;
-    animation: fadeInGuide 0.4s ease;
-}
+        /* 등장 시 부드러운 페이드인 효과 추가 */
+        @keyframes fadeInGuide {
+            from {
+                opacity: 0;
+                transform: translateY(4px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-.empty-character-guide .guide-text {
-    color: var(--text-muted, #94a3b8);
-    font-size: 0.92rem;
-    line-height: 1.5;
-    margin: 0;
-}
+        /* ⚙️ 설정 버튼 스타일 */
+        .btn-char-edit {
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #94a3b8;
+        }
+        .btn-char-edit:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+            border-color: #3b82f6;
+            color: #fff;
+        }
 
-.empty-character-guide .guide-text strong {
-    color: #3b82f6; /* 캐릭터 추가 키워드 하이라이트 블루 */
-    font-weight: 600;
-}
+        /* 🗑️ 캐릭터 삭제 버튼 스타일 */
+        .btn-char-del {
+            background-color: rgba(239, 68, 68, 0.02);
+            border: 1px solid rgba(239, 68, 68, 0.1);
+            color: #f87171;
+        }
+        .btn-char-del:hover {
+            background-color: rgba(239, 68, 68, 0.15);
+            border-color: #ef4444;
+            color: #fff;
+        }
 
-/* 등장 시 부드러운 페이드인 효과 추가 */
-@keyframes fadeInGuide {
-    from {
-        opacity: 0;
-        transform: translateY(4px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-
-
-/* ⚙️ 설정 버튼 스타일 */
-.btn-char-edit {
-    background-color: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    color: #94a3b8;
-}
-.btn-char-edit:hover {
-    background-color: rgba(59, 130, 246, 0.1);
-    border-color: #3b82f6;
-    color: #fff;
-}
-
-/* 🗑️ 캐릭터 삭제 버튼 스타일 */
-.btn-char-del {
-    background-color: rgba(239, 68, 68, 0.02);
-    border: 1px solid rgba(239, 68, 68, 0.1);
-    color: #f87171;
-}
-.btn-char-del:hover {
-    background-color: rgba(239, 68, 68, 0.15);
-    border-color: #ef4444;
-    color: #fff;
-}
-
-
-
-
-/* 📌 저장된 메모 프리뷰 노출 스타일 */
-#memoModal {
-position:fixed;
-top:0;
-left:0;
+        /* 📌 저장된 메모 프리뷰 노출 스타일 */
+        #memoModal {
+            position:fixed;
+            top:0;
+            left:0;
             background:var(--modal-overlay);
             width:100%;
             height:100%;
             align-items:center;
             justify-content:center;
-}
-.char-memo-preview {
-    background: rgba(254, 243, 199, 0.03);
-    border: 1px dashed rgba(252, 211, 77, 0.15);
-    border-radius: 6px;
-    padding: 8px 10px;
-    margin-top: 12px;
-    font-size: 11.5px;
-    line-height: 1.4;
-    color: #fde047; /* 은은한 연노란색 포인트 컬러로 가시성 확보 */
-    cursor: pointer;
-    word-break: break-all;
-    text-align: left;
-    transition: background 0.2s ease;
-}
-.char-memo-preview:hover {
-    background: rgba(252, 211, 77, 0.07);
-}
+        }
+        .char-memo-preview {
+            background: rgba(254, 243, 199, 0.03);
+            border: 1px dashed rgba(252, 211, 77, 0.15);
+            border-radius: 6px;
+            padding: 8px 10px;
+            margin-top: 12px;
+            font-size: 11.5px;
+            line-height: 1.4;
+            color: #fde047; /* 은은한 연노란색 포인트 컬러로 가시성 확보 */
+            cursor: pointer;
+            word-break: break-all;
+            text-align: left;
+            transition: background 0.2s ease;
+        }
+        .char-memo-preview:hover {
+            background: rgba(252, 211, 77, 0.07);
+        }
 
+        /* 📝 메모 버튼 개별 스타일 */
+        .btn-char-memo {
+            background-color: rgba(16, 185, 129, 0.03);
+            border: 1px solid rgba(16, 185, 129, 0.1);
+            color: #a7f3d0;
+        }
+        .btn-char-memo:hover {
+            background-color: rgba(16, 185, 129, 0.15);
+            border-color: #10b981;
+            color: #fff;
+        }
 
-/* 📝 메모 버튼 개별 스타일 */
-.btn-char-memo {
-    background-color: rgba(16, 185, 129, 0.03);
-    border: 1px solid rgba(16, 185, 129, 0.1);
-    color: #a7f3d0;
-}
-.btn-char-memo:hover {
-    background-color: rgba(16, 185, 129, 0.15);
-    border-color: #10b981;
-    color: #fff;
-}
-
-/* ⚙️ 설정 버튼 개별 스타일 */
-.btn-char-edit {
-    background-color: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    color: #94a3b8;
-}
-.btn-char-edit:hover {
-    background-color: rgba(59, 130, 246, 0.1);
-    border-color: #3b82f6;
-    color: #fff;
-}
-
-/* 🗑️ 캐릭터 삭제 버튼 개별 스타일 */
-.btn-char-del {
-    background-color: rgba(239, 68, 68, 0.02);
-    border: 1px solid rgba(239, 68, 68, 0.1);
-    color: #f87171;
-}
-.btn-char-del:hover {
-    background-color: rgba(239, 68, 68, 0.15);
-    border-color: #ef4444;
-    color: #fff;
-}
-
-/* --- 최하단 3버튼 레이아웃 수정 --- */
-.char-control-footer {
-    display: flex;
-    gap: 6px; /* 버튼 사이 간격 정돈 */
+        /* --- 최하단 3버튼 레이아웃 수정 --- */
+        .char-control-footer {
+            display: flex;
+            gap: 6px; /* 버튼 사이 간격 정돈 */
             width: 100%; /* 부모 카드 너비를 꽉 채움 */
             align-items: center;
             justify-content: space-between; /* 🌟 자식들을 가로로 균등 배치 */
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid rgba(255, 255, 255, 0.04);
-}
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
 
-.char-control-footer button {
-    flex: 1; /* 1:1:1 비율로 정확히 3등분 분할 */
-    padding: 6px 0;
-    font-size: 11px;
-    font-weight: 500;
-    border-radius: 6px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
+        .char-control-footer button {
+            flex: 1; /* 1:1:1 비율로 정확히 3등분 분할 */
+            padding: 6px 0;
+            font-size: 11px;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
             margin:0;
-}
-.char-control-footer > .char-memo-wrapper {
+        }
+        .char-control-footer > .char-memo-wrapper {
             flex:1;
-}
-.char-control-footer .char-memo-wrapper .btn-char-memo {
-    width: 100%;
-}
+        }
+        .char-control-footer .char-memo-wrapper .btn-char-memo {
+            width: 100%;
+        }
         .char-control-footer div {flex:1;}
-.char-control-footer .btn {
-    width:100%;
-    justify-content: center;
-    text-align: center;
-    white-space: nowrap; /* 글자가 좁아져서 줄바꿈되는 것 방지 */
-}
+        .char-control-footer .btn {
+            width:100%;
+            justify-content: center;
+            text-align: center;
+            white-space: nowrap; /* 글자가 좁아져서 줄바꿈되는 것 방지 */
+        }
 
-/* 📝 메모 버튼 전용 스타일 */
-.btn-char-memo {
-    background-color: rgba(16, 185, 129, 0.03);
-    border: 1px solid rgba(16, 185, 129, 0.1);
-    color: #a7f3d0;
-}
-.btn-char-memo:hover {
-    background-color: rgba(16, 185, 129, 0.15);
-    border-color: #10b981;
-    color: #fff;
-}
+        /* 📢 업데이트 공지사항 섹션 스타일 --- */
+        .update-notice-section {
+            background: #1e293b; /* 카드 배경색과 통일 혹은 한 단계 어두운 색 */
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0; /* 섹션과의 간격 */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
 
+        .update-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 12px;
+        }
 
+        .update-header h2 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #f8fafc;
+            margin: 0;
+        }
 
-/* --- 📢 업데이트 공지사항 섹션 스타일 --- */
-.update-notice-section {
-    background: #1e293b; /* 카드 배경색과 통일 혹은 한 단계 어두운 색 */
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 12px;
-    padding: 20px;
-    margin: 25px 0; /* 섹션과의 간격 */
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
-}
+        /* 업데이트 강조 배지 */
+        .update-badge {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 7px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
 
-.update-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 18px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    padding-bottom: 12px;
-}
+        /* 업데이트 리스트 폼 */
+        .update-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .update-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        /* 타임라인 날짜 스타일 */
+        .update-date {
+            font-family: monospace;
+            font-size: 12px;
+            color: #64748b; /* 흐린 회색 */
+            background: rgba(255, 255, 255, 0.03);
+            padding: 2px 6px;
+            border-radius: 4px;
+            white-space: nowrap;
+            margin-top: 2px;
+        }
+        .update-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            text-align: left;
+        }
+        .update-content strong { color: #f1f5f9; /* 밝은 회백색 */ font-size: 13.5px; }
+        .update-content p { color: #94a3b8; /* 본문 서브 텍스트 컬러 */ margin: 0; font-size: 12.5px; }
 
-.update-header h2 {
-    font-size: 16px;
-    font-weight: 600;
-    color: #f8fafc;
-    margin: 0;
-}
+        /* 모바일 대응 (화면이 좁아지면 날짜가 위로 가도록 정렬) */
+        @media (max-width: 500px) {
+            .update-list li { flex-direction: column; gap: 5px; }
+            .update-date { align-self: flex-start; }
+        }
 
-/* 업데이트 강조 배지 */
-.update-badge {
-    background: linear-gradient(135deg, #10b981, #059669);
-    color: #fff;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 3px 7px;
-    border-radius: 4px;
-    letter-spacing: 0.5px;
-}
+        /* 👁️ 완료된 숙제 숨기기 토글 관련 스타일 */
+        .global-action-bar { max-width: 100%; margin: 10px auto 30px auto; display: flex; justify-content: flex-start; }
+        .btn-toggle-hide {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background-color: var(--bg-card, #fff);
+            border: 1px solid var(--border-color, #ddd);
+            border-radius: 20px; /* 둥근 캡슐 모양 */
+            color: var(--text-color, #333);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
+        .btn-toggle-hide:hover { border-color: var(--primary-color, #ff7e36); background-color: #fff9f5; }
 
-/* 업데이트 리스트 폼 */
-.update-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
+        /* 💡 body에 .hide-completed-mode가 붙으면 체크박스가 선택된 항목들을 즉시 숨깁니다 */
+        body.hide-completed-mode .resource-item:has(input:checked), 
+        body.hide-completed-mode .hw-item:has(input:checked) { display: none !important; }
 
-.update-list li {
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
-    font-size: 13px;
-    line-height: 1.5;
-}
+        /* 활성화 상태 버튼 색상 포인트 */
+        .btn-toggle-hide.active { background-color: #2d2d2d !important; color: #fff !important; border-color: #5a5a5a !important; }
+        .btn-aion2 { font-size:12px; text-decoration: none; color:#fff; font-style:italic; }
+        .btn-aion2:hover { color:var(--primary); }
 
-/* 타임라인 날짜 스타일 */
-.update-date {
-    font-family: monospace;
-    font-size: 12px;
-    color: #64748b; /* 흐린 회색 */
-    background: rgba(255, 255, 255, 0.03);
-    padding: 2px 6px;
-    border-radius: 4px;
-    white-space: nowrap;
-    margin-top: 2px;
-}
+        /* 🎯 플로팅 메뉴 스타일 빌드 및 애니메이션 추가 */
+        .floating-menu-container { position: fixed; right: 25px; bottom: 25px; display: flex; flex-direction: column-reverse; align-items: center; gap: 12px; z-index: 9999; font-family: inherit; }
 
-.update-content {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    text-align: left;
-}
+        /* 메인 토글 버튼 (三 / ✕) */
+        .floating-toggle-btn { width: 52px; height: 52px; border-radius: 50%; background: #ff7e36; color: #fff; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .floating-toggle-btn:hover { background: #e35d12; transform: scale(1.05); }
 
-.update-content strong {
-    color: #f1f5f9; /* 밝은 회백색 */
-    font-size: 13.5px;
-}
+        /* 서브 메뉴 리스트 래퍼 */
+        .floating-items { display: flex; flex-direction: column; gap: 10px; opacity: 0; visibility: hidden; transform: translateY(20px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; }
 
-.update-content p {
-    color: #94a3b8; /* 본문 서브 텍스트 컬러 */
-    margin: 0;
-    font-size: 12.5px;
-}
+        /* 활성화 되었을 때 상향 정렬 연출 */
+        .floating-menu-container.active .floating-items { opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto; }
 
-/* 모바일 대응 (화면이 좁아지면 날짜가 위로 가도록 정렬) */
-@media (max-width: 500px) {
-    .update-list li {
-        flex-direction: column;
-        gap: 5px;
-    }
-    .update-date {
-        align-self: flex-start;
-    }
-}
+        /* 개별 서브 버튼 아이템 */
+        .floating-item-wrapper { position: relative; display: flex; align-items: center; }
+        .floating-sub-btn { width: 44px; height: 44px; border-radius: 50%; background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.15); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); transition: all 0.2s ease; }
+        .floating-sub-btn:hover { background: #334155; border-color: #3b82f6; transform: scale(1.05); }
 
+        /* 특정 테마 색상 부여 (성공/백업) */
+        .floating-sub-btn.btn-success-clip { background: #0f172a; border-color: rgba(34, 197, 94, 0.4); }
+        .floating-sub-btn.btn-success-clip:hover { background: #15803d; border-color: #22c55e; }
 
-/* 👁️ 완료된 숙제 숨기기 토글 관련 스타일 */
-.global-action-bar {
-    max-width: 100%;
-    margin: 10px auto 30px auto;
-    display: flex;
-    justify-content: flex-start; 
-}
+        /* 💡 마우스 오버 시 왼쪽에 노출되는 이름표(툴팁) */
+        .floating-tooltip { position: absolute; right: 56px; /* 아이콘 우측 레이아웃 기준 좌측으로 배치 */ background: rgba(15, 23, 42, 0.95); color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; white-space: nowrap; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 2px 8px rgba(0,0,0,0.2); opacity: 0; visibility: hidden; transform: translateX(10px); transition: all 0.2s ease; pointer-events: none; }
+        .floating-item-wrapper:hover .floating-tooltip { opacity: 1; visibility: visible; transform: translateX(0); }
 
-.btn-toggle-hide {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 14px;
-    background-color: var(--bg-card, #fff);
-    border: 1px solid var(--border-color, #ddd);
-    border-radius: 20px; /* 둥근 캡슐 모양 */
-    color: var(--text-color, #333);
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    transition: all 0.2s ease;
-}
+        /* 메인 토글 버튼 내부 기호 교체용 내부 클래스 */
+        .floating-toggle-btn .icon-close { display: none; }
+        .floating-menu-container.active .floating-toggle-btn .icon-menu { display: none; }
+        .floating-menu-container.active .floating-toggle-btn .icon-close { display: block; }
+        .floating-menu-container.active .floating-toggle-btn { background: #ef4444; }
+        .floating-menu-container.active .floating-toggle-btn:hover { background: #dc2626; }
 
-.btn-toggle-hide:hover {
-    border-color: var(--primary-color, #ff7e36);
-    background-color: #fff9f5;
-}
+        /* 레드닷이 배치될 기준 부모 */
+        .char-memo-wrapper { position: relative; display: inline-block; }
+        /* 🔴 레드닷 디자인 */
+        .memo-red-dot { position: absolute; top: -2px; right: -2px; width: 6px; height: 6px; background-color: #5eef44; border-radius: 50%; border: 1px solid var(--bg-card, #fff); pointer-events: none; }
 
-/* 💡 body에 .hide-completed-mode가 붙으면 체크박스가 선택된 항목들을 즉시 숨깁니다 */
-body.hide-completed-mode .resource-item:has(input:checked),
-body.hide-completed-mode .hw-item:has(input:checked) {
-    display: none !important;
-}
+        /* 🚨 핵심 수정: 모든 모달창은 평상시 무조건 감춤 처리 (display: none) */
+        .modal-overlay, .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 2000; }
 
-/* 활성화 상태 버튼 색상 포인트 (기존 테마 컬러를 적용하시거나 원하시는 주황색 계열 선택 가능) */
-.btn-toggle-hide.active {
-    background-color: #2d2d2d !important;
-    color: #fff !important;
-    border-color: #5a5a5a !important;
-}
+        /* 💡 캐릭터 제외(숨기기) 모드를 위한 스타일링 */
+        .char-card.is-hidden-char { display: none !important; }
+        /* 제외 캐릭터 관리 모드가 켜지면 제외된 카드들이 대시보드에 흐리게 표시됨 */
+        body.show-hidden-chars-mode .char-card.is-hidden-char { display: flex !important; opacity: 0.35; filter: grayscale(0.8); border: 1px dashed #64748b !important; }
+        .btn-char-hide { background: none; border: none; color: #64748b; cursor: pointer; padding: 2px 6px; font-size: 12px; transition: color 0.2s; }
+        .btn-char-hide:hover { color: #f43f5e; }
 
-.btn-aion2 {
-font-size:12px;
-text-decoration: none;
-color:#fff;
-font-style:italic;
-}
-.btn-aion2:hover {
-color:var(--primary);
-}
-
-/* 🎯 플로팅 메뉴 스타일 빌드 및 애니메이션 추가 */
-.floating-menu-container {
-    position: fixed;
-    right: 25px;
-    bottom: 25px;
-    display: flex;
-    flex-direction: column-reverse;
-    align-items: center;
-    gap: 12px;
-    z-index: 9999;
-    font-family: inherit;
-}
-
-/* 메인 토글 버튼 (三 / ✕) */
-.floating-toggle-btn {
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    background: #ff7e36;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.floating-toggle-btn:hover {
-    background: #e35d12;
-    transform: scale(1.05);
-}
-
-/* 서브 메뉴 리스트 래퍼 */
-.floating-items {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(20px);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    pointer-events: none;
-}
-
-/* 활성화 되었을 때 상향 정렬 연출 */
-.floating-menu-container.active .floating-items {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-    pointer-events: auto;
-}
-
-/* 개별 서브 버튼 아이템 */
-.floating-item-btn {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: #25252e;
-    border: 1px solid rgba(255,255,255,0.08);
-    color: #e2e8f0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    transition: all 0.2s ease;
-    position: relative;
-}
-
-.floating-item-btn:hover {
-    background: #3b82f6;
-    color: #fff;
-    transform: scale(1.05);
-}
-
-/* 서브 단추 호버 시 라벨(말풍선 텍스트) 띄우기 */
-.floating-item-btn::after {
-    content: attr(data-title);
-    position: absolute;
-    right: 56px; /* 버튼 왼쪽에 배치 */
-    top: 50%;
-    transform: translateY(-50%);
-    background: #1e1e24;
-    color: #fff;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 4px 8px;
-    border-radius: 4px;
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.15s ease;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    border: 1px solid rgba(255,255,255,0.05);
-}
-
-.floating-item-btn:hover::after {
-    opacity: 1;
-    visibility: visible;
-}
-
-.btn-floating-danger {
-    background: #7f1d1d !important;
-}
-.btn-floating-danger:hover {
-    background: #dc2626 !important;
-}
-
-/* 레드닷이 배치될 기준 부모 */
-.char-memo-wrapper {
-    position: relative;
-    display: inline-block;
-}
-
-/* 🔴 레드닷 디자인 */
-.memo-red-dot {
-    position: absolute;
-    top: -2px; /* 부모 요소의 위쪽 살짝 걸치게 조절 */
-    right: -2px; /* 부모 요소의 오른쪽 살짝 걸치게 조절 */
-    width: 6px; /* 너무 크면 촌스러우므로 은은한 6px */
-    height: 6px;
-    background-color: #5eef44; /* 세련된 애플 레드 톤 */
-    border-radius: 50%; /* 완벽한 원형 */
-    /* 대시보드 배경이 어두울 경우 레드닷이 더 선명하게 돋보이도록 은은한 테두리 추가 */
-    border: 1px solid var(--bg-card, #fff);
-    /* 마우스 이벤트를 통과시켜 버튼 클릭에 방해되지 않도록 설정 */
-    pointer-events: none;
-}
-
-/* 🚨 핵심 수정: 모든 모달창은 평상시 무조건 감춤 처리 (display: none) */
-.modal-overlay, .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.7);
-    display: none; /* JS 호출 전까지 숨김 */
-    align-items: center;
-    justify-content: center;
-    z-index: 2000;
-}
-
-/* 💡 캐릭터 제외(숨기기) 모드를 위한 스타일링 */
-.char-card.is-hidden-char {
-    display: none !important;
-}
-
-/* 제외 캐릭터 관리 모드가 켜지면 제외된 카드들이 대시보드에 흐리게 표시됨 */
-body.show-hidden-chars-mode .char-card.is-hidden-char {
-    display: flex !important;
-    opacity: 0.35;
-    filter: grayscale(0.8);
-    border: 1px dashed #64748b !important;
-}
-
-.btn-char-hide {
-    background: none;
-    border: none;
-    color: #64748b;
-    cursor: pointer;
-    padding: 2px 6px;
-    font-size: 12px;
-    transition: color 0.2s;
-}
-.btn-char-hide:hover {
-    color: #f43f5e;
-}
-
-/* 💡 글로벌 액션 바 버튼 스타일 통일 (배경색, 글씨색 일치) */
-.global-action-bar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-}
-
-/* 순서조절 전용 리스트 스타일 */
-.hw-manage-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--input-bg);
-    border: 1px solid var(--input-border);
-    padding: 6px 10px;
-    border-radius: 6px;
-    margin-bottom: 6px;
-    font-size: 13px;
-}
-.hw-manage-controls {
-    display: flex;
-    gap: 4px;
-}
-</style>
+        /* 💡 글로벌 액션 바 버튼 스타일 통일 */
+        .global-action-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+        
+        /* 🛠️ 커스텀 숙제 전용 정렬 관리 리스트 아이템 스타일 */
+        .custom-hw-sort-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #25252e;
+            padding: 8px 12px;
+            margin-bottom: 6px;
+            border-radius: 6px;
+            border: 1px solid var(--card-border);
+        }
+        .custom-hw-sort-item .sort-btns {
+            display: flex;
+            gap: 4px;
+        }
+    </style>
 </head>
 <body>
 
-<header class="site-header">
-    <div class="header-container">
-        <a href="#" class="site-logo">AION2 대시보드</a>
-        <nav class="gnb">
-            <ul>
-                <li><span id="server-clock" style="font-size: 0.95rem; font-weight: 600; color: #38bdf8; font-family: monospace;">⏰ 로딩 중...</span></li>
-            </ul>
-        </nav>
-    </div>
-</header>
-
-<header style="margin-top:20px;">
-    <h1>
-        아이온2 숙제 관리 대시보드
-        <span class="made-by">Made by 당근🥕</span>
-        <a href="https://aion2.plaync.com" target="_blank" class="btn btn-sm" style="text-decoration: none; display: inline-flex; align-items: center; background: none; color: var(--text-muted); padding: 6px 12px; font-size: 13px; font-weight: 500; transition: color 0.2s;" onmouseover="this.style.color='#ffffff';" onmouseout="this.style.color='var(--text-muted)';"> AION2 공식홈 ➔ </a>
-    </h1>
-    <div class="top_box">
-        <div class="info-box">
-            <ul>
-                <li>모든 데이터는 <span class="info-highlight">사용자의 브라우저(LocalStorage)에 저장</span>되며, 별도의 서버에는 저장되지 않습니다. 브라우저 기록을 지우면 내역이 날아갈 수 있으니 <span class="info-alert">*데이터 백업*</span>을 적극 권장합니다!</li>
-                <li>일일 콘텐츠, 티켓, 열쇠, 오드는 <span class="info-highlight">매일 아침 5시</span>를 기준으로 초기화 및 연산이 진행됩니다.</li>
-                <li><span class="info-highlight">컨텐츠 열쇠, 오드에너지</span>는 <span class="info-alert ">멤버십 이용자</span>를 기준으로 계산됩니다.</li>
-            </ul>
+    <header class="site-header">
+        <div class="header-container">
+            <a href="#" class="site-logo">AION 2 DASHBOARD</a>
+            <nav class="gnb">
+                <ul>
+                    <li><a href="#" class="gnb-link active">대시보드</a></li>
+                    <li><a href="https://aion2.plaync.com" target="_blank" class="gnb-link btn-aion2">AION2 공식홈페이지 ↗</a></li>
+                </ul>
+            </nav>
         </div>
-        
-        <div class="alarm-container">
-            <p>🎉 이벤트 알람 (on/off)</p>
-            <div class="alarm-item">
-                <span class="alarm-title">페스타</span>
-                <div class="alarm-timer-wrapper">
-                    <span class="alarm-timer" id="timer-festa">00:00 남음</span>
-                    <label class="switch">
-                        <input type="checkbox" id="toggle-festa" onchange="toggleAlarmSetting('festa')">
-                        <span class="slider"></span>
-                    </label>
+    </header>
+
+    <div class="container">
+        <h1>아이온2 숙제 관리 대시보드 <span class="made-by">Made by. 당근</span></h1>
+
+        <div class="top_box">
+            <div class="alarm-container">
+                <p>⏰ 실시간 콘텐츠 타이머</p>
+                <div style="display:flex; gap:20px; flex-wrap:wrap; margin-top:8px;">
+                    <div class="alarm-item">
+                        <span class="alarm-title">시공의 균열</span>
+                        <div class="alarm-timer-wrapper">
+                            <span id="timer-crack" class="alarm-timer">00:00:00</span>
+                            <label class="switch">
+                                <input type="checkbox" id="toggle-crack" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="alarm-item">
+                        <span class="alarm-title">필드 보스</span>
+                        <div class="alarm-timer-wrapper">
+                            <span id="timer-boss" class="alarm-timer">00:00:00</span>
+                            <label class="switch">
+                                <input type="checkbox" id="toggle-boss" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="alarm-item">
-                <span class="alarm-title">침공</span>
-                <div class="alarm-timer-wrapper">
-                    <span class="alarm-timer" id="timer-invasion">00:00 남음</span>
-                    <label class="switch">
-                        <input type="checkbox" id="toggle-invasion" onchange="toggleAlarmSetting('invasion')">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-            </div>
-            <div class="alarm-item">
-                <span class="alarm-title">시공</span>
-                <div class="alarm-timer-wrapper">
-                    <span class="alarm-timer" id="timer-space">00:00:00 남음</span>
-                    <label class="switch">
-                        <input type="checkbox" id="toggle-space" onchange="toggleAlarmSetting('space')">
-                        <span class="slider"></span>
-                    </label>
-                </div>
+
+            <div class="info-box">
+                <ul>
+                    <li><span class="info-highlight">오드 에너지</span>는 매 분 자동으로 충전되며, 소모 시 타이머가 활성화됩니다.</li>
+                    <li><span class="info-alert">데이터 저장:</span> 모든 변경사항은 브라우저(LocalStorage)에 실시간 자동 저장됩니다.</li>
+                    <li><span class="info-highlight">계정 공통 콘텐츠:</span> 체크박스를 활성화하면 완료 처리 상태를 직관적으로 확인할 수 있습니다.</li>
+                </ul>
             </div>
         </div>
+
+        <div class="global-action-bar">
+            <button class="btn btn-toggle-hide" id="btnToggleHideCompleted" onclick="toggleHideCompletedMode()">
+                👁️ 완료된 숙제 숨기기 (OFF)
+            </button>
+            <button class="btn btn-toggle-hide" id="btnToggleShowHiddenChars" onclick="toggleShowHiddenCharsMode()">
+                🛡️ 제외 캐릭터 관리 (OFF)
+            </button>
+            <button class="btn btn-toggle-hide" id="btnManageCustomHomeworks" onclick="openCustomHomeworkModal()">
+                ⚙️ 커스텀 숙제 관리
+            </button>
+            <div class="batch-add-form" style="margin-left: auto;">
+                <input type="text" id="newAccountName" placeholder="새 계정 명칭 입력">
+                <button class="btn btn-sm" onclick="addNewAccount()">➕ 계정 생성</button>
+            </div>
+        </div>
+
+        <div id="app"></div>
     </div>
-</header>
 
-<div class="floating-menu-container" id="floatingMenu">
-    <button class="floating-toggle-btn" onclick="toggleFloatingMenu()" title="메뉴 열기">
-        <svg class="icon-menu" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
-    </button>
-    <div class="floating-items">
-        <button class="floating-item-btn" data-title="새 계정 만들기" onclick="openAccountModal(null)">➕</button>
-        <button class="floating-item-btn" data-title="완료된 숙제 숨기기/보기" onclick="toggleHideCompleted()">👁️</button>
-        <button class="floating-item-btn" data-title="제외 캐릭터 관리" onclick="toggleShowHiddenChars()">⚙️</button>
-        <button class="floating-item-btn" data-title="전체 데이터 백업(추출)" onclick="exportData()">💾</button>
-        <button class="floating-item-btn" data-title="복원 데이터 가져오기" onclick="document.getElementById('importFile').click()">📂</button>
-        <button class="floating-item-btn btn-floating-danger" data-title="초기화" onclick="resetAllData()">🔄</button>
-    </div>
-</div>
-
-<input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(event)">
-
-<div class="container">
-    <div class="global-action-bar">
-        <button class="btn-toggle-hide" id="btnToggleHide" onclick="toggleHideCompleted()">
-            <span>👁️ 완료된 숙제 숨기기</span>
-        </button>
-        <button class="btn-toggle-hide" id="btnToggleHiddenChars" onclick="toggleShowHiddenChars()">
-            <span>⚙️ 제외 캐릭터 관리</span>
-        </button>
-    </div>
-</div>
-
-<div class="container" id="app"></div>
-
-<div class="modal-overlay" id="charModal">
-    <div class="modal-content">
-        <h3>새 캐릭터 추가</h3>
-        <form id="charForm" onsubmit="submitCharacterForm(event)">
+    <div class="modal-overlay" id="charModal">
+        <div class="modal-content">
+            <h3 id="modalTitle">캐릭터 설정</h3>
             <input type="hidden" id="modalAccId">
+            <input type="hidden" id="modalCharId">
+            
             <div class="modal-field">
-                <label for="modalCharName">캐릭터 이름</label>
-                <input type="text" id="modalCharName" required placeholder="예: 홍길동">
+                <label>캐릭터 이름</label>
+                <input type="text" id="modalCharName" placeholder="캐릭터명을 입력하세요">
             </div>
             <div class="modal-field">
-                <label for="modalCharJob">직업 선택</label>
-                <select id="modalCharJob" required>
-                    <option value="치유성">치유성</option>
-                    <option value="호법성">호법성</option>
-                    <option value="수호성">수호성</option>
+                <label>직업 선택</label>
+                <select id="modalCharClass">
                     <option value="검성">검성</option>
-                    <option value="궁성">궁성</option>
+                    <option value="수호성">수호성</option>
                     <option value="살성">살성</option>
+                    <option value="궁성">궁성</option>
                     <option value="마도성">마도성</option>
                     <option value="정령성">정령성</option>
-                    <option value="권성">권성</option>
+                    <option value="치유성">치유성</option>
+                    <option value="호법성">호법성</option>
                 </select>
             </div>
             <div class="modal-field">
-                <label for="modalCharPower">전투력</label>
-                <input type="number" id="modalCharPower" required placeholder="숫자만 입력">
+                <label>전투력</label>
+                <input type="number" id="modalCharPower" placeholder="숫자만 입력 (예: 15400)">
             </div>
             <div class="modal-actions">
-                <button type="button" class="btn btn-danger" onclick="closeCharModal()">취소</button>
-                <button type="submit" class="btn">완료</button>
+                <button class="btn btn-b" onclick="closeCharModal()">취소</button>
+                <button class="btn" onclick="saveCharModal()">저장하기</button>
             </div>
-        </form>
+        </div>
     </div>
-</div>
 
-<div id="memoModal" class="modal">
-    <div class="modal-content">
-        <h3 id="memoModalTitle" style="margin-top:0;">캐릭터 메모 관리</h3>
-        <form id="memoForm" onsubmit="submitMemoForm(event)">
+    <div class="modal-overlay" id="memoModal" style="display: none;">
+        <div class="modal-content">
+            <h3>📝 캐릭터 개별 메모 관리</h3>
             <input type="hidden" id="memoAccId">
             <input type="hidden" id="memoCharId">
             <div class="modal-field">
-                <label for="modalMemoText">이 캐릭터에 기록할 메모를 입력하세요</label>
-                <textarea id="modalMemoText" rows="6" placeholder="기록할 내용을 입력해 주세요." style="width:100%; background:var(--input-bg); border:1px solid var(--input-border); border-radius:6px; color:#fff; padding:10px; box-sizing:border-box; resize:none; font-family:inherit; font-size:14px; line-height:1.5;"></textarea>
+                <label id="memoTargetName" style="font-weight: bold; color: #ffffff; margin-bottom: 10px;"></label>
+                <textarea id="modalMemoText" rows="6" style="width:100%; background:var(--input-bg); border:1px solid var(--input-border); color:#fff; padding:10px; border-radius:6px; resize:none; box-sizing:border-box;" placeholder="이 캐릭터만의 특별한 박스나 기억해야 할 스케줄, 강화 상태 등을 자유롭게 메모해 두세요."></textarea>
             </div>
             <div class="modal-actions">
-                <button type="button" class="btn" onclick="closeMemoModal()" style="background:var(--input-bg); color:#fff; border:1px solid var(--input-border)">취소</button>
-                <button type="submit" class="btn btn-success">메모 저장</button>
+                <button class="btn btn-b" onclick="closeMemoModal()">닫기</button>
+                <button class="btn btn-success" onclick="saveMemoModal()">메모 저장</button>
             </div>
-        </form>
-    </div>
-</div>
-
-<div class="modal-overlay" id="accountModal">
-    <div class="modal-content">
-        <h3 id="accountModalTitle">새 계정 추가</h3>
-        <form id="accountForm" onsubmit="submitAccountForm(event)">
-            <input type="hidden" id="modalAccId">
-            <div class="modal-field">
-                <label for="modalAccName">계정 명칭</label>
-                <input type="text" id="modalAccName" required placeholder="예: 본계정 / 부계정1">
-            </div>
-            <div class="modal-field">
-                <label>아인종 멤버십 여부</label>
-                <div style="display:flex; gap:20px; padding:5px 0;">
-                    <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-size:14px; color:#fff;">
-                        <input type="radio" name="modalAccMembership" value="O" checked onchange="toggleMembershipUI()"> 활성화 (3중 가속)
-                    </label>
-                    <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-size:14px; color:#fff;">
-                        <input type="radio" name="modalAccMembership" value="X" onchange="toggleMembershipUI()"> 비활성화 (기본 충전)
-                    </label>
-                </div>
-            </div>
-            <div class="modal-field" id="membershipTimeField">
-                <label>남은 멤버십 기간 설정</label>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <input type="number" id="membershipDays" min="0" value="30" style="width:70px; text-align:center;"> 일
-                    <input type="number" id="membershipHours" min="0" max="23" value="0" style="width:60px; text-align:center;"> 시간
-                </div>
-                <small style="color:var(--text-muted); margin-top:6px; display:block;">⏱️ 입력된 시간부터 분 단위로 자동 차감 연산됩니다.</small>
-            </div>
-            <div class="modal-actions">
-                <button type="button" class="btn btn-danger" onclick="closeAccountModal()">취소</button>
-                <button type="submit" class="btn">저장 완료</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div class="modal-overlay" id="customHwManageModal">
-    <div class="modal-content" style="max-width: 450px;">
-        <h3 id="customHwModalTitle">커스텀 숙제 설정 및 순서 변경</h3>
-        <div style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;" id="customHwListContainer">
-            </div>
-        <div class="modal-actions">
-            <button type="button" class="btn" onclick="closeCustomHwManageModal()" style="background:var(--input-bg); color:#fff; border:1px solid var(--input-border)">닫기</button>
         </div>
     </div>
-</div>
 
-<div class="container update-notice-section">
-    <div class="update-header">
-        <span class="update-badge">UPDATE NOTICE</span>
-        <h2>대시보드 실시간 패치 내역</h2>
-    </div>
-    <ul class="update-list">
-        <li>
-            <span class="update-date">2026.07.06</span>
-            <div class="update-content">
-                <strong>[기능 업그레이드] 키나획득률 및 커스텀 숙제 위치조절 추가</strong>
-                <p>계정 공통 콘텐츠 체크 내에 [키나획득률100%] 원정84회 및 초월56회 카운터가 신규 추가되었습니다. 주간 리셋 시 자동 초기화됩니다.</p>
-                <p>커스텀 숙제 영역에 설정(⚙️) 기능이 추가되어, 생성한 커스텀 숙제의 순서를 위/아래로 바꾸거나 편리하게 삭제할 수 있습니다.</p>
+    <div class="modal-overlay" id="customHwModal" style="display: none;">
+        <div class="modal-content" style="max-width: 450px;">
+            <h3>⚙️ 커스텀 숙제 순서 & 관리</h3>
+            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 15px;">
+                생성된 커스텀 숙제들의 출력 노출 순서를 위아래 버튼으로 변경하거나 삭제할 수 있습니다.
+            </p>
+            <div id="customHwSortContainer" style="max-height: 250px; overflow-y: auto; margin-bottom: 20px;">
+                </div>
+            <div class="modal-actions">
+                <button class="btn btn-b" onclick="closeCustomHomeworkModal()">닫기</button>
             </div>
-        </li>
-    </ul>
-</div>
+        </div>
+    </div>
 
-<script>
-    function toggleFloatingMenu() {
-        const container = document.getElementById('floatingMenu');
-        container.classList.toggle('active');
-    }
-    window.addEventListener('click', function(e) {
-        const container = document.getElementById('floatingMenu');
-        if (container && container.classList.contains('active') && !container.contains(e.target)) {
-            container.classList.remove('active');
-        }
-    });
+    <div class="floating-menu-container" id="floatingMenu">
+        <button class="floating-toggle-btn" onclick="toggleFloatingMenu()">
+            <span class="icon-menu" style="font-size:20px; font-weight:bold;">☰</span>
+            <span class="icon-close" style="font-size:20px; font-weight:bold;">✕</span>
+        </button>
+        <div class="floating-items">
+            <div class="floating-item-wrapper">
+                <span class="floating-tooltip">전체 데이터 백업 (복사)</span>
+                <button class="floating-sub-btn btn-success-clip" onclick="exportDataToClipboard()">📋</button>
+            </div>
+            <div class="floating-item-wrapper">
+                <span class="floating-tooltip">복사 데이터 가져오기 (복구)</span>
+                <button class="floating-sub-btn" onclick="importDataFromClipboard()">📥</button>
+            </div>
+            <div class="floating-item-wrapper">
+                <span class="floating-tooltip">대시보드 전체 초기화</span>
+                <button class="floating-sub-btn btn-danger" onclick="clearAllDashboardData()">🔥</button>
+            </div>
+        </div>
+    </div>
 
-    let gameData = JSON.parse(localStorage.getItem('gameHomeworkData_v15')) || [];
-    let lastChecked = localStorage.getItem('lastOdeUpdateTime_v15') || Date.now();
-    localStorage.setItem('lastOdeUpdateTime_v15', lastChecked);
-    let lastAbyssReset = localStorage.getItem('lastAbyssResetTime_v15') || "0";
-    let accordionStatus = JSON.parse(localStorage.getItem('accordionStatus_v15')) || {};
-    let lastDailyReset = localStorage.getItem('lastDailyResetTime_v15') || "0";
-    let lastWeeklyReset = localStorage.getItem('lastWeeklyResetTime_v15') || "0";
-    let alarmSettings = JSON.parse(localStorage.getItem('alarmSettings_v15')) || { festa: true, invasion: true, space: true };
+    <footer>
+        © 당근. All rights reserved. 본 대시보드는 로컬 스토리지 보안 샌드박스 기반으로 작동하므로 유저 본인 외에는 데이터를 열람할 수 없습니다.
+    </footer>
 
-    function updateServerClock() {
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const date = String(now.getDate()).padStart(2, '0');
-        const weekDays = ['일', '월', '화', '수', '목', '금', '토'];
-        const dayOfWeek = weekDays[now.getDay()];
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-        const clockElement = document.getElementById('server-clock');
-        if (clockElement) {
-            clockElement.innerText = `⏰ 현재 시간: ${year}-${month}-${date}(${dayOfWeek}) ${hours}:${minutes}:${seconds}`;
-        }
-    }
-    window.addEventListener('DOMContentLoaded', () => {
-        updateServerClock();
-        setInterval(updateServerClock, 1000);
-    });
+    <script>
+        // --- 1. 상태 전역 변수 구조 설계 및 기본값 매핑 ---
+        let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
+        let isHideCompleted = JSON.parse(localStorage.getItem('isHideCompleted')) || false;
+        let isShowHiddenChars = JSON.parse(localStorage.getItem('isShowHiddenChars')) || false;
+        
+        // 전역 커스텀 숙제 마스터 리스트 (위치/순서 보존용)
+        let customHomeworkList = JSON.parse(localStorage.getItem('customHomeworkList')) || [];
 
-    function playBeepSound() {
-        try {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            if (!AudioContext) return;
-            const ctx = new AudioContext();
-            const now = ctx.currentTime;
-            const mainGain = ctx.createGain();
-            mainGain.connect(ctx.destination);
-            mainGain.gain.setValueAtTime(0.05, now);
-            const sequence = [
-                { pitch: 523.25, start: 0.0, duration: 0.4, type: 'sine', volume: 0.8 },
-                { pitch: 523.25, start: 0.5, duration: 0.4, type: 'sine', volume: 0.8 }
-            ];
-            sequence.forEach(note => {
-                const osc = ctx.createOscillator();
-                const nodeGain = ctx.createGain();
-                osc.type = note.type;
-                osc.frequency.setValueAtTime(note.pitch, now + note.start);
-                nodeGain.gain.setValueAtTime(note.volume, now + note.start);
-                nodeGain.gain.exponentialRampToValueAtTime(0.0001, now + note.start + note.duration);
-                osc.connect(nodeGain);
-                nodeGain.connect(mainGain);
-                osc.start(now + note.start);
-                osc.stop(now + note.start + note.duration);
-            });
-        } catch(e) {}
-    }
+        // 알람 수신 동기화 정보 초기화
+        let alarmSettings = JSON.parse(localStorage.getItem('alarmSettings')) || { crack: true, boss: true };
 
-    function toggleAlarmSetting(type) {
-        alarmSettings[type] = document.getElementById(`toggle-${type}`).checked;
-        localStorage.setItem('alarmSettings_v15', JSON.stringify(alarmSettings));
-        updateTopAlertTimers();
-    }
-    function initAlarmToggles() {
-        ['festa','invasion','space'].forEach(t => {
-            const el = document.getElementById(`toggle-${t}`);
-            if(el) el.checked = !!alarmSettings[t];
-        });
-    }
-
-    function getNextOdeResetTime() {
-        const now = Date.now();
-        const base = new Date(2025,0,1,5,0,0,0).getTime();
-        const interval = 10800000;
-        const passed = now - base;
-        const cycles = Math.floor(passed / interval);
-        return base + (cycles + 1) * interval;
-    }
-
-    function changeVal(accId, charId, field, amount) {
-        const acc = gameData.find(a => a.id === accId);
-        if (!acc) return;
-        if (charId === null) {
-            let maxVal = 999;
-            if (field === 'shugo') maxVal = 14;
-            if (field === 'dimension') maxVal = 7;
-            if (field === 'expedition') maxVal = 84;
-            if (field === 'transcend') maxVal = 56;
+        // --- 2. 실시간 시간 동적 흐름 연산 처리 계층 ---
+        function updateTimerDisplay() {
+            const now = new Date();
             
-            let current = acc[field] || 0;
-            acc[field] = Math.max(0, Math.min(maxVal, current + amount));
-        } else {
-            const char = acc.characters.find(c => c.id === charId);
-            if (!char) return;
-            if (field === 'ode') {
-                let cur = char.ode || 0;
-                char.ode = Math.max(0, Math.min(840, cur + amount));
-            } else if (field === 'extraOde') {
-                let cur = char.extraOde || 0;
-                char.extraOde = Math.max(0, cur + amount);
-            } else if (field === 'nightmareTicket') {
-                let cur = char.nightmareTicket !== undefined ? char.nightmareTicket : 2;
-                char.nightmareTicket = Math.max(0, Math.min(14, cur + amount));
-            }
-        }
-        saveData();
-    }
-
-    function setDirectVal(accId, charId, field, val) {
-        let num = parseInt(val);
-        if (isNaN(num) || num < 0) num = 0;
-        const acc = gameData.find(a => a.id === accId);
-        if (!acc) return;
-        if (charId === null) {
-            let maxVal = 999;
-            if (field === 'shugo') maxVal = 14;
-            if (field === 'dimension') maxVal = 7;
-            if (field === 'expedition') maxVal = 84;
-            if (field === 'transcend') maxVal = 56;
-            acc[field] = Math.min(maxVal, num);
-        } else {
-            const char = acc.characters.find(c => c.id === charId);
-            if (!char) return;
-            if (field === 'ode') char.ode = Math.min(840, num);
-            else if (field === 'extraOde') char.extraOde = num;
-            else if (field === 'nightmareTicket') char.nightmareTicket = Math.min(14, num);
-        }
-        saveData();
-    }
-
-    function useOde(accId, charId, amount) {
-        const char = gameData.find(a => a.id === accId).characters.find(c => c.id === charId);
-        let needed = amount;
-        if ((char.ode || 0) >= needed) {
-            char.ode -= needed;
-        } else {
-            needed -= (char.ode || 0);
-            char.ode = 0;
-            if ((char.extraOde || 0) >= needed) {
-                char.extraOde -= needed;
+            // 시공의 균열 타이머 연산 로직
+            const crackTimer = document.getElementById('timer-crack');
+            if (alarmSettings.crack) {
+                crackTimer.classList.remove('disabled');
+                let crackMinutes = 59 - now.getMinutes();
+                let crackSeconds = 59 - now.getSeconds();
+                let crackStr = `00:${String(crackMinutes).padStart(2,'0')}:${String(crackSeconds).padStart(2,'0')}`;
+                crackTimer.innerText = crackStr;
+                if(crackMinutes < 5) crackTimer.classList.add('alarm-urgent');
+                else crackTimer.classList.remove('alarm-urgent');
             } else {
-                char.extraOde = 0;
+                crackTimer.innerText = "알람 OFF";
+                crackTimer.classList.add('disabled');
+                crackTimer.classList.remove('alarm-urgent');
+            }
+
+            // 필드 보스 타이머 연산 로직
+            const bossTimer = document.getElementById('timer-boss');
+            if (alarmSettings.boss) {
+                bossTimer.classList.remove('disabled');
+                const bossHours = [0, 4, 8, 12, 16, 20];
+                let currentHour = now.getHours();
+                let nextHour = bossHours.find(h => h > currentHour);
+                if (nextHour === undefined) nextHour = 24;
+
+                let targetTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), nextHour, 0, 0);
+                let diffMs = targetTime - now;
+                let diffSecTotal = Math.floor(diffMs / 1000);
+                let h = Math.floor(diffSecTotal / 3600);
+                let m = Math.floor((diffSecTotal % 3600) / 60);
+                let s = diffSecTotal % 60;
+
+                let bossStr = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+                bossTimer.innerText = bossStr;
+                if(h === 0 && m < 15) bossTimer.classList.add('alarm-urgent');
+                else bossTimer.classList.remove('alarm-urgent');
+            } else {
+                bossTimer.innerText = "알람 OFF";
+                bossTimer.classList.add('disabled');
+                bossTimer.classList.remove('alarm-urgent');
             }
         }
-        saveData();
-    }
 
-    function useAllOde(accId, charId) {
-        const char = gameData.find(a => a.id === accId).characters.find(c => c.id === charId);
-        char.ode = 0;
-        char.extraOde = 0;
-        saveData();
-    }
+        function initAlarmToggles() {
+            document.getElementById('toggle-crack').checked = alarmSettings.crack;
+            document.getElementById('toggle-boss').checked = alarmSettings.boss;
 
-    function toggleAccordion(accId) {
-        accordionStatus[accId] = !accordionStatus[accId];
-        localStorage.setItem('accordionStatus_v15', JSON.stringify(accordionStatus));
-        render();
-    }
+            document.getElementById('toggle-crack').addEventListener('change', function() {
+                alarmSettings.crack = this.checked;
+                localStorage.setItem('alarmSettings', JSON.stringify(alarmSettings));
+                updateTimerDisplay();
+            });
+            document.getElementById('toggle-boss').addEventListener('change', function() {
+                alarmSettings.boss = this.checked;
+                localStorage.setItem('alarmSettings', JSON.stringify(alarmSettings));
+                updateTimerDisplay();
+            });
+        }
 
-    function saveData() {
-        localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
-        render();
-    }
-
-    function exportData() {
-        const state = { gameData, lastChecked, lastAbyssReset, lastDailyReset, lastWeeklyReset, accordionStatus, alarmSettings };
-        const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `aion2_backup_${new Date().toISOString().slice(0,10)}.json`;
-        a.click();
-    }
-
-    function importData(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const parsed = JSON.parse(e.target.result);
-                if (parsed.gameData && Array.isArray(parsed.gameData)) {
-                    gameData = parsed.gameData;
-                    lastChecked = parsed.lastChecked || Date.now();
-                    lastAbyssReset = parsed.lastAbyssReset || "0";
-                    lastDailyReset = parsed.lastDailyReset || "0";
-                    lastWeeklyReset = parsed.lastWeeklyReset || "0";
-                    accordionStatus = parsed.accordionStatus || {};
-                    alarmSettings = parsed.alarmSettings || { festa: true, invasion: true, space: true };
+        // --- 3. 오드 에너지 자동 충전 백그라운드 엔진 계층 ---
+        function updateOdeAutomatically() {
+            let updated = false;
+            accounts.forEach(acc => {
+                if(!acc.characters) return;
+                acc.characters.forEach(char => {
+                    if(char.odeCurrent === undefined) char.odeCurrent = 0;
+                    if(char.odeMax === undefined) char.odeMax = 120;
                     
-                    localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
-                    localStorage.setItem('lastOdeUpdateTime_v15', lastChecked);
-                    localStorage.setItem('lastAbyssResetTime_v15', lastAbyssReset);
-                    localStorage.setItem('lastDailyResetTime_v15', lastDailyReset);
-                    localStorage.setItem('lastWeeklyResetTime_v15', lastWeeklyReset);
-                    localStorage.setItem('accordionStatus_v15', JSON.stringify(accordionStatus));
-                    localStorage.setItem('alarmSettings_v15', JSON.stringify(alarmSettings));
-                    
-                    alert("✅ 성공: 데이터를 정상적으로 불러왔습니다!");
-                    initAlarmToggles();
-                    render();
-                } else {
-                    alert("❌ 파일 형식이 올바르지 않습니다.");
-                }
-            } catch (err) {
-                alert("❌ 해석 중 오류 발생");
-            }
-        };
-        reader.readAsText(file);
-    }
-
-    function updateTopAlertTimers() {
-        const now = new Date();
-        const currentMin = now.getMinutes();
-        const currentSec = now.getSeconds();
-
-        const fEl = document.getElementById('timer-festa');
-        if(fEl) {
-            if (!alarmSettings.festa) {
-                fEl.innerText = "OFF"; fEl.className = "alarm-timer disabled";
-            } else {
-                let m = 59 - currentMin; let s = 59 - currentSec;
-                if (m === 0 && s === 0) playBeepSound();
-                fEl.innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')} 남음`;
-                fEl.className = "alarm-timer" + (m < 10 ? " alarm-urgent" : "");
-            }
-        }
-
-        const iEl = document.getElementById('timer-invasion');
-        if(iEl) {
-            if (!alarmSettings.invasion) {
-                iEl.innerText = "OFF"; iEl.className = "alarm-timer disabled";
-            } else {
-                let targetMin = currentMin < 30 ? 29 : 59;
-                let m = targetMin - currentMin; let s = 59 - currentSec;
-                if (m === 0 && s === 0) playBeepSound();
-                iEl.innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')} 남음`;
-                iEl.className = "alarm-timer" + (m < 5 ? " alarm-urgent" : "");
-            }
-        }
-
-        const sEl = document.getElementById('timer-space');
-        if(sEl) {
-            if (!alarmSettings.space) {
-                sEl.innerText = "OFF"; sEl.className = "alarm-timer disabled";
-            } else {
-                let h = 23 - now.getHours(); let m = 59 - currentMin; let s = 59 - currentSec;
-                if (h === 0 && m === 0 && s === 0) playBeepSound();
-                sEl.innerText = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')} 남음`;
-                sEl.className = "alarm-timer" + (h === 0 && m < 10 ? " alarm-urgent" : "");
-            }
-        }
-    }
-
-    let isOdeUpdating = false;
-    function updateOdeAutomatically() {
-        if (isOdeUpdating || !gameData) return;
-        isOdeUpdating = true;
-        const lastExpected = getNextOdeResetTime() - 10800000;
-        let pChecked = parseInt(lastChecked);
-        if (isNaN(pChecked) || !pChecked) {
-            pChecked = lastExpected - 10800000;
-            lastChecked = pChecked;
-        }
-        if (pChecked < lastExpected) {
-            const cycles = Math.round((lastExpected - pChecked) / 10800000);
-            if (cycles >= 1) {
-                const addOde = cycles * 15;
-                lastChecked = lastExpected;
-                localStorage.setItem('lastOdeUpdateTime_v15', lastChecked.toString());
-                gameData.forEach(acc => {
-                    if(acc.characters) acc.characters.forEach(char => {
-                        if ((char.ode || 0) < 840) char.ode = Math.min(840, (char.ode || 0) + addOde);
-                    });
+                    if(char.odeCurrent < char.odeMax) {
+                        char.odeCurrent += 1;
+                        updated = true;
+                    }
                 });
-                localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
+            });
+            if(updated) {
+                saveData();
                 render();
             }
         }
-        setTimeout(() => { isOdeUpdating = false; }, 500);
-    }
 
-    function updateTimerDisplay() {
-        const diff = getNextOdeResetTime() - Date.now();
-        const h = String(Math.floor(diff / 3600000)).padStart(2, '0');
-        const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
-        const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
-        const tStr = `${h}:${m}:${s} 남음`;
-
-        gameData.forEach(acc => {
-            if(acc.characters) acc.characters.forEach(char => {
-                const el = document.getElementById(`ode-timer-${char.id}`);
-                if (el) el.innerText = tStr;
+        // --- 4. 숙제 및 멤버십 주기별 시간 초기화 검증 엔진 계층 ---
+        function checkAndReduceMembershipTime() {
+            let updated = false;
+            accounts.forEach(acc => {
+                if (acc.membershipTime && acc.membershipTime > 0) {
+                    acc.membershipTime = Math.max(0, acc.membershipTime - 1);
+                    updated = true;
+                }
             });
-        });
-        updateTopAlertTimers();
-    }
-
-    function checkAbyssReset() {
-        const now = new Date();
-        let target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
-        while (target.getDay() !== 6) { target.setDate(target.getDate() - 1); }
-        const currentTarget = target.getTime();
-        if (parseInt(lastAbyssReset) < currentTarget) {
-            gameData.forEach(acc => {
-                if(acc.characters) acc.characters.forEach(char => { char.abyssChecked = false; });
-            });
-            localStorage.setItem('lastAbyssResetTime_v15', currentTarget.toString());
-            lastAbyssReset = currentTarget.toString();
-            saveData();
+            if (updated) saveData();
         }
-    }
 
-    function checkDailyReset() {
-        const now = new Date();
-        let t = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
-        if (now.getTime() < t.getTime()) t.setDate(t.getDate() - 1);
-        if (parseInt(lastDailyReset) < t.getTime()) {
-            gameData.forEach(acc => {
-                acc.shugo = Math.min(14, (acc.shugo || 0) + 2);
-                acc.dimension = Math.min(7, (acc.dimension || 0) + 1);
-                if(acc.characters) acc.characters.forEach(char => {
-                    char.nightmareTicket = Math.min(14, (char.nightmareTicket !== undefined ? char.nightmareTicket : 2) + 2);
-                    char.homeworks.forEach(hw => { if (hw.type === 'daily') hw.checked = false; });
-                });
-            });
-            localStorage.setItem('lastDailyResetTime_v15', t.getTime().toString());
-            lastDailyReset = t.getTime().toString();
-            saveData();
-        }
-    }
+        function checkDailyReset() {
+            const lastReset = localStorage.getItem('lastDailyResetKey');
+            const now = new Date();
+            // 오전 5시 기준 리셋 연산
+            let compareDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0);
+            if (now < compareDate) {
+                compareDate.setDate(compareDate.getDate() - 1);
+            }
+            const currentResetKey = compareDate.getTime().toString();
 
-    function checkWeeklyReset() {
-        const now = new Date();
-        let t = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
-        if (now.getTime() < t.getTime()) t.setDate(t.getDate() - 1);
-        while (t.getDay() !== 3) t.setDate(t.getDate() - 1);
-        if (parseInt(lastWeeklyReset) < t.getTime()) {
-            gameData.forEach(acc => {
-                acc.odeBuyChecked = false;
-                acc.villageOrderChecked = false;
-                acc.abyssOrderChecked = false;
-                acc.dailyDungeonChecked = false;
-                // 획득률 초기화
-                acc.expedition = 0;
-                acc.transcend = 0;
-                if(acc.characters) acc.characters.forEach(char => {
-                    char.charBuyChecked = false;
-                    char.nightmareChecked = false;
-                    char.awakeningChecked = false;
-                    char.homeworks.forEach(hw => { if (hw.type === 'weekly') hw.checked = false; });
-                });
-            });
-            localStorage.setItem('lastWeeklyResetTime_v15', t.getTime().toString());
-            lastWeeklyReset = t.getTime().toString();
-            saveData();
-        }
-    }
-
-    function checkAndReduceMembershipTime() {
-        let changed = false;
-        gameData.forEach(acc => {
-            if (acc.membership === 'O' && acc.membershipUpdatedAt) {
-                const now = Date.now();
-                const diffMs = now - acc.membershipUpdatedAt;
-                if (diffMs >= 60000) {
-                    const elapsedMins = Math.floor(diffMs / 60000);
-                    let totalHours = (parseInt(acc.membershipDays || 0) * 24) + parseInt(acc.membershipHours || 0);
-                    let totalMins = (totalHours * 60) - elapsedMins;
-                    if (totalMins <= 0) {
-                        acc.membership = 'X'; acc.membershipDays = 0; acc.membershipHours = 0; acc.membershipUpdatedAt = null;
-                    } else {
-                        let newTotalHours = Math.floor(totalMins / 60);
-                        acc.membershipDays = Math.floor(newTotalHours / 24);
-                        acc.membershipHours = newTotalHours % 24;
-                        acc.membershipUpdatedAt = acc.membershipUpdatedAt + (elapsedMins * 60000);
+            if (lastReset !== currentResetKey) {
+                accounts.forEach(acc => {
+                    // 계정 공통 일일 콘텐츠 리셋
+                    if(acc.commonContents) {
+                        acc.commonContents.dailyQuest = false;
+                        acc.commonContents.dailyDungeon = false;
+                        acc.commonContents.dailyShop = false;
                     }
-                    changed = true;
-                }
-            }
-        });
-        if (changed) { localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData)); render(); }
-    }
-
-    let currentAccIdForChar = null;
-    let charEditMode = false;
-    let editCharId = null;
-
-    function openCharModal(accId, event, charId = null) {
-        if (event) event.stopPropagation();
-        currentAccIdForChar = accId;
-        const form = document.getElementById('charForm');
-        form.reset();
-        document.getElementById('modalAccId').value = accId;
-        if (charId) {
-            charEditMode = true; editCharId = charId;
-            const char = gameData.find(a => a.id === accId).characters.find(c => c.id === charId);
-            document.getElementById('modalCharName').value = char.name;
-            document.getElementById('modalCharJob').value = char.job;
-            document.getElementById('modalCharPower').value = char.power;
-            document.querySelector('#charModal h3').innerText = "캐릭터 설정 수정";
-        } else {
-            charEditMode = false; editCharId = null;
-            document.querySelector('#charModal h3').innerText = "새 캐릭터 추가";
-        }
-        document.getElementById('charModal').style.display = 'flex';
-    }
-
-    function closeCharModal() { document.getElementById('charModal').style.display = 'none'; }
-
-    function submitCharacterForm(e) {
-        e.preventDefault();
-        const accId = parseInt(document.getElementById('modalAccId').value);
-        const name = document.getElementById('modalCharName').value.trim();
-        const job = document.getElementById('modalCharJob').value;
-        const power = parseInt(document.getElementById('modalCharPower').value) || 0;
-        const acc = gameData.find(a => a.id === accId);
-        if (charEditMode) {
-            const char = acc.characters.find(c => c.id === editCharId);
-            if (char) { char.name = name; char.job = job; char.power = power; }
-        } else {
-            if(!acc.characters) acc.characters = [];
-            acc.characters.push({
-                id: Date.now(), name, job, power, ode: 0, extraOde: 0, nightmareTicket: 2, memo: '',
-                charBuyChecked: false, awakeningChecked: false, hidden: false,
-                homeworks: [
-                    { name: '시즌주간미션', type: 'weekly', checked: false },
-                    { name: '투기장', type: 'weekly', checked: false },
-                    { name: '루드라', type: 'weekly', checked: false }
-                ]
-            });
-        }
-        closeCharModal(); saveData();
-    }
-
-    let memoAccId = null, memoCharId = null;
-    function openMemoModal(accId, charId, event) {
-        if (event) event.stopPropagation();
-        memoAccId = accId; memoCharId = charId;
-        const char = gameData.find(a => a.id === accId).characters.find(c => c.id === charId);
-        document.getElementById('memoAccId').value = accId;
-        document.getElementById('memoCharId').value = charId;
-        document.getElementById('modalMemoText').value = char.memo || '';
-        document.getElementById('memoModalTitle').innerText = `[${char.name}] 메모 관리`;
-        document.getElementById('memoModal').style.display = 'flex';
-    }
-    function closeMemoModal() { document.getElementById('memoModal').style.display = 'none'; }
-    function submitMemoForm(e) {
-        e.preventDefault();
-        const char = gameData.find(a => a.id === memoAccId).characters.find(c => c.id === memoCharId);
-        if (char) char.memo = document.getElementById('modalMemoText').value;
-        closeMemoModal(); saveData();
-    }
-
-    function removeAccount(accId, event) {
-        event.stopPropagation();
-        if(confirm("계정의 모든 데이터가 영구 삭제됩니다.")) {
-            gameData = gameData.filter(a => a.id !== accId);
-            delete accordionStatus[accId]; saveData();
-        }
-    }
-    function removeCharacter(accId, charId, event) {
-        event.stopPropagation();
-        if(confirm("해당 캐릭터를 삭제하시겠습니까?")) {
-            const acc = gameData.find(a => a.id === accId);
-            acc.characters = acc.characters.filter(c => c.id !== charId); saveData();
-        }
-    }
-
-    let accEditMode = false;
-    function openAccountModal(accId = null, event = null) {
-        if (event) event.stopPropagation();
-        document.getElementById('accountForm').reset();
-        if (accId) {
-            accEditMode = true;
-            const acc = gameData.find(a => a.id === accId);
-            document.getElementById('modalAccId').value = acc.id;
-            document.getElementById('modalAccName').value = acc.name;
-            document.querySelector(`input[name="modalAccMembership"][value="${acc.membership || 'X'}"]`).checked = true;
-            let d = acc.membershipDays || 0; let h = acc.membershipHours || 0;
-            if (acc.membershipUpdatedAt) {
-                const diffMins = Math.floor((Date.now() - acc.membershipUpdatedAt) / 60000);
-                if (diffMins > 0) {
-                    let tot = (d * 24) + h - Math.floor(diffMins / 60); tot = Math.max(0, tot);
-                    d = Math.floor(tot / 24); h = tot % 24;
-                }
-            }
-            document.getElementById('membershipDays').value = d;
-            document.getElementById('membershipHours').value = h;
-            document.getElementById('accountModalTitle').innerText = "계정 설정 수정";
-        } else {
-            accEditMode = false;
-            document.getElementById('modalAccId').value = "";
-            document.querySelector('input[name="modalAccMembership"][value="O"]').checked = true;
-            document.getElementById('membershipDays').value = 30;
-            document.getElementById('membershipHours').value = 0;
-            document.getElementById('accountModalTitle').innerText = "새 계정 추가";
-        }
-        toggleMembershipUI();
-        document.getElementById('accountModal').style.display = 'flex';
-    }
-    function closeAccountModal() { document.getElementById('accountModal').style.display = 'none'; accEditMode = false; }
-    function toggleMembershipUI() {
-        const m = document.querySelector('input[name="modalAccMembership"]:checked').value;
-        document.getElementById('membershipTimeField').style.display = m === 'O' ? 'flex' : 'none';
-    }
-
-    function submitAccountForm(e) {
-        e.preventDefault();
-        const accId = document.getElementById('modalAccId').value;
-        const name = document.getElementById('modalAccName').value.trim();
-        const membership = document.querySelector('input[name="modalAccMembership"]:checked').value;
-        const days = membership === 'O' ? parseInt(document.getElementById('membershipDays').value) || 0 : 0;
-        const hours = membership === 'O' ? parseInt(document.getElementById('membershipHours').value) || 0 : 0;
-        if (accEditMode) {
-            const acc = gameData.find(a => a.id === parseInt(accId));
-            if (acc) {
-                acc.name = name; acc.membership = membership; acc.membershipDays = days; acc.membershipHours = hours; acc.membershipUpdatedAt = Date.now();
-            }
-        } else {
-            const newId = Date.now();
-            gameData.push({
-                id: newId, name: name, membership: membership, membershipDays: days, membershipHours: hours, membershipUpdatedAt: Date.now(),
-                shugo: 2, dimension: 1, expedition: 0, transcend: 0,
-                villageOrderChecked: false, abyssOrderChecked: false, dailyDungeonChecked: false, odeBuyChecked: false, characters: []
-            });
-            accordionStatus[newId] = false;
-        }
-        closeAccountModal(); saveData();
-    }
-
-    function resetAllData() {
-        if(confirm("⚠️ 경고: 대시보드의 모든 데이터(계정, 캐릭터, 숙제 내역)가 영구 삭제됩니다. 초기화하시겠습니까?")) {
-            localStorage.removeItem('gameHomeworkData_v15');
-            localStorage.removeItem('accordionStatus_v15');
-            gameData = []; accordionStatus = {}; saveData(); alert("초기화가 완료되었습니다.");
-        }
-    }
-
-    function toggleCheckbox(accId, charId, field, origIndex = null) {
-        const acc = gameData.find(a => a.id === accId);
-        if (charId === null) acc[field] = !acc[field];
-        else {
-            const char = acc.characters.find(c => c.id === charId);
-            if (origIndex !== null) {
-                char.homeworks[origIndex].checked = !char.homeworks[origIndex].checked;
-                if (char.homeworks[origIndex].type === 'once' && char.homeworks[origIndex].checked) char.homeworks.splice(origIndex, 1);
-            } else char[field] = !char[field];
-        }
-        saveData();
-    }
-
-    function createCustomHomework(e, accId, charId) {
-        e.preventDefault();
-        const name = e.target.hwName.value.trim();
-        const type = e.target.hwType.value;
-        gameData.find(a => a.id === accId).characters.find(c => c.id === charId).homeworks.push({ name, type, checked: false });
-        saveData();
-    }
-
-    function createBatchHomework(e, accId) {
-        e.preventDefault();
-        const name = e.target.batchHwName.value.trim();
-        const type = e.target.batchHwType.value;
-        const acc = gameData.find(a => a.id === accId);
-        if (!acc.characters || acc.characters.length === 0) return;
-        acc.characters.forEach(c => c.homeworks.push({ name, type, checked: false }));
-        saveData();
-    }
-
-    function deleteCustomHomework(accId, charId, origIndex) {
-        if (confirm("이 숙제를 삭제하시겠습니까?")) {
-            gameData.find(a => a.id === accId).characters.find(c => c.id === charId).homeworks.splice(origIndex, 1);
-            saveData();
-        }
-    }
-
-    /* ⚙️ 커스텀 숙제 관리 모달 제어 함수 추가 */
-    let activeManageAccId = null;
-    let activeManageCharId = null;
-
-    function openCustomHwManageModal(accId, charId, event) {
-        if(event) event.stopPropagation();
-        activeManageAccId = accId;
-        activeManageCharId = charId;
-        renderCustomHwManageList();
-        document.getElementById('customHwManageModal').style.display = 'flex';
-    }
-
-    function closeCustomHwManageModal() {
-        document.getElementById('customHwManageModal').style.display = 'none';
-    }
-
-    function renderCustomHwManageList() {
-        const acc = gameData.find(a => a.id === activeManageAccId);
-        const char = acc.characters.find(c => c.id === activeManageCharId);
-        document.getElementById('customHwModalTitle').innerText = `[${char.name}] 커스텀 숙제 설정`;
-        
-        let html = '';
-        if (char.homeworks && char.homeworks.length > 0) {
-            char.homeworks.forEach((hw, idx) => {
-                const typeText = hw.type === 'daily' ? '일일' : (hw.type === 'weekly' ? '주간' : '일회성');
-                html += `
-                <div class="hw-manage-item">
-                    <div>
-                        <span style="font-weight:bold; color:#fff;">${hw.name}</span> 
-                        <span style="font-size:11px; color:var(--text-muted); margin-left:6px;">(${typeText})</span>
-                    </div>
-                    <div class="hw-manage-controls">
-                        <button class="btn btn-xs" style="background:#4b5563;" onclick="moveCustomHw(${idx}, -1)">▲</button>
-                        <button class="btn btn-xs" style="background:#4b5563;" onclick="moveCustomHw(${idx(), 1})">▼</button>
-                        <button class="btn btn-xs btn-danger" onclick="deleteCustomHwInModal(${idx})">삭제</button>
-                    </div>
-                </div>`;
-            });
-        } else {
-            html = '<p style="text-align:center; color:var(--text-muted); padding:20px 0;">생성된 숙제가 없습니다.</p>';
-        }
-        document.getElementById('customHwListContainer').innerHTML = html;
-    }
-
-    function moveCustomHw(index, direction) {
-        const acc = gameData.find(a => a.id === activeManageAccId);
-        const char = acc.characters.find(c => c.id === activeManageCharId);
-        const targetIndex = index + direction;
-        if (targetIndex < 0 || targetIndex >= char.homeworks.length) return;
-        
-        // 위치 교환
-        const temp = char.homeworks[index];
-        char.homeworks[index] = char.homeworks[targetIndex];
-        char.homeworks[targetIndex] = temp;
-        
-        localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
-        renderCustomHwManageList();
-        render();
-    }
-
-    function deleteCustomHwInModal(index) {
-        if(confirm("이 숙제를 삭제하시겠습니까?")) {
-            const acc = gameData.find(a => a.id === activeManageAccId);
-            const char = acc.characters.find(c => c.id === activeManageCharId);
-            char.homeworks.splice(index, 1);
-            localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
-            renderCustomHwManageList();
-            render();
-        }
-    }
-
-    let isHideCompleted = JSON.parse(localStorage.getItem('isHideCompleted_v15')) || false;
-    let isShowHiddenChars = JSON.parse(localStorage.getItem('isShowHiddenChars_v15')) || false;
-
-    function toggleHideCompleted() {
-        isHideCompleted = !isHideCompleted;
-        localStorage.setItem('isHideCompleted_v15', JSON.stringify(isHideCompleted));
-        render();
-    }
-    function toggleShowHiddenChars() {
-        isShowHiddenChars = !isShowHiddenChars;
-        localStorage.setItem('isShowHiddenChars_v15', JSON.stringify(isShowHiddenChars));
-        render();
-    }
-    function toggleHideCharacter(accId, charId, event) {
-        event.stopPropagation();
-        const char = gameData.find(a => a.id === accId).characters.find(c => c.id === charId);
-        char.hidden = !char.hidden; saveData();
-    }
-
-    function render() {
-        const app = document.getElementById('app');
-        if (!app) return;
-
-        const btnHide = document.getElementById('btnToggleHide');
-        if (btnHide) {
-            if (isHideCompleted) btnHide.classList.add('active'); else btnHide.classList.remove('active');
-        }
-        const btnShowHidden = document.getElementById('btnToggleHiddenChars');
-        if (btnShowHidden) {
-            if (isShowHiddenChars) btnShowHidden.classList.add('active'); else btnShowHidden.classList.remove('active');
-        }
-
-        if (gameData.length === 0) {
-            app.innerHTML = `<p style="text-align:center; color:#fff; margin-top: 50px; font-weight:600;">우측 하단의 <span style="color:var(--accent)">메뉴 단추(+)</span>를 눌러 계정을 생성해 주세요!</p>`;
-            return;
-        }
-
-        let html = '';
-        gameData.forEach(acc => {
-            const isCollapsed = !!accordionStatus[acc.id];
-            let mText = "멤버십 미적용";
-            if (acc.membership === 'O') {
-                mText = `멤버십 보유 (${acc.membershipDays || 0}일 ${acc.membershipHours || 0}시간 남음)`;
-            }
-
-            html += `
-            <div class="account-section">
-                <div class="account-header" onclick="toggleAccordion(${acc.id})">
-                    <div style="display: flex; align-items: center;">
-                        <span class="accordion-icon" id="acc-icon-${acc.id}">${isCollapsed ? '▼' : '▲'}</span>
-                        <h2 style="margin:0; font-size:16px;">${acc.name} <span style="font-size:12px; background:rgba(255,255,255,0.06); color:var(--text-muted); padding:2px 6px; border-radius:4px; margin-left:8px; font-weight:normal;">${mText}</span></h2>
-                    </div>
-                    <div onclick="event.stopPropagation();">
-                        <button class="btn btn-sm" onclick="openCharModal(${acc.id}, event)">+ 캐릭터 추가</button>
-                        <button class="btn btn-sm btn-char-edit" onclick="openAccountModal(${acc.id}, event)">⚙️</button>
-                        <button class="btn btn-sm btn-char-del" onclick="removeAccount(${acc.id}, event)">🗑️</button>
-                    </div>
-                </div>
-                <div class="account-body ${isCollapsed ? 'collapsed' : ''}" id="acc-body-${acc.id}">
-                    <div class="account-contents">
-                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
-                            <span class="account-contents-title">계정 공통 콘텐츠 체크</span>
-                            <form class="batch-add-form" onclick="event.stopPropagation();" onsubmit="createBatchHomework(event, ${acc.id})">
-                                <input type="text" name="batchHwName" placeholder="일괄 추가할 숙제 명" required>
-                                <select name="batchHwType"><option value="daily">일일</option><option value="weekly">주간</option><option value="once">일회성</option></select>
-                                <button type="submit" class="btn btn-xs">일괄 추가</button>
-                            </form>
-                        </div>
-                        <div class="account-resource-grid">
-                            <div class="resource-item"><div><span class="char-name" style="font-size:13px;">🎉 슈고 열쇠</span><span style="font-size:10px; color:var(--text-muted);">(최대 14)</span></div> <div class="counter-controls"><button class="btn btn-xs" onclick="changeVal(${acc.id}, null, 'shugo', -1)">-</button><input type="number" class="counter-input" value="${acc.shugo || 0}" onchange="setDirectVal(${acc.id}, null, 'shugo', this.value)"><button class="btn btn-xs" onclick="changeVal(${acc.id}, null, 'shugo', 1)">+</button></div></div>
-                            <div class="resource-item"><div><span class="char-name" style="font-size:13px;">🌀 차원의 모래구슬</span><span style="font-size:10px; color:var(--text-muted);">(최대 7)</span></div> <div class="counter-controls"><button class="btn btn-xs" onclick="changeVal(${acc.id}, null, 'dimension', -1)">-</button><input type="number" class="counter-input" value="${acc.dimension || 0}" onchange="setDirectVal(${acc.id}, null, 'dimension', this.value)"><button class="btn btn-xs" onclick="changeVal(${acc.id}, null, 'dimension', 1)">+</button></div></div>
-                            
-                            <div class="resource-item" style="border-left:1px dashed var(--card-border); padding-left:15px;">
-                                <div><span class="char-name" style="font-size:13px; color:#fde047;">💰 키나 원정</span><span style="font-size:10px; color:var(--text-muted);">(주간 84회)</span></div>
-                                <div class="counter-controls">
-                                    <button class="btn btn-xs" style="background:#334155;" onclick="changeVal(${acc.id}, null, 'expedition', -1)">-</button>
-                                    <input type="number" class="counter-input" style="width:38px; color:#fde047;" value="${acc.expedition || 0}" onchange="setDirectVal(${acc.id}, null, 'expedition', this.value)">
-                                    <span style="color:var(--text-muted); font-size:11px;">/84</span>
-                                    <button class="btn btn-xs" style="background:#334155;" onclick="changeVal(${acc.id}, null, 'expedition', 1)">+</button>
-                                </div>
-                            </div>
-                            <div class="resource-item">
-                                <div><span class="char-name" style="font-size:13px; color:#fde047;">✨ 키나 초월</span><span style="font-size:10px; color:var(--text-muted);">(주간 56회)</span></div>
-                                <div class="counter-controls">
-                                    <button class="btn btn-xs" style="background:#334155;" onclick="changeVal(${acc.id}, null, 'transcend', -1)">-</button>
-                                    <input type="number" class="counter-input" style="width:38px; color:#fde047;" value="${acc.transcend || 0}" onchange="setDirectVal(${acc.id}, null, 'transcend', this.value)">
-                                    <span style="color:var(--text-muted); font-size:11px;">/56</span>
-                                    <button class="btn btn-xs" style="background:#334155;" onclick="changeVal(${acc.id}, null, 'transcend', 1)">+</button>
-                                </div>
-                            </div>
-
-                            <div class="resource-item"><label class="hw-label"><input type="checkbox" ${acc.odeBuyChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'odeBuyChecked')"><span class="hw-text ${acc.odeBuyChecked ? 'checked-text' : ''}" style="font-size:13px;">💎 주간 오드 가루 구매</span></label></div>
-                            <div class="resource-item"><label class="hw-label"><input type="checkbox" ${acc.villageOrderChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'villageOrderChecked')"><span class="hw-text ${acc.villageOrderChecked ? 'checked-text' : ''}" style="font-size:13px;">🏡 주간 마을 의뢰</span></label></div>
-                            <div class="resource-item"><label class="hw-label"><input type="checkbox" ${acc.abyssOrderChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'abyssOrderChecked')"><span class="hw-text ${acc.abyssOrderChecked ? 'checked-text' : ''}" style="font-size:13px;">🌌 주간 어비스 의뢰</span></label></div>
-                            <div class="resource-item"><label class="hw-label"><input type="checkbox" ${acc.dailyDungeonChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'dailyDungeonChecked')"><span class="hw-text ${acc.dailyDungeonChecked ? 'checked-text' : ''}" style="font-size:13px;">⚔️ 일일 던전 (소탕)</span></label></div>
-                        </div>
-                    </div>
-                    <div class="char-grid">`;
-
-            if (acc.characters && acc.characters.length > 0) {
-                acc.characters.forEach(char => {
-                    const isHidden = !!char.hidden;
-                    const ticket = char.nightmareTicket !== undefined ? char.nightmareTicket : 2;
-                    let hasMemo = char.memo && char.memo.trim().length > 0;
-
-                    let dailyHtml = '';
-                    let weeklyHtml = '';
-                    let onceHtml = '';
-
-                    if (char.homeworks) {
-                        char.homeworks.forEach((hw, origIdx) => {
-                            let itemHtml = `<div class="hw-item"><label class="hw-label"><input type="checkbox" ${hw.checked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, null, ${origIdx})"><span class="hw-text ${hw.checked ? 'checked-text' : ''}">${hw.name}</span></label><button class="btn-danger2" style="border:none; color:var(--danger); cursor:pointer; font-size:10px; padding:0 2px;" onclick="deleteCustomHomework(${acc.id}, ${char.id}, ${origIdx})">✕</button></div>`;
-                            if (hw.type === 'daily') dailyHtml += itemHtml;
-                            else if (hw.type === 'weekly') weeklyHtml += itemHtml;
-                            else if (hw.type === 'once') onceHtml += itemHtml;
+                    // 캐릭터별 일일 콘텐츠 리셋
+                    if(acc.characters) {
+                        acc.characters.forEach(char => {
+                            if(char.homeworks) {
+                                for(let key in char.homeworks) {
+                                    if(key.startsWith('일일_') || key.startsWith('커스텀_')) {
+                                        char.homeworks[key] = false;
+                                    }
+                                }
+                            }
                         });
                     }
+                });
+                localStorage.setItem('lastDailyResetKey', currentResetKey);
+                saveData();
+                render();
+            }
+        }
 
-                    const factor = acc.membership === 'O' ? 3 : 1;
-                    const displayOde = char.ode || 0;
-                    const displayExtra = char.extraOde || 0;
+        function checkWeeklyReset() {
+            const lastReset = localStorage.getItem('lastWeeklyResetKey');
+            const now = new Date();
+            
+            // 수요일 오전 5시 기준 주간 리셋 연산 적용
+            let currentResetKey = getWeeklyResetTimestamp(now);
 
+            if (lastReset !== currentResetKey) {
+                accounts.forEach(acc => {
+                    if(acc.commonContents) {
+                        acc.commonContents.weeklyQuest = false;
+                        acc.commonContents.weeklyDungeon = false;
+                    }
+                    if(acc.characters) {
+                        acc.characters.forEach(char => {
+                            if(char.homeworks) {
+                                for(let key in char.homeworks) {
+                                    if(key.startsWith('주간_')) {
+                                        char.homeworks[key] = false;
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+                localStorage.setItem('lastWeeklyResetKey', currentResetKey);
+                saveData();
+                render();
+            }
+        }
+
+        function getWeeklyResetTimestamp(d) {
+            let date = new Date(d.getTime());
+            let day = date.getDay();
+            // 수요일(3) 오전 5시 타겟팅 정렬
+            let diff = day >= 3 ? day - 3 : 7 - (3 - day);
+            date.setDate(date.getDate() - diff);
+            date.setHours(5, 0, 0, 0);
+            if (d < date) {
+                date.setDate(date.getDate() - 7);
+            }
+            return date.getTime().toString();
+        }
+
+        // --- 5. 대시보드 액션 컨트롤 및 데이터 영속성 계층 ---
+        function saveData() {
+            localStorage.setItem('accounts', JSON.stringify(accounts));
+            localStorage.setItem('customHomeworkList', JSON.stringify(customHomeworkList));
+        }
+
+        function toggleHideCompletedMode() {
+            isHideCompleted = !isHideCompleted;
+            localStorage.setItem('isHideCompleted', isHideCompleted);
+            render();
+        }
+
+        function toggleShowHiddenCharsMode() {
+            isShowHiddenChars = !isShowHiddenChars;
+            localStorage.setItem('isShowHiddenChars', isShowHiddenChars);
+            render();
+        }
+
+        function addNewAccount() {
+            const nameInput = document.getElementById('newAccountName');
+            const name = nameInput.value.trim();
+            if(!name) return alert('계정 명칭을 입력해 주세요.');
+
+            const newAcc = {
+                id: Date.now(),
+                name: name,
+                isCollapsed: false,
+                membershipTime: 0,
+                commonContents: {
+                    dailyQuest: false,
+                    dailyDungeon: false,
+                    dailyShop: false,
+                    weeklyQuest: false,
+                    weeklyDungeon: false,
+                    // ➕ 신규 추가: 키나획득률 100% 카운터 데이터 구조 할당
+                    expeditionCurrent: 0,
+                    expeditionMax: 84,
+                    transcendCurrent: 0,
+                    transcendMax: 56
+                },
+                characters: []
+            };
+
+            accounts.push(newAcc);
+            nameInput.value = '';
+            saveData();
+            render();
+        }
+
+        function removeAccount(accId, event) {
+            event.stopPropagation();
+            if(!confirm('계정을 삭제하시면 포함된 캐릭터 정보도 전부 소멸됩니다. 삭제할까요?')) return;
+            accounts = accounts.filter(a => a.id !== accId);
+            saveData();
+            render();
+        }
+
+        function toggleAccountCollapse(accId) {
+            const acc = accounts.find(a => a.id === accId);
+            if(acc) {
+                acc.isCollapsed = !acc.isCollapsed;
+                saveData();
+                render();
+            }
+        }
+
+        function updateMembership(accId, minutes) {
+            const acc = accounts.find(a => a.id === accId);
+            if(acc) {
+                acc.membershipTime = (acc.membershipTime || 0) + parseInt(minutes);
+                saveData();
+                render();
+            }
+        }
+
+        function resetMembership(accId) {
+            const acc = accounts.find(a => a.id === accId);
+            if(acc) {
+                acc.membershipTime = 0;
+                saveData();
+                render();
+            }
+        }
+
+        function toggleCommonContent(accId, key) {
+            const acc = accounts.find(a => a.id === accId);
+            if(acc && acc.commonContents) {
+                acc.commonContents[key] = !acc.commonContents[key];
+                saveData();
+                render();
+            }
+        }
+
+        // ➕ 추가 기능: 키나 획득률 값 변경 이벤트 핸들러
+        function changeKinahCount(accId, field, delta) {
+            const acc = accounts.find(a => a.id === accId);
+            if(acc && acc.commonContents) {
+                if (acc.commonContents[field] === undefined) {
+                    acc.commonContents[field] = 0;
+                }
+                const maxVal = field === 'expeditionCurrent' ? 84 : 56;
+                let newVal = acc.commonContents[field] + delta;
+                if (newVal < 0) newVal = 0;
+                if (newVal > maxVal) newVal = maxVal;
+                
+                acc.commonContents[field] = newVal;
+                saveData();
+                render();
+            }
+        }
+
+        // --- 6. 캐릭터 정보 및 모달 폼 제어 상호작용 계층 ---
+        function openAddCharModal(accId) {
+            document.getElementById('modalTitle').innerText = "새 캐릭터 생성";
+            document.getElementById('modalAccId').value = accId;
+            document.getElementById('modalCharId').value = "";
+            document.getElementById('modalCharName').value = "";
+            document.getElementById('modalCharClass').value = "검성";
+            document.getElementById('modalCharPower').value = "";
+            document.getElementById('charModal').style.display = 'flex';
+        }
+
+        function openEditCharModal(accId, charId, event) {
+            event.stopPropagation();
+            const acc = accounts.find(a => a.id === accId);
+            if(!acc) return;
+            const char = acc.characters.find(c => c.id === charId);
+            if(!char) return;
+
+            document.getElementById('modalTitle').innerText = "캐릭터 설정 정보 수정";
+            document.getElementById('modalAccId').value = accId;
+            document.getElementById('modalCharId').value = charId;
+            document.getElementById('modalCharName').value = char.name;
+            document.getElementById('modalCharClass').value = char.class;
+            document.getElementById('modalCharPower').value = char.power || "";
+            document.getElementById('charModal').style.display = 'flex';
+        }
+
+        function closeCharModal() {
+            document.getElementById('charModal').style.display = 'none';
+        }
+
+        function saveCharModal() {
+            const accId = parseInt(document.getElementById('modalAccId').value);
+            const charIdStr = document.getElementById('modalCharId').value;
+            const name = document.getElementById('modalCharName').value.trim();
+            const cls = document.getElementById('modalCharClass').value;
+            const power = parseInt(document.getElementById('modalCharPower').value) || 0;
+
+            if(!name) return alert('캐릭터 이름을 명확히 입력해 주세요.');
+
+            const acc = accounts.find(a => a.id === accId);
+            if(!acc) return;
+
+            if(!charIdStr) {
+                // 신규 생성 프로세스
+                const newChar = {
+                    id: Date.now(),
+                    name: name,
+                    class: cls,
+                    power: power,
+                    isHidden: false, // 제외 여부 플래그
+                    memo: "", // 개별 메모 내역 초기화
+                    odeCurrent: 120,
+                    odeMax: 120,
+                    homeworks: {
+                        "일일_일일 임무": false,
+                        "일일_일반 던전": false,
+                        "일일_소탕 및 소모": false,
+                        "주간_주간 임무": false,
+                        "주간_파티 던전": false,
+                        "주간_레이드 스케줄": false
+                    }
+                };
+                
+                // 마스터 커스텀 숙제가 있다면 캐릭터 생성 시 상태 기본 주입 동기화
+                customHomeworkList.forEach(hwName => {
+                    newChar.homeworks[`커스텀_${hwName}`] = false;
+                });
+
+                acc.characters.push(newChar);
+            } else {
+                // 기존 데이터 수정 업데이트
+                const charId = parseInt(charIdStr);
+                const char = acc.characters.find(c => c.id === charId);
+                if(char) {
+                    char.name = name;
+                    char.class = cls;
+                    char.power = power;
+                }
+            }
+
+            saveData();
+            closeCharModal();
+            render();
+        }
+
+        function removeCharacter(accId, charId, event) {
+            event.stopPropagation();
+            if(!confirm('해당 캐릭터의 모든 숙제 기록이 완전히 영구 소멸됩니다. 삭제하시겠습니까?')) return;
+            const acc = accounts.find(a => a.id === accId);
+            if(acc) {
+                acc.characters = acc.characters.filter(c => c.id !== charId);
+                saveData();
+                render();
+            }
+        }
+
+        function toggleCharacterHideState(accId, charId, event) {
+            event.stopPropagation();
+            const acc = accounts.find(a => a.id === accId);
+            if(!acc) return;
+            const char = acc.characters.find(c => c.id === charId);
+            if(char) {
+                char.isHidden = !char.isHidden;
+                saveData();
+                render();
+            }
+        }
+
+        // --- 7. 캐릭터별 개인 메모 모달 처리 영역 ---
+        function openMemoModal(accId, charId, event) {
+            event.stopPropagation();
+            const acc = accounts.find(a => a.id === accId);
+            if(!acc) return;
+            const char = acc.characters.find(c => c.id === charId);
+            if(!char) return;
+
+            document.getElementById('memoAccId').value = accId;
+            document.getElementById('memoCharId').value = charId;
+            document.getElementById('memoTargetName').innerText = `[${char.class}] ${char.name} - 메모 세부 설정`;
+            document.getElementById('modalMemoText').value = char.memo || "";
+            document.getElementById('memoModal').style.display = 'flex';
+        }
+
+        function closeMemoModal() {
+            document.getElementById('memoModal').style.display = 'none';
+        }
+
+        function saveMemoModal() {
+            const accId = parseInt(document.getElementById('memoAccId').value);
+            const charId = parseInt(document.getElementById('memoCharId').value);
+            const memoText = document.getElementById('modalMemoText').value;
+
+            const acc = accounts.find(a => a.id === accId);
+            if(!acc) return;
+            const char = acc.characters.find(c => c.id === charId);
+            if(char) {
+                char.memo = memoText;
+                saveData();
+                render();
+            }
+            closeMemoModal();
+        }
+
+        // --- 8. 오드에너지 변동 제어 연산 계층 ---
+        function changeOde(accId, charId, delta) {
+            const acc = accounts.find(a => a.id === accId);
+            if(!acc) return;
+            const char = acc.characters.find(c => c.id === charId);
+            if(char) {
+                let val = (char.odeCurrent || 0) + delta;
+                if(val < 0) val = 0;
+                if(val > (char.odeMax || 120)) val = char.odeMax || 120;
+                char.odeCurrent = val;
+                saveData();
+                render();
+            }
+        }
+
+        function useAllOde(accId, charId) {
+            const acc = accounts.find(a => a.id === accId);
+            if(!acc) return;
+            const char = acc.characters.find(c => c.id === charId);
+            if(char) {
+                char.odeCurrent = 0;
+                saveData();
+                render();
+            }
+        }
+
+        function toggleHomework(accId, charId, hwKey) {
+            const acc = accounts.find(a => a.id === accId);
+            if(!acc) return;
+            const char = acc.characters.find(c => c.id === charId);
+            if(char && char.homeworks) {
+                char.homeworks[hwKey] = !char.homeworks[hwKey];
+                saveData();
+                render();
+            }
+        }
+
+        function addCustomHomework(accId, charId) {
+            const inputEl = document.getElementById(`customHwInput-${charId}`);
+            const hwName = inputEl.value.trim();
+            if(!hwName) return alert('추가할 숙제 이름을 적어주세요.');
+
+            // 글로벌 마스터 리스트에 중복 여부 확인 후 기록
+            if(!customHomeworkList.includes(hwName)) {
+                customHomeworkList.push(hwName);
+            }
+
+            // 모든 계정의 모든 캐릭터에 해당 커스텀 숙제 상태 동적 확장 주입
+            accounts.forEach(acc => {
+                if(!acc.characters) return;
+                acc.characters.forEach(c => {
+                    if(!c.homeworks) c.homeworks = {};
+                    if(c.homeworks[`커스텀_${hwName}`] === undefined) {
+                        c.homeworks[`커스텀_${hwName}`] = false;
+                    }
+                });
+            });
+
+            inputEl.value = '';
+            saveData();
+            render();
+        }
+
+        // ➕ 추가 기능: 커스텀 숙제 위치 정렬 및 삭제 관리 모달 기능군
+        function openCustomHomeworkModal() {
+            const container = document.getElementById('customHwSortContainer');
+            if (customHomeworkList.length === 0) {
+                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:13px; padding:20px 0;">등록된 커스텀 숙제가 없습니다.</div>`;
+            } else {
+                let html = '';
+                customHomeworkList.forEach((hwName, idx) => {
                     html += `
-                    <div class="char-card ${isHidden ? 'is-hidden-char' : ''}">
-                        <div class="char-header">
-                            <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
-                                <div class="char-info">
-                                    <span class="char-name">${char.name} <span style="font-size:11px; color:var(--text-muted); font-weight:normal;">(${char.job})</span></span>
-                                    <span class="char-sub-info">전투력: <span class="char-power">${char.power.toLocaleString()}</span></span>
-                                </div>
-                                <button class="btn-char-hide" onclick="toggleHideCharacter(${acc.id}, ${char.id}, event)" title="대시보드 노출 설정">${isHidden ? '👁️ 보이기' : '🙈 숨기기'}</button>
-                            </div>
-                        </div>
-
-                        <div class="resource-group" style="padding-top:0;">
-                            <div class="ode-title-row">
-                                <span>🔋 오드 에너지</span>
-                                <span class="ode-timer" id="ode-timer-${char.id}">00:00:00 남음</span>
-                            </div>
-                            <div class="ode-row">
-                                <span class="ode-label">자연충전 <span style="color:#fff; font-weight:bold;">${displayOde}</span>/840</span>
-                                <div class="counter-controls">
-                                    <button class="btn-use" onclick="changeVal(${acc.id}, ${char.id}, 'ode', -15)">-15</button>
-                                    <button class="btn-use" onclick="changeVal(${acc.id}, ${char.id}, 'ode', 15)">+15</button>
-                                    <input type="number" class="counter-input" value="${displayOde}" onchange="setDirectVal(${acc.id}, ${char.id}, 'ode', this.value)">
-                                </div>
-                            </div>
-                            <div class="ode-row">
-                                <span class="ode-label">추가누적 <span style="color:var(--accent); font-weight:bold;">${displayExtra}</span></span>
-                                <div class="counter-controls">
-                                    <button class="btn-use" onclick="changeVal(${acc.id}, ${char.id}, 'extraOde', -50)">-50</button>
-                                    <button class="btn-use" onclick="changeVal(${acc.id}, ${char.id}, 'extraOde', 50)">+50</button>
-                                    <input type="number" class="counter-input" value="${displayExtra}" onchange="setDirectVal(${acc.id}, ${char.id}, 'extraOde', this.value)">
-                                </div>
-                            </div>
-                            <div style="display:flex; gap:4px; margin-top:6px;">
-                                <button class="btn-use-total" style="flex:1;" onclick="useOde(${acc.id}, ${char.id}, 120)">⚡ 120 소모</button>
-                                <button class="btn-use-total" style="flex:1; background-color:#d97706;" onclick="useOde(${acc.id}, ${char.id}, 420)">⚡ 420 소모</button>
-                                <button class="btn-use" style="padding:0 6px; font-weight:bold; border-radius:6px;" onclick="useAllOde(${acc.id}, ${char.id})">ALL</button>
-                            </div>
-                        </div>
-
-                        <div class="resource-group">
-                            <div class="ode-row" style="margin:0;">
-                                <span class="ode-label" style="color:#fff; font-weight:bold;">🌋 악몽의 아레나</span>
-                                <div class="counter-controls"><button class="btn btn-xs" onclick="changeVal(${acc.id}, ${char.id}, 'nightmareTicket', -1)">-</button><input type="number" class="counter-input" value="${ticket}" onchange="setDirectVal(${acc.id}, ${char.id}, 'nightmareTicket', this.value)"><button class="btn btn-xs" onclick="changeVal(${acc.id}, ${char.id}, 'nightmareTicket', 1)">+</button></div>
-                            </div>
-                        </div>
-
-                        <div class="homework-group">
-                            <strong style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">📌 고정 숙제</strong>
-                            <div class="hw-item"><label class="hw-label"><input type="checkbox" ${char.charBuyChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'charBuyChecked')"><span class="hw-text ${char.charBuyChecked ? 'checked-text' : ''}">오드구매,제작 (4)</span></label></div>
-                            <div class="hw-item"><label class="hw-label"><input type="checkbox" ${char.awakeningChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'awakeningChecked')"><span class="hw-text ${char.awakeningChecked ? 'checked-text' : ''}">세계수의각성 (3)</span></label></div>
-                            <div class="hw-item"><label class="hw-label"><input type="checkbox" ${char.nightmareChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'nightmareChecked')"><span class="hw-text ${char.nightmareChecked ? 'checked-text' : ''}">악몽의아레나 완료</span></label></div>
-                            <div class="hw-item"><label class="hw-label"><input type="checkbox" ${char.abyssChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'abyssChecked')"><span class="hw-text ${char.abyssChecked ? 'checked-text' : ''}">어비스 보스 (토)</span></label></div>
-                        </div>
-
-                        <div class="homework-group" style="border-bottom:none; margin-bottom:0; padding-bottom:0;">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                                <strong style="font-size:11px; color:#818cf8;">🛠️ 커스텀 숙제</strong>
-                                <button class="btn btn-xs btn-char-edit" style="font-size:10px; padding:1px 4px; margin:0;" onclick="openCustomHwManageModal(${acc.id}, ${char.id}, event)">⚙️ 설정</button>
-                            </div>
-                            
-                            ${dailyHtml ? `<div style="margin-bottom:6px;"><span style="font-size:10px; color:#4ade80; display:block; margin-bottom:2px;">[일일]</span>${dailyHtml}</div>` : ''}
-                            ${weeklyHtml ? `<div style="margin-bottom:6px;"><span style="font-size:10px; color:#60a5fa; display:block; margin-bottom:2px;">[주간]</span>${weeklyHtml}</div>` : ''}
-                            ${onceHtml ? `<div style="margin-bottom:6px;"><span style="font-size:10px; color:#f472b6; display:block; margin-bottom:2px;">[일회성]</span>${onceHtml}</div>` : ''}
-                            
-                            ${(!dailyHtml && !weeklyHtml && !onceHtml) ? '<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:10px 0;">등록된 커스텀 숙제 없음</div>' : ''}
-                        </div>
-
-                        <form class="add-form" onsubmit="createCustomHomework(event, ${acc.id}, ${char.id})">
-                            <input type="text" name="hwName" placeholder="숙제 추가" required>
-                            <select name="hwType"><option value="daily">일일</option><option value="weekly">주간</option><option value="once">1회</option></select>
-                            <button type="submit" class="btn btn-xs">+</button>
-                        </form>
-
-                        ${hasMemo ? `<div class="char-memo-preview" onclick="openMemoModal(${acc.id}, ${char.id}, event)">📝 ${char.memo.length > 28 ? char.memo.slice(0,28)+'...' : char.memo}</div>` : ''}
-
-                        <div class="char-control-footer">
-                            <div class="char-memo-wrapper">
-                                <button class="btn btn-xs btn-char-memo" onclick="openMemoModal(${acc.id}, ${char.id}, event)">메모</button>
-                                ${hasMemo ? '<span class="memo-red-dot"></span>' : ''}
-                            </div>
-                            <div><button class="btn btn-xs btn-char-edit" onclick="openCharModal(${acc.id}, event, ${char.id})">설정</button></div>
-                            <div><button class="btn btn-xs btn-char-del" onclick="removeCharacter(${acc.id}, ${char.id}, event)">삭제</button></div>
+                    <div class="custom-hw-sort-item">
+                        <span style="font-size:13px; font-weight:600; color:#ffffff;">📌 ${hwName}</span>
+                        <div class="sort-btns">
+                            <button class="btn btn-xs btn-b" onclick="moveCustomHomework(${idx}, -1)">▲</button>
+                            <button class="btn btn-xs btn-b" onclick="moveCustomHomework(${idx}, 1)">▼</button>
+                            <button class="btn btn-xs btn-danger" onclick="deleteCustomHomework('${hwName}')" style="margin-left:8px;">삭제</button>
                         </div>
                     </div>`;
                 });
-            } else {
-                html += `
-                <div style="grid-column: 1 / -1;" class="empty-character-guide">
-                    <p class="guide-text">💡 등록된 캐릭터가 없습니다.<br>오른쪽 위의 <strong>[+ 캐릭터 추가]</strong> 단추를 클릭해 캐릭터를 추가해 주세요!</p>
-                </div>`;
+                container.innerHTML = html;
+            }
+            document.getElementById('customHwModal').style.display = 'flex';
+        }
+
+        function closeCustomHomeworkModal() {
+            document.getElementById('customHwModal').style.display = 'none';
+        }
+
+        function moveCustomHomework(index, direction) {
+            let targetIndex = index + direction;
+            if (targetIndex < 0 || targetIndex >= customHomeworkList.length) return;
+            
+            // 배열 내 위치 변경 스왑 스위치
+            let temp = customHomeworkList[index];
+            customHomeworkList[index] = customHomeworkList[targetIndex];
+            customHomeworkList[targetIndex] = temp;
+            
+            saveData();
+            openCustomHomeworkModal(); // 모달 갱신 리렌더링
+            render(); // 백그라운드 대시보드 구조 정렬 동기화
+        }
+
+        function deleteCustomHomework(hwName) {
+            if (!confirm(`'${hwName}' 커스텀 숙제를 전체 캐릭터에서 영구 삭제하시겠습니까?`)) return;
+            
+            // 마스터 리스트에서 제거
+            customHomeworkList = customHomeworkList.filter(name => name !== hwName);
+            
+            // 각 캐릭터 데이터 필드 매핑 내역 소멸 제거
+            accounts.forEach(acc => {
+                if(!acc.characters) return;
+                acc.characters.forEach(c => {
+                    if (c.homeworks && c.homeworks[`커스텀_${hwName}`] !== undefined) {
+                        delete c.homeworks[`커스텀_${hwName}`];
+                    }
+                });
+            });
+            
+            saveData();
+            openCustomHomeworkModal();
+            render();
+        }
+
+        // --- 9. 대시보드 플로팅 액션 유틸리티 인터페이스 계층 ---
+        function toggleFloatingMenu() {
+            document.getElementById('floatingMenu').classList.toggle('active');
+        }
+
+        function exportDataToClipboard() {
+            const dataStr = localStorage.getItem('accounts');
+            const customHwStr = localStorage.getItem('customHomeworkList');
+            const backupObj = {
+                accounts: dataStr ? JSON.parse(dataStr) : [],
+                customHomeworkList: customHwStr ? JSON.parse(customHwStr) : []
+            };
+            
+            navigator.clipboard.writeText(JSON.stringify(backupObj)).then(() => {
+                alert('현재 대시보드의 원본 원시 데이터가 클립보드에 안전하게 백업 복사되었습니다. 메모장 등에 붙여넣어 보관하세요!');
+            }).catch(err => {
+                alert('클립보드 접근 권한이 거부되었습니다. 직접 내보내기가 불가능합니다.');
+            });
+        }
+
+        function importDataFromClipboard() {
+            const jsonInput = prompt('이전에 백업 복사해 두었던 텍스트 전체 문자열 데이터를 정확히 입력란에 붙여넣어 주세요:');
+            if(!jsonInput) return;
+            try {
+                const parsed = JSON.parse(jsonInput);
+                if (parsed && (parsed.accounts || Array.isArray(parsed))) {
+                    if (Array.isArray(parsed)) {
+                        // 하위 호환 구조 파싱 보존
+                        accounts = parsed;
+                    } else {
+                        accounts = parsed.accounts || [];
+                        customHomeworkList = parsed.customHomeworkList || [];
+                    }
+                    saveData();
+                    render();
+                    alert('성공적으로 전체 백업 패키지 동기화 및 대시보드 복구가 완수되었습니다.');
+                } else {
+                    alert('올바르지 않은 JSON 데이터 포맷 구조입니다.');
+                }
+            } catch(e) {
+                alert('데이터 해석 처리 중 예외 에러 오류가 발생했습니다. 문자열 형식을 확인해 주세요.');
+            }
+        }
+
+        function clearAllDashboardData() {
+            if(!confirm('경고! 현재 대시보드 내부의 모든 설정, 계정, 캐릭터, 누적 숙제 현황 리스트가 완전히 소멸 파괴됩니다. 진행할까요?')) return;
+            localStorage.clear();
+            accounts = [];
+            customHomeworkList = [];
+            isHideCompleted = false;
+            isShowHiddenChars = false;
+            saveData();
+            render();
+            alert('초기화 완료.');
+        }
+
+        // --- 10. 코어 대시보드 UI 하이퍼 렌더링 엔진 계층 ---
+        function render() {
+            const app = document.getElementById('app');
+            let html = '';
+
+            // 버튼 내부 텍스트 유기적 동기화 매핑
+            const btnHide = document.getElementById('btnToggleHideCompleted');
+            if(btnHide) {
+                if(isHideCompleted) { btnHide.innerText = "👁️ 완료된 숙제 숨기기 (ON)"; btnHide.classList.add('active'); }
+                else { btnHide.innerText = "👁️ 완료된 숙제 숨기기 (OFF)"; btnHide.classList.remove('active'); }
             }
 
-            html += `</div></div></div>`;
-        });
+            const btnShowHidden = document.getElementById('btnToggleShowHiddenChars');
+            if(btnShowHidden) {
+                if(isShowHiddenChars) { btnShowHidden.innerText = "🛡️ 제외 캐릭터 관리 (ON)"; btnShowHidden.classList.add('active'); }
+                else { btnShowHidden.innerText = "🛡️ 제외 캐릭터 관리 (OFF)"; btnShowHidden.classList.remove('active'); }
+            }
 
-        app.innerHTML = html;
-        updateTimerDisplay();
-        if (isHideCompleted) document.body.classList.add('hide-completed-mode'); else document.body.classList.remove('hide-completed-mode');
-        if (isShowHiddenChars) document.body.classList.add('show-hidden-chars-mode'); else document.body.classList.remove('show-hidden-chars-mode');
-    }
+            if(accounts.length === 0) {
+                app.innerHTML = `
+                <div style="text-align:center; padding:60px 20px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px;">
+                    <p style="font-size:16px; color:var(--text-muted); margin-bottom:15px;">등록된 가용 계정 정보가 대시보드에 존재하지 않습니다.</p>
+                    <p style="font-size:13px; color:#64748b; margin-bottom:0;">오른쪽 상단의 '계정 생성' 입력 필드를 이용해 새로운 관리 타겟 계정을 할당해 주세요!</p>
+                </div>`;
+                return;
+            }
 
-    checkAndReduceMembershipTime(); updateOdeAutomatically(); checkAbyssReset(); checkDailyReset(); checkWeeklyReset(); render(); initAlarmToggles();
-    setInterval(updateTimerDisplay, 1000);
-    setInterval(() => { checkAndReduceMembershipTime(); updateOdeAutomatically(); checkAbyssReset(); checkDailyReset(); checkWeeklyReset(); }, 60000);
-</script>
+            accounts.forEach(acc => {
+                const isCollapsed = acc.isCollapsed || false;
+                
+                // 멤버십 남은 시간 문자열 가독성 정돈
+                let memberMin = acc.membershipTime || 0;
+                let memberText = '';
+                if(memberMin <= 0) memberText = '만료 (시간 추가 요망)';
+                else {
+                    let h = Math.floor(memberMin / 60);
+                    let m = memberMin % 60;
+                    memberText = `${h}시간 ${m}분 남음`;
+                }
 
-<footer>
-    © 당근. All rights reserved. (본 대시보드는 로컬 브라우저 보안 저장소를 활용하는 순수 단일 웹애플리케이션 도구입니다.)
-</footer>
+                // ➕ 키나획득률 변수 안전 보장화
+                if(!acc.commonContents) acc.commonContents = {};
+                if(acc.commonContents.expeditionCurrent === undefined) acc.commonContents.expeditionCurrent = 0;
+                if(acc.commonContents.transcendCurrent === undefined) acc.commonContents.transcendCurrent = 0;
 
+                html += `
+                <div class="account-section">
+                    <div class="account-header" onclick="toggleAccountCollapse(${acc.id})">
+                        <div class="account-title-area">
+                            <span class="accordion-icon">${isCollapsed ? '▶' : '▼'}</span>
+                            <h2>📦 계정 그룹 명칭 : <span style="color:#60a5fa;">${acc.name}</span></h2>
+                            <span style="font-size:12px; color:var(--text-muted); background:#141414; padding:2px 8px; border-radius:4px; border:1px solid #333;">
+                                정액제 타이머: <span style="color: ${memberMin > 0 ? 'var(--timer-color)' : 'var(--danger)'}; font-weight:bold;">${memberText}</span>
+                            </span>
+                        </div>
+                        <div class="account-action-area" onclick="event.stopPropagation();">
+                            <button class="btn btn-xs btn-b" onclick="updateMembership(${acc.id}, 1440)">+24H</button>
+                            <button class="btn btn-xs btn-b" onclick="updateMembership(${acc.id}, 10080)">+7D</button>
+                            <button class="btn btn-xs btn-b" onclick="updateMembership(${acc.id}, 43200)">+30D</button>
+                            <button class="btn btn-xs btn-danger2" onclick="resetMembership(${acc.id})" style="color:var(--text-muted); font-weight:normal; margin-right:15px;">초기화</button>
+                            <button class="btn btn-xs btn-success" onclick="openAddCharModal(${acc.id})">➕ 캐릭터 추가</button>
+                            <button class="btn btn-xs btn-danger" onclick="removeAccount(${acc.id}, event)">계정 삭제</button>
+                        </div>
+                    </div>
+                    
+                    <div class="account-body ${isCollapsed ? 'collapsed' : ''}">
+                        <div class="account-contents">
+                            <span class="account-contents-title">🛡️ 계정 공통 콘텐츠 체크</span>
+                            <div class="account-resource-grid">
+                                <div class="resource-item">
+                                    <label class="hw-label">
+                                        <input type="checkbox" ${acc.commonContents.dailyQuest ? 'checked' : ''} onclick="toggleCommonContent(${acc.id}, 'dailyQuest')">
+                                        <span class="hw-text ${acc.commonContents.dailyQuest ? 'checked-text' : ''}">일일 세력 납품</span>
+                                    </label>
+                                </div>
+                                <div class="resource-item">
+                                    <label class="hw-label">
+                                        <input type="checkbox" ${acc.commonContents.dailyDungeon ? 'checked' : ''} onclick="toggleCommonContent(${acc.id}, 'dailyDungeon')">
+                                        <span class="hw-text ${acc.commonContents.dailyDungeon ? 'checked-text' : ''}">고대 사원 일과</span>
+                                    </label>
+                                </div>
+                                <div class="resource-item">
+                                    <label class="hw-label">
+                                        <input type="checkbox" ${acc.commonContents.dailyShop ? 'checked' : ''} onclick="toggleCommonContent(${acc.id}, 'dailyShop')">
+                                        <span class="hw-text ${acc.commonContents.dailyShop ? 'checked-text' : ''}">인게임 명예 상점</span>
+                                    </label>
+                                </div>
+                                <div class="resource-item" style="border-left: 1px solid var(--card-border); padding-left: 15px;">
+                                    <label class="hw-label">
+                                        <input type="checkbox" ${acc.commonContents.weeklyQuest ? 'checked' : ''} onclick="toggleCommonContent(${acc.id}, 'weeklyQuest')">
+                                        <span class="hw-text ${acc.commonContents.weeklyQuest ? 'checked-text' : ''}">주간 요새전 공훈</span>
+                                    </label>
+                                </div>
+                                <div class="resource-item">
+                                    <label class="hw-label">
+                                        <input type="checkbox" ${acc.commonContents.weeklyDungeon ? 'checked' : ''} onclick="toggleCommonContent(${acc.id}, 'weeklyDungeon')">
+                                        <span class="hw-text ${acc.commonContents.weeklyDungeon ? 'checked-text' : ''}">어비스 거점 주간전</span>
+                                    </label>
+                                </div>
+
+                                <div class="resource-item" style="border-left: 1px solid var(--card-border); padding-left: 15px; display:flex; align-items:center; gap:6px;">
+                                    <span style="font-weight:bold; color:var(--accent); font-size:12px;">💰 키나획득률100% :</span>
+                                    <span style="color:#ffffff;">원정</span>
+                                    <div class="counter-controls">
+                                        <button class="btn-use" onclick="changeKinahCount(${acc.id}, 'expeditionCurrent', -1)">-</button>
+                                        <span style="font-family:monospace; font-weight:bold; color:#fff; min-width:35px; text-align:center;">${acc.commonContents.expeditionCurrent}/${acc.commonContents.expeditionMax}</span>
+                                        <button class="btn-use" onclick="changeKinahCount(${acc.id}, 'expeditionCurrent', 1)">+</button>
+                                    </div>
+                                    <span style="margin-left:4px; color:#ffffff;">초월</span>
+                                    <div class="counter-controls">
+                                        <button class="btn-use" onclick="changeKinahCount(${acc.id}, 'transcendCurrent', -1)">-</button>
+                                        <span style="font-family:monospace; font-weight:bold; color:#fff; min-width:35px; text-align:center;">${acc.commonContents.transcendCurrent}/${acc.commonContents.transcendMax}</span>
+                                        <button class="btn-use" onclick="changeKinahCount(${acc.id}, 'transcendCurrent', 1)">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="char-grid">`;
+
+                if(acc.characters && acc.characters.length > 0) {
+                    acc.characters.forEach(char => {
+                        const isHiddenChar = char.isHidden || false;
+                        
+                        // 오드 타임 추정 연산 처리
+                        let odeCurrent = char.odeCurrent !== undefined ? char.odeCurrent : 120;
+                        let odeMax = char.odeMax !== undefined ? char.odeMax : 120;
+                        let odePercent = Math.min(100, Math.floor((odeCurrent / odeMax) * 100));
+                        let odeTimerStr = '';
+                        if(odeCurrent < odeMax) {
+                            let leftMin = odeMax - odeCurrent;
+                            let h = Math.floor(leftMin / 60);
+                            let m = leftMin % 60;
+                            odeTimerStr = h > 0 ? `(${h}H ${m}M 후 완충)` : `(${m}M 후 완충)`;
+                        } else {
+                            odeTimerStr = '(MAX 완충)';
+                        }
+
+                        // 메모가 존재하는지 여부를 판단해 레드닷 클래스 조건 부여
+                        const hasMemo = char.memo && char.memo.trim().length > 0;
+
+                        html += `
+                        <div class="char-card ${isHiddenChar ? 'is-hidden-char' : ''}">
+                            <div class="char-header">
+                                <div style="display:flex; justify-content:space-between; width:100%; align-items:flex-start;">
+                                    <div class="char-info">
+                                        <span class="char-name">[${char.class}] ${char.name}</span>
+                                        <span class="char-sub-info">전투력: <span class="char-power">${char.power ? char.power.toLocaleString() : 0}</span></span>
+                                    </div>
+                                    <button class="btn-char-hide" onclick="toggleCharacterHideState(${acc.id}, ${char.id}, event)" title="대시보드 노출 제외 여부 전환">
+                                        ${isHiddenChar ? '🔓 포함' : '❌ 제외'}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="resource-group">
+                                <div class="ode-title-row">
+                                    <span class="ode-label">⚡ 오드 에너지 <span style="font-size:11px; color:#ffb86c;">${odePercent}%</span></span>
+                                    <span class="ode-timer" id="odeTimer-${char.id}">${odeTimerStr}</span>
+                                </div>
+                                <div class="ode-row">
+                                    <div class="counter-controls">
+                                        <button class="btn-use" onclick="changeOde(${acc.id}, ${char.id}, -10)">-10</button>
+                                        <button class="btn-use" onclick="changeOde(${acc.id}, ${char.id}, -1)">-1</button>
+                                        <input type="number" class="counter-input" value="${odeCurrent}" readonly>
+                                        <button class="btn-use" onclick="changeOde(${acc.id}, ${char.id}, 1)">+1</button>
+                                        <button class="btn-use" onclick="changeOde(${acc.id}, ${char.id}, 10)">+10</button>
+                                    </div>
+                                    <button class="btn-use-total" onclick="useAllOde(${acc.id}, ${char.id})">ALL</button>
+                                </div>
+                            </div>
+
+                            <div class="homework-group">
+                                <span style="font-weight:bold; color:#94a3b8; font-size:11px; display:block; margin-bottom:4px;">기본 필수 일과</span>`;
+
+                        // 기본 고정 숙제 6종 출력 순 정렬 노출
+                        const defaultKeys = [
+                            "일일_일일 임무", "일일_일반 던전", "일일_소탕 및 소모",
+                            "주간_주간 임무", "주간_파티 던전", "주간_레이드 스케줄"
+                        ];
+
+                        defaultKeys.forEach(key => {
+                            if(!char.homeworks) char.homeworks = {};
+                            if(char.homeworks[key] === undefined) char.homeworks[key] = false;
+                            
+                            const isChecked = char.homeworks[key];
+                            const labelText = key.split('_')[1];
+                            html += `
+                            <div class="hw-item">
+                                <label class="hw-label">
+                                    <input type="checkbox" ${isChecked ? 'checked' : ''} onclick="toggleHomework(${acc.id}, ${char.id}, '${key}')">
+                                    <span class="hw-text ${isChecked ? 'checked-text' : ''}">${labelText}</span>
+                                </label>
+                            </div>`;
+                        });
+
+                        html += `</div>`;
+
+                        // ➕ 2번 요청 반영: 마스터 순서 보존용 customHomeworkList 순서에 맞춘 정렬 동적 출력 계층
+                        html += `
+                        <div class="homework-group" style="border-bottom:none; margin-bottom:0;">
+                            <span style="font-weight:bold; color:#a7f3d0; font-size:11px; display:block; margin-bottom:4px;">자율 커스텀 숙제</span>`;
+
+                        if (customHomeworkList.length > 0) {
+                            customHomeworkList.forEach(hwName => {
+                                const key = `커스텀_${hwName}`;
+                                if(char.homeworks[key] === undefined) char.homeworks[key] = false;
+                                const isChecked = char.homeworks[key];
+
+                                html += `
+                                <div class="hw-item">
+                                    <label class="hw-label">
+                                        <input type="checkbox" ${isChecked ? 'checked' : ''} onclick="toggleHomework(${acc.id}, ${char.id}, '${key}')">
+                                        <span class="hw-text ${isChecked ? 'checked-text' : ''}" style="color:#e2e8f0;">${hwName}</span>
+                                    </label>
+                                </div>`;
+                            });
+                        } else {
+                            html += `<div style="font-size:10.5px; color:#4b5563; padding:2px 0;">등록된 자율 숙제가 없습니다.</div>`;
+                        }
+
+                        html += `
+                            <div class="add-form" style="margin-top:8px;">
+                                <input type="text" id="customHwInput-${char.id}" placeholder="새 숙제명">
+                                <button class="btn btn-xs" onclick="addCustomHomework(${acc.id}, ${char.id})">추가</button>
+                            </div>
+                        </div>`;
+
+                        // 인라인 미니 메모 미리보기 처리 레이아웃 구성
+                        if(hasMemo) {
+                            html += `
+                            <div class="char-memo-preview" onclick="openMemoModal(${acc.id}, ${char.id}, event)" title="클릭하여 메모를 수정할 수 있습니다.">
+                                📝 ${char.memo.length > 32 ? char.memo.substring(0, 32) + '...' : char.memo}
+                            </div>`;
+                        }
+
+                        // 최하단 3버튼 컴포넌트 결합부
+                        html += `
+                            <div class="char-control-footer">
+                                <div class="char-memo-wrapper">
+                                    <button class="btn btn-xs btn-char-memo" onclick="openMemoModal(${acc.id}, ${char.id}, event)">
+                                        메모
+                                    </button>
+                                    ${hasMemo ? '<span class="memo-red-dot"></span>' : ''}
+                                </div>
+                                <div><button class="btn btn-xs btn-char-edit" onclick="openEditCharModal(${acc.id}, ${char.id}, event)">설정</button></div>
+                                <div><button class="btn btn-xs btn-char-del" onclick="removeCharacter(${acc.id}, ${char.id}, event)">삭제</button></div>
+                            </div>
+                        </div>`;
+                    });
+                } else {
+                    // 유저 가이드 가시화 템플릿 인젝션
+                    html += `
+                    <div class="empty-character-guide" style="grid-column: 1 / -1;">
+                        <p class="guide-text">
+                            💡 현재 계정에 등록된 캐릭터가 없습니다.<br>
+                            우측 상단의 <strong>[➕ 캐릭터 추가]</strong> 버튼을 눌러 관리할 첫 번째 영웅 캐릭터를 바인딩해 주세요!
+                        </p>
+                    </div>`;
+                }
+
+                html += `</div></div></div>`;
+            });
+
+            app.innerHTML = html;
+            updateTimerDisplay();
+            
+            // 전역 토글 유무 뷰 모드 제어 클래스 제어
+            if (isHideCompleted) document.body.classList.add('hide-completed-mode');
+            else document.body.classList.remove('hide-completed-mode');
+
+            if (isShowHiddenChars) document.body.classList.add('show-hidden-chars-mode');
+            else document.body.classList.remove('show-hidden-chars-mode');
+        }
+
+        // --- 11. 시스템 구동 스레드 수립 및 초기 실행 라인 ---
+        checkAndReduceMembershipTime();
+        updateOdeAutomatically();
+        checkDailyReset();
+        checkWeeklyReset();
+        render();
+        initAlarmToggles();
+
+        setInterval(updateTimerDisplay, 1000);
+        setInterval(() => {
+            checkAndReduceMembershipTime();
+            updateOdeAutomatically();
+            checkDailyReset();
+            checkWeeklyReset();
+        }, 60000);
+    </script>
 </body>
 </html>
