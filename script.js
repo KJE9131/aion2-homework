@@ -554,7 +554,7 @@ function toggleFloatingMenu() {
                 <div class="account-body ${isCollapsed ? 'collapsed' : ''}" id="acc-body-${acc.id}">
     <div class="account-contents">
 
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
             <span class="account-contents-title">계정 공통 콘텐츠</span>
 
             <form class="batch-add-form"
@@ -579,156 +579,149 @@ function toggleFloatingMenu() {
             </form>
         </div>
 
-        <!-- 자원 -->
-        <div class="account-section-title">📦 자원</div>
+        <div class="account-common-wrap">
 
-        <div class="account-resource-grid">
+            <!-- 자원 -->
+            <div class="common-card">
 
-            <div class="resource-item">
-                <div>
+                <div class="common-card-title">
+                    📦 자원
+                </div>
+
+                <div class="resource-item">
                     <span class="char-name">🎉 슈고 페스타</span>
-                    <span style="font-size:10px;color:var(--text-muted);display:block;">
-                        최대 14
-                    </span>
+
+                    <div class="counter-controls">
+                        <button class="btn btn-xs"
+                            onclick="changeVal(${acc.id},null,'shugo',-1)">-</button>
+
+                        <span class="counter-progress">
+                            ${acc.shugo} <span class="max">/14</span>
+                        </span>
+
+                        <button class="btn btn-xs"
+                            onclick="changeVal(${acc.id},null,'shugo',1)">+</button>
+                    </div>
                 </div>
 
-                <div class="counter-controls">
-                    <button class="btn btn-xs"
-                        onclick="changeVal(${acc.id},null,'shugo',-1)">-</button>
-
-                    <input
-                        type="number"
-                        class="counter-input"
-                        value="${acc.shugo || 0}"
-                        onchange="setDirectVal(${acc.id},null,'shugo',this.value)">
-
-                    <button class="btn btn-xs"
-                        onclick="changeVal(${acc.id},null,'shugo',1)">+</button>
-                </div>
-            </div>
-
-            <div class="resource-item">
-                <div>
+                <div class="resource-item">
                     <span class="char-name">🗝️ 차원 침공</span>
-                    <span style="font-size:10px;color:var(--text-muted);display:block;">
-                        최대 7
-                    </span>
+
+                    <div class="counter-controls">
+                        <button class="btn btn-xs"
+                            onclick="changeVal(${acc.id},null,'dimension',-1)">-</button>
+
+                        <span class="counter-progress">
+                            ${acc.dimension} <span class="max">/7</span>
+                        </span>
+
+                        <button class="btn btn-xs"
+                            onclick="changeVal(${acc.id},null,'dimension',1)">+</button>
+                    </div>
                 </div>
 
-                <div class="counter-controls">
-                    <button class="btn btn-xs"
-                        onclick="changeVal(${acc.id},null,'dimension',-1)">-</button>
+                <div class="resource-item">
+                    <span class="char-name">🧭 원정</span>
 
-                    <input
-                        type="number"
-                        class="counter-input"
-                        value="${acc.dimension || 0}"
-                        onchange="setDirectVal(${acc.id},null,'dimension',this.value)">
+                    <div class="counter-controls">
+                        <button class="btn btn-xs"
+                            onclick="changeVal(${acc.id},null,'expedition',-1)">-</button>
 
-                    <button class="btn btn-xs"
-                        onclick="changeVal(${acc.id},null,'dimension',1)">+</button>
+                        <span class="counter-progress">
+                            ${acc.expedition} <span class="max">/84</span>
+                        </span>
+
+                        <button class="btn btn-xs"
+                            onclick="changeVal(${acc.id},null,'expedition',1)">+</button>
+                    </div>
                 </div>
-            </div>
 
-            <div class="resource-item">
-                <span class="char-name">🧭 원정</span>
+                <div class="resource-item">
+                    <span class="char-name">🌀 초월</span>
 
-                <div class="counter-controls">
-                    <button class="btn btn-xs"
-                        onclick="changeVal(${acc.id},null,'expedition',-1)">-</button>
+                    <div class="counter-controls">
+                        <button class="btn btn-xs"
+                            onclick="changeVal(${acc.id},null,'transcend',-1)">-</button>
 
-                    <span class="counter-progress">
-                        ${acc.expedition}
-                        <span class="max">/84</span>
-                    </span>
+                        <span class="counter-progress">
+                            ${acc.transcend} <span class="max">/56</span>
+                        </span>
 
-                    <button class="btn btn-xs"
-                        onclick="changeVal(${acc.id},null,'expedition',1)">+</button>
+                        <button class="btn btn-xs"
+                            onclick="changeVal(${acc.id},null,'transcend',1)">+</button>
+                    </div>
                 </div>
+
             </div>
 
-            <div class="resource-item">
-                <span class="char-name">🏛️ 초월</span>
 
-                <div class="counter-controls">
-                    <button class="btn btn-xs"
-                        onclick="changeVal(${acc.id},null,'transcend',-1)">-</button>
+            <!-- 체크리스트 -->
+            <div class="common-card">
 
-                    <span class="counter-progress">
-                        ${acc.transcend}
-                        <span class="max">/56</span>
-                    </span>
-
-                    <button class="btn btn-xs"
-                        onclick="changeVal(${acc.id},null,'transcend',1)">+</button>
+                <div class="common-card-title">
+                    ✅ 체크리스트
                 </div>
-            </div>
 
-        </div>
+                <div class="resource-item">
+                    <label class="hw-label">
+                        <input type="checkbox"
+                            ${acc.odeBuyChecked?'checked':''}
+                            onchange="toggleCheckbox(${acc.id},null,'odeBuyChecked')">
 
-        <!-- 체크리스트 -->
-        <div class="account-section-title">📋 체크리스트</div>
+                        <span class="${acc.odeBuyChecked?'checked-text':''}">
+                            ⚡ 오드구매·제작
+                        </span>
+                    </label>
+                </div>
 
-        <div class="account-resource-grid">
+                <div class="resource-item">
+                    <label class="hw-label">
+                        <input type="checkbox"
+                            ${acc.villageOrderChecked?'checked':''}
+                            onchange="toggleCheckbox(${acc.id},null,'villageOrderChecked')">
 
-            <div class="resource-item">
-                <label class="hw-label">
-                    <input type="checkbox"
-                        ${acc.odeBuyChecked?'checked':''}
-                        onchange="toggleCheckbox(${acc.id},null,'odeBuyChecked')">
+                        <span class="${acc.villageOrderChecked?'checked-text':''}">
+                            📜 지령서 (마을)
+                        </span>
+                    </label>
+                </div>
 
-                    <span class="${acc.odeBuyChecked?'checked-text':''}">
-                        ⚡ 오드구매·제작
-                    </span>
-                </label>
-            </div>
+                <div class="resource-item">
+                    <label class="hw-label">
+                        <input type="checkbox"
+                            ${acc.abyssOrderChecked?'checked':''}
+                            onchange="toggleCheckbox(${acc.id},null,'abyssOrderChecked')">
 
-            <div class="resource-item">
-                <label class="hw-label">
-                    <input type="checkbox"
-                        ${acc.villageOrderChecked?'checked':''}
-                        onchange="toggleCheckbox(${acc.id},null,'villageOrderChecked')">
+                        <span class="${acc.abyssOrderChecked?'checked-text':''}">
+                            🌌 지령서 (어비스)
+                        </span>
+                    </label>
+                </div>
 
-                    <span class="${acc.villageOrderChecked?'checked-text':''}">
-                        📜 지령서(마을)
-                    </span>
-                </label>
-            </div>
+                <div class="resource-item">
+                    <label class="hw-label">
+                        <input type="checkbox"
+                            ${acc.dailyDungeonChecked?'checked':''}
+                            onchange="toggleCheckbox(${acc.id},null,'dailyDungeonChecked')">
 
-            <div class="resource-item">
-                <label class="hw-label">
-                    <input type="checkbox"
-                        ${acc.abyssOrderChecked?'checked':''}
-                        onchange="toggleCheckbox(${acc.id},null,'abyssOrderChecked')">
+                        <span class="${acc.dailyDungeonChecked?'checked-text':''}">
+                            🏛️ 일일던전
+                        </span>
+                    </label>
+                </div>
 
-                    <span class="${acc.abyssOrderChecked?'checked-text':''}">
-                        🌌 지령서(어비스)
-                    </span>
-                </label>
-            </div>
+                <div class="resource-item">
+                    <label class="hw-label">
+                        <input type="checkbox"
+                            ${acc.dailyMissionChecked?'checked':''}
+                            onchange="toggleCheckbox(${acc.id},null,'dailyMissionChecked')">
 
-            <div class="resource-item">
-                <label class="hw-label">
-                    <input type="checkbox"
-                        ${acc.dailyDungeonChecked?'checked':''}
-                        onchange="toggleCheckbox(${acc.id},null,'dailyDungeonChecked')">
+                        <span class="${acc.dailyMissionChecked?'checked-text':''}">
+                            ⭐ 일일사명퀘
+                        </span>
+                    </label>
+                </div>
 
-                    <span class="${acc.dailyDungeonChecked?'checked-text':''}">
-                        🏛️ 일일던전
-                    </span>
-                </label>
-            </div>
-
-            <div class="resource-item">
-                <label class="hw-label">
-                    <input type="checkbox"
-                        ${acc.dailyMissionChecked?'checked':''}
-                        onchange="toggleCheckbox(${acc.id},null,'dailyMissionChecked')">
-
-                    <span class="${acc.dailyMissionChecked?'checked-text':''}">
-                        ⭐ 일일사명퀘
-                    </span>
-                </label>
             </div>
 
         </div>
