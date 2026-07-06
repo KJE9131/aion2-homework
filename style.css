@@ -1184,7 +1184,7 @@ color:var(--primary);
     font-weight:500;
 }
 
-.account-common-wrap{
+.account-common-wrap{ 
     display:flex;
         flex-wrap:wrap;
         gap:20px 0;
