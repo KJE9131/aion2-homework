@@ -580,7 +580,9 @@ function toggleFloatingMenu() {
         </div>
 
         <div class="account-common-wrap">
-
+<div class="common-card-title">
+                    📦 자원
+                </div>
             <!-- 자원 -->
             <div class="common-card">
                 <div class="resource-item">
@@ -617,7 +619,6 @@ function toggleFloatingMenu() {
 
                 <div class="resource-item">
                     <span class="char-name">원정</span>
-
                     <div class="counter-controls">
                         <button class="btn btn-xs"
                             onclick="changeVal(${acc.id},null,'expedition',-1)">-</button>
@@ -652,6 +653,9 @@ function toggleFloatingMenu() {
 
             <!-- 체크리스트 -->
             <div class="common-card">
+            <div class="common-card-title">
+                    ✅ 체크리스트
+                </div>
                 <div class="resource-item">
                     <label class="hw-label">
                         <input type="checkbox"
