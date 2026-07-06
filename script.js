@@ -589,7 +589,7 @@ function toggleFloatingMenu() {
                 </div>
 
                 <div class="resource-item">
-                    <span class="char-name">🎉 슈고 페스타</span>
+                    <span class="char-name">슈고 페스타</span>
 
                     <div class="counter-controls">
                         <button class="btn btn-xs"
@@ -605,7 +605,7 @@ function toggleFloatingMenu() {
                 </div>
 
                 <div class="resource-item">
-                    <span class="char-name">🗝️ 차원 침공</span>
+                    <span class="char-name">차원 침공</span>
 
                     <div class="counter-controls">
                         <button class="btn btn-xs"
@@ -621,7 +621,7 @@ function toggleFloatingMenu() {
                 </div>
 
                 <div class="resource-item">
-                    <span class="char-name">🧭 원정</span>
+                    <span class="char-name">원정</span>
 
                     <div class="counter-controls">
                         <button class="btn btn-xs"
@@ -637,7 +637,7 @@ function toggleFloatingMenu() {
                 </div>
 
                 <div class="resource-item">
-                    <span class="char-name">🌀 초월</span>
+                    <span class="char-name">초월</span>
 
                     <div class="counter-controls">
                         <button class="btn btn-xs"
@@ -669,7 +669,7 @@ function toggleFloatingMenu() {
                             onchange="toggleCheckbox(${acc.id},null,'odeBuyChecked')">
 
                         <span class="${acc.odeBuyChecked?'checked-text':''}" style="font-size:12px;">
-                            ⚡ 오드구매·제작
+                            오드구매·제작(16)
                         </span>
                     </label>
                 </div>
@@ -681,7 +681,7 @@ function toggleFloatingMenu() {
                             onchange="toggleCheckbox(${acc.id},null,'villageOrderChecked')">
 
                         <span class="${acc.villageOrderChecked?'checked-text':''}" style="font-size:12px;">
-                            📜 지령서 (마을)
+                            지령서 (마을)
                         </span>
                     </label>
                 </div>
@@ -693,7 +693,7 @@ function toggleFloatingMenu() {
                             onchange="toggleCheckbox(${acc.id},null,'abyssOrderChecked')">
 
                         <span class="${acc.abyssOrderChecked?'checked-text':''}" style="font-size:12px;">
-                            🌌 지령서 (어비스)
+                            지령서 (어비스)
                         </span>
                     </label>
                 </div>
@@ -705,7 +705,7 @@ function toggleFloatingMenu() {
                             onchange="toggleCheckbox(${acc.id},null,'dailyDungeonChecked')">
 
                         <span class="${acc.dailyDungeonChecked?'checked-text':''}" style="font-size:12px;">
-                            🏛️ 일일던전
+                            일일던전
                         </span>
                     </label>
                 </div>
@@ -717,7 +717,7 @@ function toggleFloatingMenu() {
                             onchange="toggleCheckbox(${acc.id},null,'dailyMissionChecked')">
 
                         <span class="${acc.dailyMissionChecked?'checked-text':''}" style="font-size:12px;">
-                            ⭐ 일일사명퀘
+                            일일사명퀘
                         </span>
                     </label>
                 </div>
