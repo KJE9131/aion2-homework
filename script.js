@@ -146,8 +146,8 @@ function toggleFloatingMenu() {
         } else {
             const newId = Date.now();
             gameData.push({ 
-                id: newId, name: name, membership: membership, membershipDays: days, membershipHours: hours, membershipUpdatedAt: Date.now(), dailyMissionChecked: false, expedition: 84, transcend: 56,
-                shugo: 2, dimension: 1, expedition: 84, transcend: 56, odeBuyChecked: false, villageOrderChecked: false, abyssOrderChecked: false, dailyDungeonChecked: false, characters: [] 
+                id: newId, name: name, membership: membership, membershipDays: days, membershipHours: hours, membershipUpdatedAt: Date.now(), dailyMissionChecked: false,
+                shugo: 2, dimension: 1, expedition: 0, transcend: 0, odeBuyChecked: false, villageOrderChecked: false, abyssOrderChecked: false, dailyDungeonChecked: false, characters: [] 
             });
             accordionStatus[newId] = true;
             localStorage.setItem('accordionStatus_v15', JSON.stringify(accordionStatus));
@@ -349,7 +349,7 @@ function toggleFloatingMenu() {
         while (t.getDay() !== 3) t.setDate(t.getDate() - 1);
         if (parseInt(lastWeeklyReset) < t.getTime()) {
             gameData.forEach(acc => {
-                acc.odeBuyChecked = false; acc.villageOrderChecked = false; acc.abyssOrderChecked = false; acc.dailyDungeonChecked = false; acc.dailyMissionChecked=false; acc.expedition = 84; acc.transcend = 56;
+                acc.odeBuyChecked = false; acc.villageOrderChecked = false; acc.abyssOrderChecked = false; acc.dailyDungeonChecked = false; acc.dailyMissionChecked=false; acc.expedition = 0; acc.transcend = 0;
                 if(acc.characters) acc.characters.forEach(char => {
                     char.charBuyChecked = false; char.nightmareChecked = false; char.awakeningChecked = false;
                     char.homeworks.forEach(hw => { if (hw.type === 'weekly') hw.checked = false; });
