@@ -464,6 +464,22 @@
     function toggleShowHiddenChars() { isShowHiddenChars = !isShowHiddenChars; localStorage.setItem('isShowHiddenChars_v15', JSON.stringify(isShowHiddenChars)); render(); }
     function toggleHideCharacter(accId, charId, event) { event.stopPropagation(); const char = gameData.find(a => a.id === accId).characters.find(c => c.id === charId); char.hidden = !char.hidden; saveData(); }
 
+
+    function renderCharacter(acc, char) {
+    
+        let html = "";
+    
+    
+    
+        // 여기에 기존 char-card 코드를 넣을 예정
+    
+    
+    
+        return html;
+    
+    }
+
+
     function render() {
         const app = document.getElementById('app'); if (!app) return;
         if (gameData.length === 0) { app.innerHTML = `<p style="text-align:center; color:#fff; margin-top: 50px; font-weight:600;">우측 하단의 <span style="color:var(--accent)">메뉴 단추</span>를 눌러 새 계정을 추가해 주세요!</p>`; return; }
