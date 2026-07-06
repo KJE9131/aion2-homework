@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="favicon.png">
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
     <title>아이온2 숙제 관리 대시보드</title>
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
 
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css');
@@ -1918,34 +1918,7 @@ color:var(--primary);
                         </div>
                         <div class="homework-group" style="border:none; padding:0;">
                             <div class="custom-homework-header">
-
-    <strong>
-
-        📝 커스텀 숙제
-
-    </strong>
-
-    <button
-
-        class="btn-custom-edit"
-
-        onclick="toggleHomeworkEdit(${acc.id},${char.id},event)"
-
-    >
-
-        ⚙ 설정
-
-    </button>
-
-</div>
-
-<div
-
-    id="homework-${char.id}"
-
-    class="custom-homework-list"
-
->`;
+                            <strong>📝 커스텀 숙제</strong><button class="btn-custom-edit" onclick="toggleHomeworkEdit(${acc.id},${char.id},event)">⚙ 설정</button></div><div id="homework-${char.id}" class="custom-homework-list">`;
 
                     // 원래 배열 구조와 인덱스를 유지하면서 정렬하여 HTML 출력
                     const typeOrder = { 'weekly': 1, 'daily': 2, 'once': 3 };
@@ -1953,86 +1926,39 @@ color:var(--primary);
                     
                     mappedHomeworks.sort((a, b) => typeOrder[a.hw.type] - typeOrder[b.hw.type]);
 
+                    mappedHomeworks.forEach(({ hw, index }) => {
+                        html += `
+                            <div class="hw-item">
+                                <label class="hw-label">
+                                    <input type="checkbox" ${hw.checked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, null, ${index})">
+                                    <span class="hw-text ${hw.checked ? 'checked-text' : ''}">[${hw.type==='weekly'?'주':hw.type==='once'?'일회':'일'}] ${hw.name}</span>
+                                </label>
+                                <button class="btn-danger2" style="padding: 1px 4px; font-size: 10px; filter:contrast(0.1); border:none;" onclick="deleteCustomHomework(${acc.id}, ${char.id}, ${index})">❌</button>
+                            </div>`;
+                    });
                     mappedHomeworks.forEach(({ hw, index })=>{
 
-    html+=`
-
-<div
-
-class="hw-item"
-
-draggable="false"
-
-data-index="${index}"
-
->
-
-<div class="hw-left">
-
-<span class="dragHandle">
-
-☰
-
-</span>
-
-<label class="hw-label">
-
-<input
-
-type="checkbox"
-
-${hw.checked?"checked":""}
-
-onchange="toggleCheckbox(${acc.id},${char.id},null,${index})"
-
->
-
-<span class="hw-text ${hw.checked?"checked-text":""}">
-
-[${hw.type==='weekly'?'주':hw.type==='once'?'일회':'일'}]
-
-${hw.name}
-
-</span>
-
-</label>
-
-</div>
-
-<button
-
-class="btn-delete-homework"
-
-onclick="deleteCustomHomework(${acc.id},${char.id},${index})"
-
->
-
-🗑
-
-</button>
-
-</div>
-
-`;
-
-});
+                            html+=`
+                        
+                            <div class="hw-item" draggable="false" data-index="${index}">
+                                <div class="hw-left">
+                                    <span class="dragHandle">☰</span>
+                                    <label class="hw-label">
+                                        <input type="checkbox" ${hw.checked?"checked":""} onchange="toggleCheckbox(${acc.id},${char.id},null,${index})">
+                                        <span class="hw-text ${hw.checked?"checked-text":""}">[${hw.type==='weekly'?'주':hw.type==='once'?'일회':'일'}]${hw.name}</span>
+                                    </label>
+                                </div>
+                                <button class="btn-delete-homework" onclick="deleteCustomHomework(${acc.id},${char.id},${index})">🗑</button>
+                            </div>`;
+                        
+                        });
 
                     html += `</div>
-                        <div class="custom-homework-add">
-
-<button
-
-class="btn-add-homework"
-
-onclick="openHomeworkAddModal(${acc.id},${char.id},event)"
-
->
-
-＋ 숙제 추가
-
-</button>
-
-</div>
+                        <form class="add-form" onsubmit="createCustomHomework(event, ${acc.id}, ${char.id})">
+                            <div class="custom-homework-add">
+                                <button class="btn-add-homework" onclick="openHomeworkAddModal(${acc.id},${char.id},event)">＋ 숙제 추가</button>
+                            </div>
+                        </form>
                         <div class="char-control-footer">
                             <div style="position:relative;"><button class="btn btn-xs btn-char-edit" onclick="openMemoModal(${acc.id}, ${char.id}, event)">메모</button>${char.memo?'<span class="memo-red-dot"></span>':''}</div>
                             <button class="btn btn-xs btn-char-edit" onclick="openEditCharModal(${acc.id}, ${char.id}, event)">설정</button>
