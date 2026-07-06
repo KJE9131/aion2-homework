@@ -568,8 +568,11 @@ function toggleFloatingMenu() {
                                 <div class="counter-controls"><button class="btn btn-xs" onclick="changeVal(${acc.id}, null, 'dimension', -1)">-</button><input type="number" class="counter-input" value="${acc.dimension || 0}" onchange="setDirectVal(${acc.id}, null, 'dimension', this.value)"><button class="btn btn-xs" onclick="changeVal(${acc.id}, null, 'dimension', 1)">+</button></div></div>
                         <div class="resource-item">
                             <div>
-                                <span class="char-name" style="font-size:13px;">🗺️ 원정횟수</span>
-                                <span style="font-size:10px;color:var(--text-muted);">(최대 84)</span>
+                                <span class="char-name" style="font-size:13px;">🗺️ 원정</span>
+                                <span style="font-size:10px;color:var(--text-muted);display:block;">
+                                    <span style="color:#fff">${acc.expedition}</span>
+                                    <span style="color:#777">/ 84</span>
+                                </span>
                             </div>
                         
                             <div class="counter-controls">
@@ -589,8 +592,11 @@ function toggleFloatingMenu() {
                         
                         <div class="resource-item">
                             <div>
-                                <span class="char-name" style="font-size:13px;">✨ 초월횟수</span>
-                                <span style="font-size:10px;color:var(--text-muted);">(최대 56)</span>
+                                <span class="char-name" style="font-size:13px;">✨ 초월</span>
+                                <span style="font-size:10px;color:var(--text-muted);display:block;">
+                                    <span style="color:#fff">${acc.expedition}</span>
+                                    <span style="color:#777">/ 56</span>
+                                </span>
                             </div>
                         
                             <div class="counter-controls">
