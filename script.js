@@ -549,16 +549,51 @@ function toggleFloatingMenu() {
                     
                     mappedHomeworks.sort((a, b) => typeOrder[a.hw.type] - typeOrder[b.hw.type]);
 
-                    mappedHomeworks.forEach(({ hw, index }) => {
+                    let currentType = "";
+
+                mappedHomeworks.forEach(({ hw, index }) => {
+                
+                    if (currentType !== hw.type) {
+                
+                        currentType = hw.type;
+                
                         html += `
-                            <div class="hw-item">
-                                <label class="hw-label">
-                                    <input type="checkbox" ${hw.checked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, null, ${index})">
-                                    <span class="hw-text ${hw.checked ? 'checked-text' : ''}">[${hw.type==='weekly'?'주':hw.type==='once'?'일회':'일'}] ${hw.name}</span>
-                                </label>
-                                <button class="btn-danger2" style="padding: 1px 4px; font-size: 10px; filter:contrast(0.1); border:none;" onclick="deleteCustomHomework(${acc.id}, ${char.id}, ${index})">❌</button>
-                            </div>`;
-                    });
+                            <div class="custom-homework-category">
+                                ${
+                                    hw.type === "weekly"
+                                        ? "[주간]"
+                                        : hw.type === "daily"
+                                        ? "[일일]"
+                                        : "[일회성]"
+                                }
+                            </div>
+                        `;
+                    }
+                
+                    html += `
+                        <div class="hw-item">
+                            <label class="hw-label">
+                                <input
+                                    type="checkbox"
+                                    ${hw.checked ? 'checked' : ''}
+                                    onchange="toggleCheckbox(${acc.id}, ${char.id}, null, ${index})">
+                
+                                <span class="hw-text ${hw.checked ? 'checked-text' : ''}">
+                                    ${hw.name}
+                                </span>
+                            </label>
+                
+                            <button
+                                class="btn-danger2"
+                                style="padding:1px 4px;font-size:10px;filter:contrast(.1);border:none;"
+                                onclick="deleteCustomHomework(${acc.id}, ${char.id}, ${index})">
+                
+                                ❌
+                
+                            </button>
+                        </div>
+                    `;
+                });
 
                     html += `</div>
                         <form class="add-form" onsubmit="createCustomHomework(event, ${acc.id}, ${char.id})">
