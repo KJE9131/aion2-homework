@@ -479,6 +479,25 @@
     
     }
 
+    function renderCustomHomework(acc, char){
+        const typeOrder = {
+            weekly:1,
+            daily:2,
+            once:3
+        };
+        
+        const mappedHomeworks =
+            char.homeworks.map((hw,index)=>({
+                hw,
+                index
+            }));
+        
+        mappedHomeworks.sort((a,b)=>
+            typeOrder[a.hw.type]-typeOrder[b.hw.type]
+        );
+            
+    }
+
 
     function render() {
         const app = document.getElementById('app'); if (!app) return;
