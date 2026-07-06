@@ -134,7 +134,7 @@ function toggleFloatingMenu() {
         } else {
             const newId = Date.now();
             gameData.push({ 
-                id: newId, name: name, membership: membership, membershipDays: days, membershipHours: hours, membershipUpdatedAt: Date.now(), 
+                id: newId, name: name, membership: membership, membershipDays: days, membershipHours: hours, membershipUpdatedAt: Date.now(), dailyMissionChecked: false,
                 shugo: 2, dimension: 1, odeBuyChecked: false, villageOrderChecked: false, abyssOrderChecked: false, dailyDungeonChecked: false, characters: [] 
             });
             accordionStatus[newId] = true;
@@ -255,6 +255,8 @@ function toggleFloatingMenu() {
                     if(acc.characters) acc.characters.forEach(char => {
                         if ((char.ode || 0) < 840) char.ode = Math.min(840, (char.ode || 0) + addOde);
                     });
+                    if(acc.dailyMissionChecked===undefined)
+                    acc.dailyMissionChecked=false;
                 });
                 localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData));
                 render();
@@ -335,7 +337,7 @@ function toggleFloatingMenu() {
         while (t.getDay() !== 3) t.setDate(t.getDate() - 1);
         if (parseInt(lastWeeklyReset) < t.getTime()) {
             gameData.forEach(acc => {
-                acc.odeBuyChecked = false; acc.villageOrderChecked = false; acc.abyssOrderChecked = false; acc.dailyDungeonChecked = false;
+                acc.odeBuyChecked = false; acc.villageOrderChecked = false; acc.abyssOrderChecked = false; acc.dailyDungeonChecked = false; acc.dailyMissionChecked=false;
                 if(acc.characters) acc.characters.forEach(char => {
                     char.charBuyChecked = false; char.nightmareChecked = false; char.awakeningChecked = false;
                     char.homeworks.forEach(hw => { if (hw.type === 'weekly') hw.checked = false; });
@@ -513,7 +515,7 @@ function toggleFloatingMenu() {
                             <div class="resource-item"><label class="hw-label"><input type="checkbox" ${acc.villageOrderChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'villageOrderChecked')"><span class="${acc.villageOrderChecked ? 'checked-text' : ''}">📜 지령서 (마을)</span></label></div>
                             <div class="resource-item"><label class="hw-label"><input type="checkbox" ${acc.abyssOrderChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'abyssOrderChecked')"><span class="${acc.abyssOrderChecked ? 'checked-text' : ''}">🌌 지령서 (어비스)</span></label></div>
                             <div class="resource-item"><label class="hw-label"><input type="checkbox" ${acc.dailyDungeonChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'dailyDungeonChecked')"><span class="${acc.dailyDungeonChecked ? 'checked-text' : ''}">🏛️ 일일던전</span></label></div>
-                        </div>
+                            <div class="resource-item"><label class="hw-label"><input type="checkbox" ${acc.dailyMissionChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'dailyMissionChecked')"><span class="${acc.dailyMissionChecked ? 'checked-text' : ''}">⭐ 일일사명퀘</span></label></div></div>
                     </div>
                     <div class="char-grid">`;
 
