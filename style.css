@@ -1186,7 +1186,6 @@ color:var(--primary);
 
 .account-common-wrap{
     display:flex;
-    flex-direction:column;
     gap:14px;
 }
 
@@ -1230,4 +1229,8 @@ color:var(--primary);
 
 .common-card .hw-label{
     width:100%;
+}
+
+.resource-item .char-name {
+        font-size:12px;
 }
