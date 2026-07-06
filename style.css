@@ -1159,3 +1159,9 @@ color:var(--primary);
     align-items:center;
     margin-bottom:6px;
 }
+.drag-handle{
+    cursor:grab;
+    color:#888;
+    margin-right:8px;
+    user-select:none;
+}
