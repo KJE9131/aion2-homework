@@ -1,5 +1,4 @@
-
-    function toggleFloatingMenu() {
+function toggleFloatingMenu() {
         const container = document.getElementById('floatingMenu');
         container.classList.toggle('active');
     }
@@ -16,7 +15,6 @@
     localStorage.setItem('lastOdeUpdateTime_v15', lastChecked);
     let lastAbyssReset = localStorage.getItem('lastAbyssResetTime_v15') || "0";
     let accordionStatus = JSON.parse(localStorage.getItem('accordionStatus_v15')) || {};
-    let homeworkEditMode = {};
     
     let lastDailyReset = localStorage.getItem('lastDailyResetTime_v15') || "0";
     let lastWeeklyReset = localStorage.getItem('lastWeeklyResetTime_v15') || "0";
@@ -465,81 +463,6 @@
     function toggleShowHiddenChars() { isShowHiddenChars = !isShowHiddenChars; localStorage.setItem('isShowHiddenChars_v15', JSON.stringify(isShowHiddenChars)); render(); }
     function toggleHideCharacter(accId, charId, event) { event.stopPropagation(); const char = gameData.find(a => a.id === accId).characters.find(c => c.id === charId); char.hidden = !char.hidden; saveData(); }
 
-
-    //여기서부터 커스텀숙제부분 드래그 수정하는 코드 추가하는거
-    function renderCharacter(acc, char) {
-    
-        let html = "";
-    
-    
-    
-        // 여기에 기존 char-card 코드를 넣을 예정
-    
-    
-    
-        return html;
-    
-    }
-
-    function renderCustomHomework(acc, char){
-
-        let html = "";
-    
-        const typeOrder = {
-            weekly:1,
-            daily:2,
-            once:3
-        };
-    
-        const mappedHomeworks =
-            char.homeworks.map((hw,index)=>({
-                hw,
-                index
-            }));
-    
-        mappedHomeworks.sort((a,b)=>
-            typeOrder[a.hw.type]-typeOrder[b.hw.type]
-        );
-    
-        return html;
-    
-    }
-
-    function renderHomeworkItem(acc, char, hw, index){
-    
-        return `
-            <div class="hw-item" data-index="${index}">
-    
-                <label class="hw-label">
-    
-                    ${!homeworkEditMode[acc.id]?.[char.id] ? `
-                    <input
-                        type="checkbox"
-                        ${hw.checked ? 'checked' : ''}
-                        onchange="toggleCheckbox(${acc.id}, ${char.id}, null, ${index})">
-                    ` : ``}
-                    
-                    <span class="hw-text ${hw.checked ? 'checked-text' : ''}">
-                        [${hw.type==='weekly'?'주':hw.type==='once'?'일회':'일'}] ${hw.name}
-                    </span>
-    
-                </label>
-    
-                <button
-                    class="btn-danger2"
-                    style="padding:1px 4px;font-size:10px;filter:contrast(.1);border:none;"
-                    onclick="deleteCustomHomework(${acc.id}, ${char.id}, ${index})">
-    
-                    ❌
-    
-                </button>
-    
-            </div>
-        `;
-    
-    }
-    //여기서부터 커스텀숙제부분 드래그 수정하는 코드 추가하는거 끝
-    //랜더부분체
     function render() {
         const app = document.getElementById('app'); if (!app) return;
         if (gameData.length === 0) { app.innerHTML = `<p style="text-align:center; color:#fff; margin-top: 50px; font-weight:600;">우측 하단의 <span style="color:var(--accent)">메뉴 단추</span>를 눌러 새 계정을 추가해 주세요!</p>`; return; }
@@ -618,58 +541,24 @@
                             <div class="hw-item"><label class="hw-label"><input type="checkbox" ${char.awakeningChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'awakeningChecked')"><span class="hw-text ${char.awakeningChecked ? 'checked-text' : ''}">각성전</span></label></div>
                         </div>
                         <div class="homework-group" style="border:none; padding:0;">
-                            <div class="custom-homework-header">
-                                <strong style="font-size:11px; color:var(--text-muted);">
-                                    📝 커스텀 숙제
-                                </strong>
-                            
-                                <button
-                                    class="btn btn-xs"
-                                    onclick="event.stopPropagation(); toggleHomeworkEdit(${acc.id}, ${char.id});">
-                            
-                                    ${homeworkEditMode[acc.id]?.[char.id] ? "✔ 완료" : "⚙ 설정"}
-                            
-                                </button>
-                            </div>`;
+                            <strong style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">📝 커스텀 숙제</strong>`;
 
                     // 원래 배열 구조와 인덱스를 유지하면서 정렬하여 HTML 출력
                     const typeOrder = { 'weekly': 1, 'daily': 2, 'once': 3 };
                     const mappedHomeworks = char.homeworks.map((hw, index) => ({ hw, index }));
                     
                     mappedHomeworks.sort((a, b) => typeOrder[a.hw.type] - typeOrder[b.hw.type]);
-                    
-                    html += `<div class="custom-homework-list" id="custom-homework-list-${acc.id}-${char.id}">`;
 
                     mappedHomeworks.forEach(({ hw, index }) => {
                         html += `
-                            <div class="hw-item" data-index="${index}">
+                            <div class="hw-item">
                                 <label class="hw-label">
-                                    ${homeworkEditMode[acc.id]?.[char.id]
-                                        ? `<span class="drag-handle">☰</span>`
-                                        : ``}
-                                
-                                    ${!homeworkEditMode[acc.id]?.[char.id] ? `
-                                    <input
-                                        type="checkbox"
-                                        ${hw.checked ? 'checked' : ''}
-                                        onchange="toggleCheckbox(${acc.id}, ${char.id}, null, ${index})">
-                                    ` : ``}
-                                    
-                                    <span class="hw-text ${hw.checked ? 'checked-text' : ''}">
-                                        [${hw.type==='weekly'?'주':hw.type==='once'?'일회':'일'}] ${hw.name}
-                                    </span>
+                                    <input type="checkbox" ${hw.checked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, null, ${index})">
+                                    <span class="hw-text ${hw.checked ? 'checked-text' : ''}">[${hw.type==='weekly'?'주':hw.type==='once'?'일회':'일'}] ${hw.name}</span>
                                 </label>
-                                ${homeworkEditMode[acc.id]?.[char.id] ? `
-                                <button class="btn-danger2"
-                                    style="padding:1px 4px;font-size:10px;border:none;"
-                                    onclick="deleteCustomHomework(${acc.id}, ${char.id}, ${index})">
-                                    🗑
-                                </button>
-                                ` : ``}
+                                <button class="btn-danger2" style="padding: 1px 4px; font-size: 10px; filter:contrast(0.1); border:none;" onclick="deleteCustomHomework(${acc.id}, ${char.id}, ${index})">❌</button>
                             </div>`;
                     });
-                    
-                    html += `</div>`;
 
                     html += `</div>
                         <form class="add-form" onsubmit="createCustomHomework(event, ${acc.id}, ${char.id})">
@@ -691,9 +580,7 @@
             html += `</div></div></div>`;
         });
 
-        app.innerHTML = html; 
-        initHomeworkDrag();
-        updateTimerDisplay();
+        app.innerHTML = html; updateTimerDisplay();
         if (isHideCompleted) document.body.classList.add('hide-completed-mode'); else document.body.classList.remove('hide-completed-mode');
         if (isShowHiddenChars) document.body.classList.add('show-hidden-chars-mode'); else document.body.classList.remove('show-hidden-chars-mode');
     }
@@ -701,59 +588,3 @@
     checkAndReduceMembershipTime(); updateOdeAutomatically(); checkAbyssReset(); checkDailyReset(); checkWeeklyReset(); render(); initAlarmToggles();
     setInterval(updateTimerDisplay, 1000);
     setInterval(() => { checkAndReduceMembershipTime(); updateOdeAutomatically(); checkAbyssReset(); checkDailyReset(); checkWeeklyReset(); }, 60000);
-
-    function toggleHomeworkEdit(accountId, characterId){
-    
-        if(!homeworkEditMode[accountId]){
-            homeworkEditMode[accountId] = {};
-        }
-    
-        homeworkEditMode[accountId][characterId] =
-            !homeworkEditMode[accountId][characterId];
-    
-        render();
-
-        setTimeout(()=>{
-        
-            const list=document.getElementById(
-                `custom-homework-list-${accountId}-${characterId}`
-            );
-        
-            if(!list) return;
-        
-            const sortable=Sortable.get(list);
-        
-            if(sortable){
-        
-                sortable.option(
-                    "disabled",
-                    !homeworkEditMode[accountId][characterId]
-                );
-        
-            }
-        
-        },0);
-
-        function initHomeworkDrag(){
-
-    document.querySelectorAll(".custom-homework-list").forEach(list=>{
-
-        if(list.dataset.sortable) return;
-
-        list.dataset.sortable = "1";
-
-        new Sortable(list,{
-
-            animation:150,
-
-            handle:".drag-handle",
-
-            disabled:true
-
-        });
-
-    });
-
-}
-    
-    }
