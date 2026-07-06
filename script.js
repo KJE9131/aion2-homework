@@ -618,18 +618,18 @@
                         </div>
                         <div class="homework-group" style="border:none; padding:0;">
                             <div class="custom-homework-header">
-    <strong style="font-size:11px; color:var(--text-muted);">
-        📝 커스텀 숙제
-    </strong>
-
-    <button
-        class="btn btn-xs"
-        onclick="event.stopPropagation(); toggleHomeworkEdit(${acc.id}, ${char.id});">
-
-        ${homeworkEditMode[acc.id]?.[char.id] ? "✔ 완료" : "⚙ 설정"}
-
-    </button>
-</div>`;
+                                <strong style="font-size:11px; color:var(--text-muted);">
+                                    📝 커스텀 숙제
+                                </strong>
+                            
+                                <button
+                                    class="btn btn-xs"
+                                    onclick="event.stopPropagation(); toggleHomeworkEdit(${acc.id}, ${char.id});">
+                            
+                                    ${homeworkEditMode[acc.id]?.[char.id] ? "✔ 완료" : "⚙ 설정"}
+                            
+                                </button>
+                            </div>`;
 
                     // 원래 배열 구조와 인덱스를 유지하면서 정렬하여 HTML 출력
                     const typeOrder = { 'weekly': 1, 'daily': 2, 'once': 3 };
@@ -641,10 +641,26 @@
                         html += `
                             <div class="hw-item">
                                 <label class="hw-label">
-                                    <input type="checkbox" ${hw.checked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, null, ${index})">
-                                    <span class="hw-text ${hw.checked ? 'checked-text' : ''}">[${hw.type==='weekly'?'주':hw.type==='once'?'일회':'일'}] ${hw.name}</span>
+                                    ${homeworkEditMode[acc.id]?.[char.id]
+                                        ? `<span class="drag-handle">☰</span>`
+                                        : ``}
+                                
+                                    <input
+                                        type="checkbox"
+                                        ${hw.checked ? 'checked' : ''}
+                                        onchange="toggleCheckbox(${acc.id}, ${char.id}, null, ${index})">
+                                
+                                    <span class="hw-text ${hw.checked ? 'checked-text' : ''}">
+                                        [${hw.type==='weekly'?'주':hw.type==='once'?'일회':'일'}] ${hw.name}
+                                    </span>
                                 </label>
-                                <button class="btn-danger2" style="padding: 1px 4px; font-size: 10px; filter:contrast(0.1); border:none;" onclick="deleteCustomHomework(${acc.id}, ${char.id}, ${index})">❌</button>
+                                ${homeworkEditMode[acc.id]?.[char.id] ? `
+                                <button class="btn-danger2"
+                                    style="padding:1px 4px;font-size:10px;border:none;"
+                                    onclick="deleteCustomHomework(${acc.id}, ${char.id}, ${index})">
+                                    🗑
+                                </button>
+                                ` : ``}
                             </div>`;
                     });
 
