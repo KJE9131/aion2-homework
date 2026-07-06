@@ -562,14 +562,14 @@ function toggleFloatingMenu() {
                             </form>
                         </div>
                         <div class="account-resource-grid">
-                            <div class="resource-item"><div><span class="char-name" style="font-size:13px;">🎉 슈고 열쇠</span><span style="font-size:10px; color:var(--text-muted);">(최대 14)</span></div>
+                            <div class="resource-item"><div><span class="char-name" style="font-size:13px;">슈고 페스타</span><span style="font-size:10px; color:var(--text-muted);">(최대 14)</span></div>
                                 <div class="counter-controls"><button class="btn btn-xs" onclick="changeVal(${acc.id}, null, 'shugo', -1)">-</button><input type="number" class="counter-input" value="${acc.shugo || 0}" onchange="setDirectVal(${acc.id}, null, 'shugo', this.value)"><button class="btn btn-xs" onclick="changeVal(${acc.id}, null, 'shugo', 1)">+</button></div></div>
-                            <div class="resource-item"><div><span class="char-name" style="font-size:13px;">⚔️ 차원침공 열쇠</span><span style="font-size:10px; color:var(--text-muted);">(최대 7)</span></div>
+                            <div class="resource-item"><div><span class="char-name" style="font-size:13px;">차원 침공</span><span style="font-size:10px; color:var(--text-muted);">(최대 7)</span></div>
                                 <div class="counter-controls"><button class="btn btn-xs" onclick="changeVal(${acc.id}, null, 'dimension', -1)">-</button><input type="number" class="counter-input" value="${acc.dimension || 0}" onchange="setDirectVal(${acc.id}, null, 'dimension', this.value)"><button class="btn btn-xs" onclick="changeVal(${acc.id}, null, 'dimension', 1)">+</button></div></div>
                         
                         <div class="resource-item">
                             <div>
-                                <span class="char-name" style="font-size:13px;">🗺️ 원정</span>
+                                <span class="char-name" style="font-size:13px;">원정</span>
                             </div>
                             <div class="counter-controls">
                                     <button class="btn btn-xs"
@@ -586,7 +586,7 @@ function toggleFloatingMenu() {
                         
                         <div class="resource-item">
                             <div>
-                                <span class="char-name" style="font-size:13px;">✨ 초월</span>
+                                <span class="char-name" style="font-size:13px;">초월</span>
                             </div>
                             <div class="counter-controls">
                                     <button class="btn btn-xs"
