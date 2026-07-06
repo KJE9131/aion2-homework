@@ -512,14 +512,15 @@
     
                 <label class="hw-label">
     
+                    ${!homeworkEditMode[acc.id]?.[char.id] ? `
                     <input
                         type="checkbox"
-                        ${hw.checked ? "checked" : ""}
+                        ${hw.checked ? 'checked' : ''}
                         onchange="toggleCheckbox(${acc.id}, ${char.id}, null, ${index})">
-    
-                    <span class="hw-text ${hw.checked ? "checked-text" : ""}">
-                        [${hw.type==="weekly" ? "주" : hw.type==="daily" ? "일" : "일회"}]
-                        ${hw.name}
+                    ` : ``}
+                    
+                    <span class="hw-text ${hw.checked ? 'checked-text' : ''}">
+                        [${hw.type==='weekly'?'주':hw.type==='once'?'일회':'일'}] ${hw.name}
                     </span>
     
                 </label>
@@ -645,11 +646,13 @@
                                         ? `<span class="drag-handle">☰</span>`
                                         : ``}
                                 
+                                    ${!homeworkEditMode[acc.id]?.[char.id] ? `
                                     <input
                                         type="checkbox"
                                         ${hw.checked ? 'checked' : ''}
                                         onchange="toggleCheckbox(${acc.id}, ${char.id}, null, ${index})">
-                                
+                                    ` : ``}
+                                    
                                     <span class="hw-text ${hw.checked ? 'checked-text' : ''}">
                                         [${hw.type==='weekly'?'주':hw.type==='once'?'일회':'일'}] ${hw.name}
                                     </span>
