@@ -581,7 +581,7 @@ function toggleFloatingMenu() {
 
         <div class="account-common-wrap">
 <div class="common-card-title">
-                    📦 자원
+                    자원
                 </div>
             <!-- 자원 -->
             <div class="common-card">
@@ -654,7 +654,7 @@ function toggleFloatingMenu() {
             <!-- 체크리스트 -->
             <div class="common-card">
             <div class="common-card-title">
-                    ✅ 체크리스트
+                    체크리스트
                 </div>
                 <div class="resource-item">
                     <label class="hw-label">
