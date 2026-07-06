@@ -276,7 +276,7 @@
         .resource-group { margin-bottom: 12px; }
         .homework-group { margin-bottom: 12px; display: flex; flex-direction: column; gap: 6px; }
         
-        /* ✨ 커스텀 숙제 디자인 수선 및 정렬 전용 스타일 추가 */
+        /* 🎨 원본 스타일을 보존하되 숙제 가로 정렬 맞춤 */
         .hw-item { 
             display: flex; 
             align-items: center; 
@@ -285,10 +285,6 @@
             padding: 8px 12px; 
             border-radius: 6px;
             border: 1px solid #2a2a35;
-            transition: background 0.2s;
-        }
-        .hw-item:hover {
-            background: #25252d;
         }
         .hw-label { 
             display: flex; 
@@ -320,12 +316,12 @@
 
         /* ↕️ 순서 제어용 버튼 컴포넌트 */
         .hw-sort-controls {
-            display: none; /* 기본 모드에서는 감춤 */
+            display: none;
             gap: 2px;
             margin-right: 6px;
         }
         .char-card.edit-mode .hw-sort-controls {
-            display: flex; /* 설정 편집 모드 시 노출 */
+            display: flex;
         }
         .btn-sort {
             background: #2d2d37;
@@ -353,7 +349,7 @@
         }
         .add-form input { flex: 1; }
 
-        /* 컴포넌트 제외 제어 스타일링 */
+        /* 제외 제어 스타일링 */
         .char-card.is-hidden-char { display: none !important; }
         body.show-hidden-chars-mode .char-card.is-hidden-char {
             display: flex !important;
@@ -527,11 +523,12 @@
 </footer>
 
 <script>
+    // 💡 기존 localStorage 연동 변수 동결 (aion2_accounts 변수명 절대 유지)
     let accounts = JSON.parse(localStorage.getItem('aion2_accounts')) || [];
     let isHideCompleted = JSON.parse(localStorage.getItem('aion2_isHideCompleted')) || false;
     let isShowHiddenChars = JSON.parse(localStorage.getItem('aion2_isShowHiddenChars')) || false;
 
-    // 실시간 타이머 타임테이블 구성 목록
+    // 타임테이블 구성 목록 동결
     const ALARM_CONFIG = [
         { id: 'world_boss', title: '월드보스', interval: 14400, baseTime: new Date(2025, 0, 1, 0, 0, 0).getTime() },
         { id: 'rift', title: '시공의 균열', interval: 7200, baseTime: new Date(2025, 0, 1, 1, 0, 0).getTime() }
@@ -808,7 +805,7 @@
         save();
         render();
         
-        // 다시 렌더링된 후에도 편집용 기어가 유지되도록 클래스 강제 부여
+        // 정렬 편집 유지
         document.getElementById(`charCard_${charId}`).classList.add('edit-mode');
     }
 
@@ -1049,6 +1046,7 @@
                         `;
                     });
 
+                    // 💡 아래 하단 버튼들 클래스명 원본 동결 (btn-char-edit, btn-char-del 완벽 복구)
                     html += `
                             </div>
                             
@@ -1066,17 +1064,17 @@
 
                             <div class="char-control-footer">
                                 <div class="char-memo-wrapper">
-                                    <button class="btn btn-xs" style="background:#444;" onclick="openMemoModal(${acc.id}, ${char.id}, event)">메모</button>
+                                    <button class="btn btn-xs btn-char-memo" style="background:#444;" onclick="openMemoModal(${acc.id}, ${char.id}, event)">메모</button>
                                     ${char.memo ? `<div class="memo-red-dot"></div>` : ''}
                                 </div>
-                                <button class="btn btn-xs" style="background:#444;" onclick="openEditCharModal(${acc.id}, ${char.id}, event)">설정</button>
-                                <button class="btn btn-xs btn-danger" onclick="removeCharacter(${acc.id}, ${char.id}, event)">삭제</button>
+                                <button class="btn btn-xs btn-char-edit" onclick="openEditCharModal(${acc.id}, ${char.id}, event)">설정</button>
+                                <button class="btn btn-xs btn-char-del" onclick="removeCharacter(${acc.id}, ${char.id}, event)">삭제</button>
                             </div>
                         </div>
                     `;
                 });
             } else {
-                html += `<div style="grid-column:1/-1; text-align:center; color:var(--text-muted); font-size:13px; padding:20px 0;">💡 캐릭터를 추가해 주세요!</div>`;
+                html += `<div style="grid-column:1/-1; text-align:center; color:var(--text-muted); font-size:13px; padding:20px 0;\">💡 캐릭터를 추가해 주세요!</div>`;
             }
 
             html += `</div></div></div>`;
