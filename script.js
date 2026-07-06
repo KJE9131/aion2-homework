@@ -465,6 +465,7 @@
     function toggleHideCharacter(accId, charId, event) { event.stopPropagation(); const char = gameData.find(a => a.id === accId).characters.find(c => c.id === charId); char.hidden = !char.hidden; saveData(); }
 
 
+    //여기서부터 커스텀숙제부분 드래그 수정하는 코드 추가하는거
     function renderCharacter(acc, char) {
     
         let html = "";
@@ -480,24 +481,62 @@
     }
 
     function renderCustomHomework(acc, char){
+
+        let html = "";
+    
         const typeOrder = {
             weekly:1,
             daily:2,
             once:3
         };
-        
+    
         const mappedHomeworks =
             char.homeworks.map((hw,index)=>({
                 hw,
                 index
             }));
-        
+    
         mappedHomeworks.sort((a,b)=>
             typeOrder[a.hw.type]-typeOrder[b.hw.type]
         );
-            
+    
+        return html;
+    
     }
 
+    function renderHomeworkItem(acc, char, hw, index){
+    
+        return `
+            <div class="hw-item">
+    
+                <label class="hw-label">
+    
+                    <input
+                        type="checkbox"
+                        ${hw.checked ? "checked" : ""}
+                        onchange="toggleCheckbox(${acc.id}, ${char.id}, null, ${index})">
+    
+                    <span class="hw-text ${hw.checked ? "checked-text" : ""}">
+                        [${hw.type==="weekly" ? "주" : hw.type==="daily" ? "일" : "일회"}]
+                        ${hw.name}
+                    </span>
+    
+                </label>
+    
+                <button
+                    class="btn-danger2"
+                    style="padding:1px 4px;font-size:10px;filter:contrast(.1);border:none;"
+                    onclick="deleteCustomHomework(${acc.id}, ${char.id}, ${index})">
+    
+                    ❌
+    
+                </button>
+    
+            </div>
+        `;
+    
+    }
+    //여기서부터 커스텀숙제부분 드래그 수정하는 코드 추가하는거 끝
 
     function render() {
         const app = document.getElementById('app'); if (!app) return;
