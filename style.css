@@ -1188,7 +1188,8 @@ color:var(--primary);
     display:flex;
         flex-wrap:wrap;
         gap:20px 0;
-        align-items:center;
+        align-items:flex-start;
+        flex-direction:column;
 }
 
 .common-card{
