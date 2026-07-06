@@ -583,7 +583,6 @@ function toggleFloatingMenu() {
 
             <!-- 자원 -->
             <div class="common-card">
-                    <div class="common-card-title">자원</div>
                 <div class="resource-item">
                     <span class="char-name">슈고 페스타</span>
 
@@ -652,9 +651,6 @@ function toggleFloatingMenu() {
 
             <!-- 체크리스트 -->
             <div class="common-card">
-            <div class="common-card-title">
-                    체크리스트
-                </div>
                 <div class="resource-item">
                     <label class="hw-label">
                         <input type="checkbox"
