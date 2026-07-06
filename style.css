@@ -1160,6 +1160,6 @@ color:var(--primary);
     font-weight:700;
 }
 
-.weekly { color:#ff6868; }   /* 레드 */
-.daily  { color:#58a6ff; }   /* 블루 */
-.once   { color:#a0a0a0; }   /* 그레이 */
+.weekly { color:#ff6868; } 
+.daily  { color:#58a6ff; } 
+.once   { color:#6fc399; }  
