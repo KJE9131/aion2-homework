@@ -16,6 +16,7 @@
     localStorage.setItem('lastOdeUpdateTime_v15', lastChecked);
     let lastAbyssReset = localStorage.getItem('lastAbyssResetTime_v15') || "0";
     let accordionStatus = JSON.parse(localStorage.getItem('accordionStatus_v15')) || {};
+    let homeworkEditMode = {};
     
     let lastDailyReset = localStorage.getItem('lastDailyResetTime_v15') || "0";
     let lastWeeklyReset = localStorage.getItem('lastWeeklyResetTime_v15') || "0";
@@ -663,3 +664,16 @@
     checkAndReduceMembershipTime(); updateOdeAutomatically(); checkAbyssReset(); checkDailyReset(); checkWeeklyReset(); render(); initAlarmToggles();
     setInterval(updateTimerDisplay, 1000);
     setInterval(() => { checkAndReduceMembershipTime(); updateOdeAutomatically(); checkAbyssReset(); checkDailyReset(); checkWeeklyReset(); }, 60000);
+
+    function toggleHomeworkEdit(accountId, characterId){
+    
+        if(!homeworkEditMode[accountId]){
+            homeworkEditMode[accountId] = {};
+        }
+    
+        homeworkEditMode[accountId][characterId] =
+            !homeworkEditMode[accountId][characterId];
+    
+        render();
+    
+    }
