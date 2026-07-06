@@ -1152,3 +1152,11 @@ color:var(--primary);
             background-color: #6f5239; /* 💡 브라운 톤에 맞춘 호버 색상 */
             color: #fff;
         }
+
+.custom-homework-category{
+    margin-top:8px;
+    margin-bottom:4px;
+    font-size:11px;
+    font-weight:700;
+    color:var(--text-muted);
+}
