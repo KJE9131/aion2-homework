@@ -11,14 +11,26 @@ function toggleFloatingMenu() {
     });
 
     let gameData = JSON.parse(localStorage.getItem('gameHomeworkData_v15')) || [];
-    let lastChecked = localStorage.getItem('lastOdeUpdateTime_v15') || Date.now();
-    localStorage.setItem('lastOdeUpdateTime_v15', lastChecked);
-    let lastAbyssReset = localStorage.getItem('lastAbyssResetTime_v15') || "0";
-    let accordionStatus = JSON.parse(localStorage.getItem('accordionStatus_v15')) || {};
-    
-    let lastDailyReset = localStorage.getItem('lastDailyResetTime_v15') || "0";
-    let lastWeeklyReset = localStorage.getItem('lastWeeklyResetTime_v15') || "0";
-    let alarmSettings = JSON.parse(localStorage.getItem('alarmSettings_v15')) || { festa: true, invasion: true, space: true };
+
+        gameData.forEach(acc => {
+            if (acc.expedition === undefined) acc.expedition = 84;
+            if (acc.transcend === undefined) acc.transcend = 56;
+        });
+        
+        let lastChecked = localStorage.getItem('lastOdeUpdateTime_v15') || Date.now();
+        localStorage.setItem('lastOdeUpdateTime_v15', lastChecked);
+        
+        let lastAbyssReset = localStorage.getItem('lastAbyssResetTime_v15') || "0";
+        let accordionStatus = JSON.parse(localStorage.getItem('accordionStatus_v15')) || {};
+        
+        let lastDailyReset = localStorage.getItem('lastDailyResetTime_v15') || "0";
+        let lastWeeklyReset = localStorage.getItem('lastWeeklyResetTime_v15') || "0";
+        
+        let alarmSettings = JSON.parse(localStorage.getItem('alarmSettings_v15')) || {
+            festa: true,
+            invasion: true,
+            space: true
+        };
 
     function updateServerClock() {
         const now = new Date();
@@ -134,8 +146,8 @@ function toggleFloatingMenu() {
         } else {
             const newId = Date.now();
             gameData.push({ 
-                id: newId, name: name, membership: membership, membershipDays: days, membershipHours: hours, membershipUpdatedAt: Date.now(), dailyMissionChecked: false,
-                shugo: 2, dimension: 1, odeBuyChecked: false, villageOrderChecked: false, abyssOrderChecked: false, dailyDungeonChecked: false, characters: [] 
+                id: newId, name: name, membership: membership, membershipDays: days, membershipHours: hours, membershipUpdatedAt: Date.now(), dailyMissionChecked: false, expedition: 84, transcend: 56,
+                shugo: 2, dimension: 1, expedition: 84, transcend: 56, odeBuyChecked: false, villageOrderChecked: false, abyssOrderChecked: false, dailyDungeonChecked: false, characters: [] 
             });
             accordionStatus[newId] = true;
             localStorage.setItem('accordionStatus_v15', JSON.stringify(accordionStatus));
@@ -337,7 +349,7 @@ function toggleFloatingMenu() {
         while (t.getDay() !== 3) t.setDate(t.getDate() - 1);
         if (parseInt(lastWeeklyReset) < t.getTime()) {
             gameData.forEach(acc => {
-                acc.odeBuyChecked = false; acc.villageOrderChecked = false; acc.abyssOrderChecked = false; acc.dailyDungeonChecked = false; acc.dailyMissionChecked=false;
+                acc.odeBuyChecked = false; acc.villageOrderChecked = false; acc.abyssOrderChecked = false; acc.dailyDungeonChecked = false; acc.dailyMissionChecked=false; acc.expedition = 84; acc.transcend = 56;
                 if(acc.characters) acc.characters.forEach(char => {
                     char.charBuyChecked = false; char.nightmareChecked = false; char.awakeningChecked = false;
                     char.homeworks.forEach(hw => { if (hw.type === 'weekly') hw.checked = false; });
@@ -346,6 +358,18 @@ function toggleFloatingMenu() {
             localStorage.setItem('lastWeeklyResetTime_v15', t.getTime().toString()); lastWeeklyReset = t.getTime().toString(); saveData();
         }
     }
+
+        function initializeAccountData() {
+            gameData.forEach(acc => {
+        
+                if (acc.expedition === undefined)
+                    acc.expedition = 84;
+        
+                if (acc.transcend === undefined)
+                    acc.transcend = 56;
+        
+            });
+        }
 
     function saveData() { localStorage.setItem('gameHomeworkData_v15', JSON.stringify(gameData)); render(); }
 
@@ -411,26 +435,57 @@ function toggleFloatingMenu() {
     function removeCharacter(accId, charId) { if(confirm("캐릭터를 삭제하시겠습니까?")) { const acc = gameData.find(a => a.id === accId); acc.characters = acc.characters.filter(c => c.id !== charId); saveData(); } }
 
     function changeVal(accId, charId, key, diff) {
-        const acc = gameData.find(a => a.id === accId);
-        if (charId === null) {
-            acc[key] = Math.max(0, (acc[key] || 0) + diff);
-            if (key === 'shugo') acc[key] = Math.min(14, acc[key]); if (key === 'dimension') acc[key] = Math.min(7, acc[key]);
-        } else {
-            const char = acc.characters.find(c => c.id === charId); char[key] = Math.max(0, (char[key] || 0) + diff);
-            if (key === 'nightmareTicket') char[key] = Math.min(14, char[key]);
+            const acc = gameData.find(a => a.id === accId);
+        
+            if (charId === null) {
+        
+                acc[key] = Math.max(0, (acc[key] || 0) + diff);
+        
+                if (key === 'shugo') acc[key] = Math.min(14, acc[key]);
+                if (key === 'dimension') acc[key] = Math.min(7, acc[key]);
+                if (key === 'expedition') acc[key] = Math.min(84, acc[key]);
+                if (key === 'transcend') acc[key] = Math.min(56, acc[key]);
+        
+            } else {
+        
+                const char = acc.characters.find(c => c.id === charId);
+        
+                char[key] = Math.max(0, (char[key] || 0) + diff);
+        
+                if (key === 'nightmareTicket') char[key] = Math.min(14, char[key]);
+            }
+        
+            render();
+            saveData();
         }
-        render(); saveData();
-    }
 
     function setDirectVal(accId, charId, key, val) {
-        const acc = gameData.find(a => a.id === accId); let num = Math.max(0, parseInt(val) || 0);
-        if (charId === null) {
-            if (key === 'shugo') num = Math.min(14, num); if (key === 'dimension') num = Math.min(7, num); acc[key] = num;
-        } else {
-            const char = acc.characters.find(c => c.id === charId); if (key === 'nightmareTicket') num = Math.min(14, num); char[key] = num;
+            const acc = gameData.find(a => a.id === accId);
+        
+            let num = Math.max(0, parseInt(val) || 0);
+        
+            if (charId === null) {
+        
+                if (key === 'shugo') num = Math.min(14, num);
+                if (key === 'dimension') num = Math.min(7, num);
+                if (key === 'expedition') num = Math.min(84, num);
+                if (key === 'transcend') num = Math.min(56, num);
+        
+                acc[key] = num;
+        
+            } else {
+        
+                const char = acc.characters.find(c => c.id === charId);
+        
+                if (key === 'nightmareTicket')
+                    num = Math.min(14, num);
+        
+                char[key] = num;
+            }
+        
+            render();
+            saveData();
         }
-        render(); saveData();
-    }
 
     function toggleCheckbox(accId, charId, field, origIndex = null) {
         const acc = gameData.find(a => a.id === accId);
@@ -511,6 +566,47 @@ function toggleFloatingMenu() {
                                 <div class="counter-controls"><button class="btn btn-xs" onclick="changeVal(${acc.id}, null, 'shugo', -1)">-</button><input type="number" class="counter-input" value="${acc.shugo || 0}" onchange="setDirectVal(${acc.id}, null, 'shugo', this.value)"><button class="btn btn-xs" onclick="changeVal(${acc.id}, null, 'shugo', 1)">+</button></div></div>
                             <div class="resource-item"><div><span class="char-name" style="font-size:13px;">⚔️ 차원침공 열쇠</span><span style="font-size:10px; color:var(--text-muted);">(최대 7)</span></div>
                                 <div class="counter-controls"><button class="btn btn-xs" onclick="changeVal(${acc.id}, null, 'dimension', -1)">-</button><input type="number" class="counter-input" value="${acc.dimension || 0}" onchange="setDirectVal(${acc.id}, null, 'dimension', this.value)"><button class="btn btn-xs" onclick="changeVal(${acc.id}, null, 'dimension', 1)">+</button></div></div>
+                        <div class="resource-item">
+                            <div>
+                                <span class="char-name" style="font-size:13px;">🗺️ 원정횟수</span>
+                                <span style="font-size:10px;color:var(--text-muted);">(최대 84)</span>
+                            </div>
+                        
+                            <div class="counter-controls">
+                                <button class="btn btn-xs"
+                                    onclick="changeVal(${acc.id}, null, 'expedition', -1)">-</button>
+                        
+                                <input
+                                    type="number"
+                                    class="counter-input"
+                                    value="${acc.expedition}"
+                                    onchange="setDirectVal(${acc.id}, null, 'expedition', this.value)">
+                        
+                                <button class="btn btn-xs"
+                                    onclick="changeVal(${acc.id}, null, 'expedition', 1)">+</button>
+                            </div>
+                        </div>
+                        
+                        <div class="resource-item">
+                            <div>
+                                <span class="char-name" style="font-size:13px;">✨ 초월횟수</span>
+                                <span style="font-size:10px;color:var(--text-muted);">(최대 56)</span>
+                            </div>
+                        
+                            <div class="counter-controls">
+                                <button class="btn btn-xs"
+                                    onclick="changeVal(${acc.id}, null, 'transcend', -1)">-</button>
+                        
+                                <input
+                                    type="number"
+                                    class="counter-input"
+                                    value="${acc.transcend}"
+                                    onchange="setDirectVal(${acc.id}, null, 'transcend', this.value)">
+                        
+                                <button class="btn btn-xs"
+                                    onclick="changeVal(${acc.id}, null, 'transcend', 1)">+</button>
+                            </div>
+                        </div>
                             <div class="resource-item"><label class="hw-label"><input type="checkbox" ${acc.odeBuyChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'odeBuyChecked')"><span class="${acc.odeBuyChecked ? 'checked-text' : ''}">⚡ 오드구매,제작 (16)</span></label></div>
                             <div class="resource-item"><label class="hw-label"><input type="checkbox" ${acc.villageOrderChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'villageOrderChecked')"><span class="${acc.villageOrderChecked ? 'checked-text' : ''}">📜 지령서 (마을)</span></label></div>
                             <div class="resource-item"><label class="hw-label"><input type="checkbox" ${acc.abyssOrderChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, null, 'abyssOrderChecked')"><span class="${acc.abyssOrderChecked ? 'checked-text' : ''}">🌌 지령서 (어비스)</span></label></div>
