@@ -558,7 +558,7 @@ function toggleFloatingMenu() {
                         currentType = hw.type;
                 
                         html += `
-                            <div class="custom-homework-category">
+                            <div class="custom-homework-category ${hw.type}">
                                 ${
                                     hw.type === "weekly"
                                         ? "[주간]"
