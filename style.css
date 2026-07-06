@@ -1183,3 +1183,51 @@ color:var(--primary);
     color:var(--text-muted);
     font-weight:500;
 }
+
+.account-common-wrap{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.common-card{
+    background:#262b34;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:12px;
+    padding:14px;
+}
+
+.common-card-title{
+    font-size:13px;
+    font-weight:700;
+    color:#ffd66d;
+    margin-bottom:10px;
+}
+
+.resource-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 0;
+    border-bottom:1px solid rgba(255,255,255,.05);
+}
+
+.resource-item:last-child{
+    border-bottom:none;
+}
+
+.counter-progress{
+    min-width:64px;
+    text-align:center;
+    font-weight:700;
+    color:#fff;
+}
+
+.counter-progress .max{
+    color:#8d98aa;
+    font-weight:400;
+}
+
+.common-card .hw-label{
+    width:100%;
+}
