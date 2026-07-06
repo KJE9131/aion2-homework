@@ -580,11 +580,10 @@ function toggleFloatingMenu() {
         </div>
 
         <div class="account-common-wrap">
-<div class="common-card-title">
-                    자원
-                </div>
+
             <!-- 자원 -->
             <div class="common-card">
+                    <div class="common-card-title">자원</div>
                 <div class="resource-item">
                     <span class="char-name">슈고 페스타</span>
 
