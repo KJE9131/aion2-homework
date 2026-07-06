@@ -617,7 +617,19 @@
                             <div class="hw-item"><label class="hw-label"><input type="checkbox" ${char.awakeningChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'awakeningChecked')"><span class="hw-text ${char.awakeningChecked ? 'checked-text' : ''}">각성전</span></label></div>
                         </div>
                         <div class="homework-group" style="border:none; padding:0;">
-                            <strong style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">📝 커스텀 숙제</strong>`;
+                            <div class="custom-homework-header">
+    <strong style="font-size:11px; color:var(--text-muted);">
+        📝 커스텀 숙제
+    </strong>
+
+    <button
+        class="btn btn-xs"
+        onclick="event.stopPropagation(); toggleHomeworkEdit(${acc.id}, ${char.id});">
+
+        ${homeworkEditMode[acc.id]?.[char.id] ? "✔ 완료" : "⚙ 설정"}
+
+    </button>
+</div>`;
 
                     // 원래 배열 구조와 인덱스를 유지하면서 정렬하여 HTML 출력
                     const typeOrder = { 'weekly': 1, 'daily': 2, 'once': 3 };
