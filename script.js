@@ -594,7 +594,7 @@ function toggleFloatingMenu() {
                             <div>
                                 <span class="char-name" style="font-size:13px;">✨ 초월</span>
                                 <span style="font-size:10px;color:var(--text-muted);display:block;">
-                                    <span style="color:#fff">${acc.expedition}</span>
+                                    <span style="color:#fff">${acc.transcend}</span>
                                     <span style="color:#777">/ 56</span>
                                 </span>
                             </div>
