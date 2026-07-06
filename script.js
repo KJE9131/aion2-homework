@@ -508,7 +508,7 @@
     function renderHomeworkItem(acc, char, hw, index){
     
         return `
-            <div class="hw-item">
+            <div class="hw-item" data-index="${index}">
     
                 <label class="hw-label">
     
@@ -539,7 +539,7 @@
     
     }
     //여기서부터 커스텀숙제부분 드래그 수정하는 코드 추가하는거 끝
-
+    //랜더부분체
     function render() {
         const app = document.getElementById('app'); if (!app) return;
         if (gameData.length === 0) { app.innerHTML = `<p style="text-align:center; color:#fff; margin-top: 50px; font-weight:600;">우측 하단의 <span style="color:var(--accent)">메뉴 단추</span>를 눌러 새 계정을 추가해 주세요!</p>`; return; }
@@ -637,10 +637,12 @@
                     const mappedHomeworks = char.homeworks.map((hw, index) => ({ hw, index }));
                     
                     mappedHomeworks.sort((a, b) => typeOrder[a.hw.type] - typeOrder[b.hw.type]);
+                    
+                    html += `<div class="custom-homework-list" id="custom-homework-list-${acc.id}-${char.id}">`;
 
                     mappedHomeworks.forEach(({ hw, index }) => {
                         html += `
-                            <div class="hw-item">
+                            <div class="hw-item" data-index="${index}">
                                 <label class="hw-label">
                                     ${homeworkEditMode[acc.id]?.[char.id]
                                         ? `<span class="drag-handle">☰</span>`
@@ -666,6 +668,8 @@
                                 ` : ``}
                             </div>`;
                     });
+                    
+                    html += `</div>`;
 
                     html += `</div>
                         <form class="add-form" onsubmit="createCustomHomework(event, ${acc.id}, ${char.id})">
@@ -687,7 +691,9 @@
             html += `</div></div></div>`;
         });
 
-        app.innerHTML = html; updateTimerDisplay();
+        app.innerHTML = html; 
+        initHomeworkDrag();
+        updateTimerDisplay();
         if (isHideCompleted) document.body.classList.add('hide-completed-mode'); else document.body.classList.remove('hide-completed-mode');
         if (isShowHiddenChars) document.body.classList.add('show-hidden-chars-mode'); else document.body.classList.remove('show-hidden-chars-mode');
     }
@@ -706,5 +712,48 @@
             !homeworkEditMode[accountId][characterId];
     
         render();
+
+        setTimeout(()=>{
+        
+            const list=document.getElementById(
+                `custom-homework-list-${accountId}-${characterId}`
+            );
+        
+            if(!list) return;
+        
+            const sortable=Sortable.get(list);
+        
+            if(sortable){
+        
+                sortable.option(
+                    "disabled",
+                    !homeworkEditMode[accountId][characterId]
+                );
+        
+            }
+        
+        },0);
+
+        function initHomeworkDrag(){
+
+    document.querySelectorAll(".custom-homework-list").forEach(list=>{
+
+        if(list.dataset.sortable) return;
+
+        list.dataset.sortable = "1";
+
+        new Sortable(list,{
+
+            animation:150,
+
+            handle:".drag-handle",
+
+            disabled:true
+
+        });
+
+    });
+
+}
     
     }
