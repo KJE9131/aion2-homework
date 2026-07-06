@@ -1234,3 +1234,6 @@ color:var(--primary);
 .resource-item .char-name {
         font-size:12px;
 }
+.common-card .resource-item .checked-text {
+        font-size:12px;
+}
