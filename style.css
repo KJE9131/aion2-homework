@@ -322,7 +322,7 @@
         }
         
         .counter-input { 
-            width: 24px; 
+            width: 28px; 
             background: var(--input-bg); 
             border: 1px solid var(--input-border); 
             color: #ffffff; 
