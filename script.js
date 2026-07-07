@@ -617,49 +617,65 @@ function toggleFloatingMenu() {
                 </div>
 
                 <div class="resource-item">
-                    <span class="char-name">원정</span>
-
-                    <div class="counter-controls">
-                            <button class="btn btn-xs" onclick="changeVal(1782640509522,null,'expedition',-1)">-</button>
+                            <span class="char-name">원정</span>
                         
-                            <span class="counter-progress">
-                                <input
-                                    type="number"
-                                    class="counter-input"
-                                    value="0"
-                                    min="0"
-                                    max="84"
-                                    onchange="updateExpedition(this, 1782640509522)"
-                                >
-                                <span class="max">/84</span>
-                            </span>
+                            <div class="counter-controls">
                         
-                            <button class="btn btn-xs" onclick="changeVal(1782640509522,null,'expedition',1)">+</button>
+                                <button class="btn btn-xs"
+                                    onclick="changeVal(${acc.id},null,'expedition',-1)">
+                                    -
+                                </button>
+                        
+                                <span class="counter-progress">
+                                    <input
+                                        type="number"
+                                        class="counter-input"
+                                        value="${acc.expedition || 0}"
+                                        min="0"
+                                        max="84"
+                                        onchange="setDirectVal(${acc.id},null,'expedition',this.value)"
+                                    >
+                                    <span class="max">/84</span>
+                                </span>
+                        
+                                <button class="btn btn-xs"
+                                    onclick="changeVal(${acc.id},null,'expedition',1)">
+                                    +
+                                </button>
+                        
+                            </div>
                         </div>
-                </div>
-
-
-                <div class="resource-item">
-                    <span class="char-name">초월</span>
-
-                    <div class="counter-controls">
-                            <button class="btn btn-xs" onclick="changeVal(1782640509522,null,'transcend',-1)">-</button>
                         
-                            <span class="counter-progress">
-                                <input
-                                    type="number"
-                                    class="counter-input"
-                                    value="0"
-                                    min="0"
-                                    max="84"
-                                    onchange="updatetranscend(this, 1782640509522)"
-                                >
-                                <span class="max">/84</span>
-                            </span>
                         
-                            <button class="btn btn-xs" onclick="changeVal(1782640509522,null,'transcend',1)">+</button>
+                        <div class="resource-item">
+                            <span class="char-name">초월</span>
+                        
+                            <div class="counter-controls">
+                        
+                                <button class="btn btn-xs"
+                                    onclick="changeVal(${acc.id},null,'transcend',-1)">
+                                    -
+                                </button>
+                        
+                                <span class="counter-progress">
+                                    <input
+                                        type="number"
+                                        class="counter-input"
+                                        value="${acc.transcend || 0}"
+                                        min="0"
+                                        max="84"
+                                        onchange="setDirectVal(${acc.id},null,'transcend',this.value)"
+                                    >
+                                    <span class="max">/84</span>
+                                </span>
+                        
+                                <button class="btn btn-xs"
+                                    onclick="changeVal(${acc.id},null,'transcend',1)">
+                                    +
+                                </button>
+                        
+                            </div>
                         </div>
-                </div>
 
             </div>
 
