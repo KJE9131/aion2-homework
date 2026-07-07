@@ -831,3 +831,23 @@ function toggleFloatingMenu() {
     checkAndReduceMembershipTime(); updateOdeAutomatically(); checkAbyssReset(); checkDailyReset(); checkWeeklyReset(); render(); initAlarmToggles();
     setInterval(updateTimerDisplay, 1000);
     setInterval(() => { checkAndReduceMembershipTime(); updateOdeAutomatically(); checkAbyssReset(); checkDailyReset(); checkWeeklyReset(); }, 60000);
+
+function updateExpedition(input, accountId) {
+    let value = parseInt(input.value) || 0;
+
+    const max = 84;
+
+    if (value < 0) value = 0;
+    if (value > max) value = max;
+
+    input.value = value;
+
+    // 기존 데이터 저장
+    const account = gameData.find(a => a.id == accountId);
+    if (account) {
+        account.expedition = value;
+    }
+
+    saveData();
+    render();
+}
