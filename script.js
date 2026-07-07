@@ -334,6 +334,7 @@ function toggleFloatingMenu() {
         if (parseInt(lastDailyReset) < t.getTime()) {
             gameData.forEach(acc => {
                 acc.shugo = Math.min(14, (acc.shugo || 0) + 2); acc.dimension = Math.min(7, (acc.dimension || 0) + 1);
+                    acc.dailyMissionChecked = false;
                 if(acc.characters) acc.characters.forEach(char => {
                     char.nightmareTicket = Math.min(14, (char.nightmareTicket !== undefined ? char.nightmareTicket : 2) + 2);
                     char.homeworks.forEach(hw => { if (hw.type === 'daily') hw.checked = false; });
