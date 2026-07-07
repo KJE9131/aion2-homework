@@ -1239,3 +1239,23 @@ color:var(--primary);
 .common-card .resource-item .checked-text {
         font-size:12px;
 }
+
+.counter-input{
+    width:50px;
+    text-align:center;
+    border:none;
+    background:transparent;
+    font-size:16px;
+    font-weight:600;
+    outline:none;
+}
+
+.counter-input::-webkit-outer-spin-button,
+.counter-input::-webkit-inner-spin-button{
+    -webkit-appearance:none;
+    margin:0;
+}
+
+.counter-input[type=number]{
+    -moz-appearance:textfield;
+}
