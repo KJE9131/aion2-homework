@@ -663,7 +663,7 @@ function toggleFloatingMenu() {
                                         class="counter-input"
                                         value="${acc.transcend || 0}"
                                         min="0"
-                                        max="84"
+                                        max="56"
                                         onchange="setDirectVal(${acc.id},null,'transcend',this.value)"
                                     >
                                     <span class="max">/84</span>
