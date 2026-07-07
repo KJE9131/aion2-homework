@@ -635,16 +635,22 @@ function toggleFloatingMenu() {
                     <span class="char-name">초월</span>
 
                     <div class="counter-controls">
-                        <button class="btn btn-xs"
-                            onclick="changeVal(${acc.id},null,'transcend',-1)">-</button>
-
-                        <span class="counter-progress">
-                            ${acc.transcend} <span class="max">/56</span>
-                        </span>
-
-                        <button class="btn btn-xs"
-                            onclick="changeVal(${acc.id},null,'transcend',1)">+</button>
-                    </div>
+                            <button class="btn btn-xs" onclick="changeVal(1782640509522,null,'expedition',-1)">-</button>
+                        
+                            <span class="counter-progress">
+                                <input
+                                    type="number"
+                                    class="counter-input"
+                                    value="70"
+                                    min="0"
+                                    max="84"
+                                    onchange="updateExpedition(this, 1782640509522)"
+                                >
+                                <span class="max">/84</span>
+                            </span>
+                        
+                            <button class="btn btn-xs" onclick="changeVal(1782640509522,null,'expedition',1)">+</button>
+                        </div>
                 </div>
 
             </div>
