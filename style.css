@@ -322,7 +322,7 @@
         }
         
         .counter-input { 
-            width: 32px; 
+            width: 24px; 
             background: var(--input-bg); 
             border: 1px solid var(--input-border); 
             color: #ffffff; 
@@ -1177,6 +1177,7 @@ color:var(--primary);
     min-width:60px;
     text-align:center;
     font-weight:700;
+        padding:0 12px;
 }
 
 .counter-progress .max{
