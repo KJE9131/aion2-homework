@@ -666,7 +666,7 @@ function toggleFloatingMenu() {
                                         max="56"
                                         onchange="setDirectVal(${acc.id},null,'transcend',this.value)"
                                     >
-                                    <span class="max">/84</span>
+                                    <span class="max">/56</span>
                                 </span>
                         
                                 <button class="btn btn-xs"
