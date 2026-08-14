@@ -32,6 +32,7 @@ function toggleFloatingMenu() {
             space: true
         };
 
+
     function updateServerClock() {
         const now = new Date();
         const year = now.getFullYear();
@@ -521,275 +522,502 @@ function toggleFloatingMenu() {
     function toggleShowHiddenChars() { isShowHiddenChars = !isShowHiddenChars; localStorage.setItem('isShowHiddenChars_v15', JSON.stringify(isShowHiddenChars)); render(); }
     function toggleHideCharacter(accId, charId, event) { event.stopPropagation(); const char = gameData.find(a => a.id === accId).characters.find(c => c.id === charId); char.hidden = !char.hidden; saveData(); }
 
-    function render() {
-        const app = document.getElementById('app'); if (!app) return;
-        if (gameData.length === 0) { app.innerHTML = `<p style="text-align:center; color:#fff; margin-top: 50px; font-weight:600;">우측 하단의 <span style="color:var(--accent)">메뉴 단추</span>를 눌러 새 계정을 추가해 주세요!</p>`; return; }
 
-        let html = `<div class="global-action-bar">
-            <button id="btnToggleHide" class="btn-toggle-action" onclick="toggleHideCompleted()">${isHideCompleted ? '👀 모든 숙제 보기' : '✅ 완료 숙제 제외'}</button>
-            <button id="btnToggleHiddenChars" class="btn-toggle-action" onclick="toggleShowHiddenChars()">${isShowHiddenChars ? '🙈 제외 캐릭터 감추기' : '🙉 제외 캐릭터 관리'}</button>
-            <button id="btnHomeworkFilter" class="btn-toggle-action" onclick="toggleFilterDrawer()">📋 숙제 필터</button>
-        </div>`;
 
-        gameData.forEach(acc => {
-            if (accordionStatus[acc.id] === undefined) accordionStatus[acc.id] = true;
-            const isCollapsed = !accordionStatus[acc.id];
-            let d = acc.membershipDays || 0, h = acc.membershipHours || 0;
-            if (acc.membership === 'O' && acc.membershipUpdatedAt) {
-                const diffMins = Math.floor((Date.now() - acc.membershipUpdatedAt) / 60000);
-                if (diffMins > 0) { let tot = Math.max(0, (d * 24) + h - Math.floor(diffMins / 60)); d = Math.floor(tot / 24); h = tot % 24; }
+        // ==========================================
+        // 0. 전역 상태 정의 (filterConfig 안전 선언)
+        // ==========================================
+        let filterConfig = JSON.parse(localStorage.getItem('filterConfig_v1')) || {
+            includeCompleted: false, // 완료숙제 포함 여부 (false: 미포함, true: 포함)
+            selectedHomeworks: [], // 선택된 숙제명 배열
+            searchKeyword: '', // 실시간 검색어
+            isActive: false // 필터 적용 활성화 여부
+        };
+        
+        
+        // ==========================================
+        // 1. 드로어 / UI 토글 및 동기화
+        // ==========================================
+        
+        // 드로어 열기/닫기
+        function toggleFilterDrawer(isOpen) {
+            const drawer = document.getElementById('filterDrawer');
+            const overlay = document.getElementById('filterOverlay');
+            if (!drawer || !overlay) return;
+        
+            if (isOpen) {
+                drawer.classList.add('open');
+                overlay.classList.add('open');
+                syncFilterUI(); // 열릴 때 UI 동기화
+                renderFilterHomeworkList(); // 항목 리스트 렌더링
+            } else {
+                drawer.classList.remove('open');
+                overlay.classList.remove('open');
             }
-            const mText = acc.membership === 'O' ? `멤버십 남은기간 : ${d}일 ${h}시간` : '멤버십 미이용';
+        }
+        
+        // UI 상태 동기화 (filterConfig -> DOM)
+        function syncFilterUI() {
+            const incCompCheckbox = document.getElementById('filterIncludeCompleted');
+            const searchInput = document.getElementById('filterHomeworkSearch');
+        
+            if (incCompCheckbox) {
+                incCompCheckbox.checked = filterConfig.includeCompleted;
+            }
+            if (searchInput) {
+                searchInput.value = filterConfig.searchKeyword || '';
+            }
+        
+            // 배지 상태 업데이트 (필터 적용 여부)
+            updateFilterBadge();
+        }
+        
+        // 필터 배지 표시 업데이트
+        function updateFilterBadge() {
+            const badge = document.getElementById('filterActiveBadge');
+            if (!badge) return;
+        
+            const hasActiveFilter = filterConfig.includeCompleted || 
+                                    filterConfig.selectedHomeworks.length > 0 || 
+                                    (filterConfig.searchKeyword && filterConfig.searchKeyword.trim() !== '');
+        
+            filterConfig.isActive = hasActiveFilter;
+        
+            if (hasActiveFilter) {
+                badge.classList.remove('hidden');
+                badge.textContent = filterConfig.selectedHomeworks.length > 0 
+                    ? `${filterConfig.selectedHomeworks.length}` 
+                    : 'ON';
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+        
+        // ==========================================
+        // 2. 숙제 항목 렌더링 및 검색 (부분 문자열 일치)
+        // ==========================================
+        
+        function renderFilterHomeworkList() {
+            const container = document.getElementById('filterHomeworkList');
+            if (!container) return;
+        
+            // 숙제 목록이 없는 경우 예외 처리
+            if (typeof HOMEWORK_DATA === 'undefined' || !HOMEWORK_DATA) {
+                container.innerHTML = '<div class="empty-msg">숙제 데이터가 없습니다.</div>';
+                return;
+            }
+        
+            const keyword = (filterConfig.searchKeyword || '').trim().toLowerCase();
+            container.innerHTML = '';
+        
+            let renderedCount = 0;
+        
+            // HOMEWORK_DATA 순회
+            Object.keys(HOMEWORK_DATA).forEach(categoryKey => {
+                const category = HOMEWORK_DATA[categoryKey];
+                if (!category || !category.items) return;
+        
+                // Keyword 필터링 (일반 텍스트 부분 일치)
+                const filteredItems = category.items.filter(item => {
+                    if (!keyword) return true;
+                    return item.name.toLowerCase().includes(keyword);
+                });
+        
+                if (filteredItems.length === 0) return;
+        
+                // 카테고리 헤더 생성
+                const catGroup = document.createElement('div');
+                catGroup.className = 'filter-homework-group';
+                
+                const catTitle = document.createElement('div');
+                catTitle.className = 'filter-group-title';
+                catTitle.textContent = category.title || categoryKey;
+                catGroup.appendChild(catTitle);
+        
+                // 아이템 아이템 체크박스 생성
+                const itemList = document.createElement('div');
+                itemList.className = 'filter-item-list';
+        
+                filteredItems.forEach(item => {
+                    renderedCount++;
+                    const isChecked = filterConfig.selectedHomeworks.includes(item.id);
+        
+                    const label = document.createElement('label');
+                    label.className = `filter-item-chip ${isChecked ? 'selected' : ''}`;
+                    label.innerHTML = `
+                        <input type="checkbox" value="${item.id}" ${isChecked ? 'checked' : ''} onchange="onHomeworkFilterCheckChange(this)">
+                        <span>${item.name}</span>
+                    `;
+                    itemList.appendChild(label);
+                });
+        
+                catGroup.appendChild(itemList);
+                container.appendChild(catGroup);
+            });
+        
+            if (renderedCount === 0) {
+                container.innerHTML = '<div class="empty-msg">검색 결과가 없습니다.</div>';
+            }
+        }
+        
+        // 검색어 입력 이벤트 핸들러
+        function onFilterSearchInput(e) {
+            filterConfig.searchKeyword = e.target.value;
+            renderFilterHomeworkList();
+        }
+        
+        // 체크박스 변경 핸들러
+        function onHomeworkFilterCheckChange(checkbox) {
+            const val = checkbox.value;
+            if (checkbox.checked) {
+                if (!filterConfig.selectedHomeworks.includes(val)) {
+                    filterConfig.selectedHomeworks.push(val);
+                }
+                checkbox.parentElement.classList.add('selected');
+            } else {
+                filterConfig.selectedHomeworks = filterConfig.selectedHomeworks.filter(id => id !== val);
+                checkbox.parentElement.classList.remove('selected');
+            }
+            updateFilterBadge();
+        }
+        
+        // '완료된 숙제 포함' 체크박스 변경
+        function onIncludeCompletedChange(checkbox) {
+            filterConfig.includeCompleted = checkbox.checked;
+            updateFilterBadge();
+        }
+        
+        // ==========================================
+        // 3. 필터 적용 / 초기화 / 저장
+        // ==========================================
+        
+        function applyHomeworkFilter() {
+            localStorage.setItem('filterConfig_v1', JSON.stringify(filterConfig));
+            toggleFilterDrawer(false);
+            render(); // 메인 화면 재렌더링
+        }
+        
+        function resetHomeworkFilter() {
+            filterConfig = {
+                includeCompleted: false,
+                selectedHomeworks: [],
+                searchKeyword: '',
+                isActive: false
+            };
+            localStorage.removeItem('filterConfig_v1');
+            syncFilterUI();
+            renderFilterHomeworkList();
+            render(); // 메인 화면 재렌더링
+        }
+        
+        // ==========================================
+        // 4. 캐릭터 필터링 판별 로직
+        // ==========================================
+        
+        function checkCharacterHasHomework(char, config) {
+            if (!config || !config.isActive) return true;
+        
+            // 1. 선택된 특정 숙제가 있는 경우
+            if (config.selectedHomeworks && config.selectedHomeworks.length > 0) {
+                const hasMatchingHomework = config.selectedHomeworks.some(hwId => {
+                    const hwStatus = char.homeworks ? char.homeworks[hwId] : null;
+                    if (!hwStatus) return false;
+        
+                    // 완료된 숙제 포함 여부 체크
+                    if (config.includeCompleted) {
+                        return true; // 진행 중이든 완료든 해당 숙제가 존재하면 표시
+                    } else {
+                        return !hwStatus.isDone; // 미완료된 숙제만 판별
+                    }
+                });
+        
+                if (!hasMatchingHomework) return false;
+            }
+        
+            // 2. 특정 숙제 선택 없이 '완료 포함 여부'만 켜져 있거나 기본 필터링일 때
+            if (!config.includeCompleted && (!config.selectedHomeworks || config.selectedHomeworks.length === 0)) {
+                // 미완료 숙제가 하나라도 있는지 확인
+                if (!char.homeworks) return false;
+                const hasUnfinished = Object.values(char.homeworks).some(hw => !hw.isDone);
+                if (!hasUnfinished) return false;
+            }
+        
+            return true;
+        }
 
-            html += `<div class="account-section">
-                <div class="account-header" onclick="toggleAccordion(${acc.id})">
-                    <div style="display: flex; align-items: center;">
-                        <span class="accordion-icon" id="acc-icon-${acc.id}">${isCollapsed ? '▼' : '▲'}</span>
-                        <h2 style="margin:0; font-size:16px;">${acc.name} <span style="font-size:12px; background:rgba(255,255,255,0.06); color:var(--text-muted); padding:2px 6px; border-radius:4px; margin-left:8px; font-weight:normal;">${mText}</span></h2>
-                    </div>
-                    <div onclick="event.stopPropagation();">
-                        <button class="btn btn-sm" onclick="openCharModal(${acc.id}, event)">+ 캐릭터 추가</button>
-                        <button class="btn btn-sm btn-char-edit" onclick="openAccountModal(${acc.id}, event)">⚙️</button>
-                        <button class="btn btn-sm btn-char-del" onclick="removeAccount(${acc.id}, event)">🗑️</button>
-                    </div>
+
+    function render() {
+    const app = document.getElementById('app'); 
+    if (!app) return;
+
+    if (gameData.length === 0) { 
+        app.innerHTML = `<p style="text-align:center; color:#fff; margin-top: 50px; font-weight:600;">우측 하단의 <span style="color:var(--accent)">메뉴 단추</span>를 눌러 새 계정을 추가해 주세요!</p>`; 
+        return; 
+    }
+
+    let html = `<div class="global-action-bar">
+        <button id="btnToggleHide" class="btn-toggle-action" onclick="toggleHideCompleted()">${isHideCompleted ? '👀 모든 숙제 보기' : '✅ 완료 숙제 제외'}</button>
+        <button id="btnToggleHiddenChars" class="btn-toggle-action" onclick="toggleShowHiddenChars()">${isShowHiddenChars ? '🙈 제외 캐릭터 감추기' : '🙉 제외 캐릭터 관리'}</button>
+        <button id="btnHomeworkFilter" class="btn-toggle-action" onclick="toggleFilterDrawer()">📋 숙제 필터</button>
+    </div>`;
+
+    gameData.forEach(acc => {
+        if (accordionStatus[acc.id] === undefined) accordionStatus[acc.id] = true;
+        const isCollapsed = !accordionStatus[acc.id];
+        let d = acc.membershipDays || 0, h = acc.membershipHours || 0;
+        
+        if (acc.membership === 'O' && acc.membershipUpdatedAt) {
+            const diffMins = Math.floor((Date.now() - acc.membershipUpdatedAt) / 60000);
+            if (diffMins > 0) { 
+                let tot = Math.max(0, (d * 24) + h - Math.floor(diffMins / 60)); 
+                d = Math.floor(tot / 24); 
+                h = tot % 24; 
+            }
+        }
+        const mText = acc.membership === 'O' ? `멤버십 남은기간 : ${d}일 ${h}시간` : '멤버십 미이용';
+
+        html += `<div class="account-section">
+            <div class="account-header" onclick="toggleAccordion(${acc.id})">
+                <div style="display: flex; align-items: center;">
+                    <span class="accordion-icon" id="acc-icon-${acc.id}">${isCollapsed ? '▼' : '▲'}</span>
+                    <h2 style="margin:0; font-size:16px;">${acc.name} <span style="font-size:12px; background:rgba(255,255,255,0.06); color:var(--text-muted); padding:2px 6px; border-radius:4px; margin-left:8px; font-weight:normal;">${mText}</span></h2>
                 </div>
-                <div class="account-body ${isCollapsed ? 'collapsed' : ''}" id="acc-body-${acc.id}">
-    <div class="account-contents">
-
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
-            <span class="account-contents-title">계정 공통 콘텐츠</span>
-
-            <form class="batch-add-form"
-                onclick="event.stopPropagation();"
-                onsubmit="createBatchHomework(event, ${acc.id})">
-
-                <input type="text"
-                    name="batchHwName"
-                    placeholder="일괄 추가할 숙제 명"
-                    required>
-
-                <select name="batchHwType">
-                    <option value="daily">일일</option>
-                    <option value="weekly">주간</option>
-                    <option value="once">일회성</option>
-                </select>
-
-                <button type="submit" class="btn btn-xs">
-                    일괄 추가
-                </button>
-
-            </form>
-        </div>
-
-        <div class="account-common-wrap">
-
-            <!-- 자원 -->
-            <div class="common-card">
-                <div class="resource-item">
-                    <span class="char-name">슈고 페스타</span>
-
-                    <div class="counter-controls">
-                        <button class="btn btn-xs"
-                            onclick="changeVal(${acc.id},null,'shugo',-1)">-</button>
-
-                        <span class="counter-progress">
-                            ${acc.shugo} <span class="max">/14</span>
-                        </span>
-
-                        <button class="btn btn-xs"
-                            onclick="changeVal(${acc.id},null,'shugo',1)">+</button>
-                    </div>
+                <div onclick="event.stopPropagation();">
+                    <button class="btn btn-sm" onclick="openCharModal(${acc.id}, event)">+ 캐릭터 추가</button>
+                    <button class="btn btn-sm btn-char-edit" onclick="openAccountModal(${acc.id}, event)">⚙️</button>
+                    <button class="btn btn-sm btn-char-del" onclick="removeAccount(${acc.id}, event)">🗑️</button>
                 </div>
-
-                <div class="resource-item">
-                    <span class="char-name">차원 침공</span>
-
-                    <div class="counter-controls">
-                        <button class="btn btn-xs"
-                            onclick="changeVal(${acc.id},null,'dimension',-1)">-</button>
-
-                        <span class="counter-progress">
-                            ${acc.dimension} <span class="max">/7</span>
-                        </span>
-
-                        <button class="btn btn-xs"
-                            onclick="changeVal(${acc.id},null,'dimension',1)">+</button>
-                    </div>
-                </div>
-
-                <div class="resource-item">
-                            <span class="char-name">원정</span>
-                        
-                            <div class="counter-controls">
-                        
-                                <button class="btn btn-xs"
-                                    onclick="changeVal(${acc.id},null,'expedition',-1)">
-                                    -
-                                </button>
-                        
-                                <span class="counter-progress">
-                                    <input
-                                        type="number"
-                                        class="counter-input"
-                                        value="${acc.expedition || 0}"
-                                        min="0"
-                                        max="84"
-                                        onchange="setDirectVal(${acc.id},null,'expedition',this.value)"
-                                    >
-                                    <span class="max">/84</span>
-                                </span>
-                        
-                                <button class="btn btn-xs"
-                                    onclick="changeVal(${acc.id},null,'expedition',1)">
-                                    +
-                                </button>
-                        
-                            </div>
-                        </div>
-                        
-                        
-                        <div class="resource-item">
-                            <span class="char-name">초월</span>
-                        
-                            <div class="counter-controls">
-                        
-                                <button class="btn btn-xs"
-                                    onclick="changeVal(${acc.id},null,'transcend',-1)">
-                                    -
-                                </button>
-                        
-                                <span class="counter-progress">
-                                    <input
-                                        type="number"
-                                        class="counter-input"
-                                        value="${acc.transcend || 0}"
-                                        min="0"
-                                        max="56"
-                                        onchange="setDirectVal(${acc.id},null,'transcend',this.value)"
-                                    >
-                                    <span class="max">/56</span>
-                                </span>
-                        
-                                <button class="btn btn-xs"
-                                    onclick="changeVal(${acc.id},null,'transcend',1)">
-                                    +
-                                </button>
-                        
-                            </div>
-                        </div>
-
             </div>
+            <div class="account-body ${isCollapsed ? 'collapsed' : ''}" id="acc-body-${acc.id}">
+                <div class="account-contents">
 
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+                        <span class="account-contents-title">계정 공통 콘텐츠</span>
 
-            <!-- 체크리스트 -->
-            <div class="common-card">
-                <div class="resource-item">
-                    <label class="hw-label">
-                        <input type="checkbox"
-                            ${acc.odeBuyChecked?'checked':''}
-                            onchange="toggleCheckbox(${acc.id},null,'odeBuyChecked')">
+                        <form class="batch-add-form"
+                            onclick="event.stopPropagation();"
+                            onsubmit="createBatchHomework(event, ${acc.id})">
 
-                        <span class="${acc.odeBuyChecked?'checked-text':''}" style="font-size:13px;">
-                            🍀 오드구매·제작(16)
-                        </span>
-                    </label>
-                </div>
+                            <input type="text"
+                                name="batchHwName"
+                                placeholder="일괄 추가할 숙제 명"
+                                required>
 
-                <div class="resource-item">
-                    <label class="hw-label">
-                        <input type="checkbox"
-                            ${acc.villageOrderChecked?'checked':''}
-                            onchange="toggleCheckbox(${acc.id},null,'villageOrderChecked')">
+                            <select name="batchHwType">
+                                <option value="daily">일일</option>
+                                <option value="weekly">주간</option>
+                                <option value="once">일회성</option>
+                            </select>
 
-                        <span class="${acc.villageOrderChecked?'checked-text':''}" style="font-size:13px;">
-                            📜 지령서 (마을)
-                        </span>
-                    </label>
-                </div>
+                            <button type="submit" class="btn btn-xs">
+                                일괄 추가
+                            </button>
 
-                <div class="resource-item">
-                    <label class="hw-label">
-                        <input type="checkbox"
-                            ${acc.abyssOrderChecked?'checked':''}
-                            onchange="toggleCheckbox(${acc.id},null,'abyssOrderChecked')">
+                        </form>
+                    </div>
 
-                        <span class="${acc.abyssOrderChecked?'checked-text':''}" style="font-size:13px;">
-                            🌀 지령서 (어비스)
-                        </span>
-                    </label>
-                </div>
+                    <div class="account-common-wrap">
 
-                <div class="resource-item">
-                    <label class="hw-label">
-                        <input type="checkbox"
-                            ${acc.dailyDungeonChecked?'checked':''}
-                            onchange="toggleCheckbox(${acc.id},null,'dailyDungeonChecked')">
+                        <!-- 자원 -->
+                        <div class="common-card">
+                            <div class="resource-item">
+                                <span class="char-name">슈고 페스타</span>
 
-                        <span class="${acc.dailyDungeonChecked?'checked-text':''}" style="font-size:13px;">
-                            🏦 일일던전
-                        </span>
-                    </label>
-                </div>
+                                <div class="counter-controls">
+                                    <button class="btn btn-xs"
+                                        onclick="changeVal(${acc.id},null,'shugo',-1)">-</button>
 
-                <div class="resource-item">
-                    <label class="hw-label">
-                        <input type="checkbox"
-                            ${acc.dailyMissionChecked?'checked':''}
-                            onchange="toggleCheckbox(${acc.id},null,'dailyMissionChecked')">
+                                    <span class="counter-progress">
+                                        ${acc.shugo} <span class="max">/14</span>
+                                    </span>
 
-                        <span class="${acc.dailyMissionChecked?'checked-text':''}" style="font-size:13px;">
-                            📅 일일사명퀘
-                        </span>
-                    </label>
-                </div>
+                                    <button class="btn btn-xs"
+                                        onclick="changeVal(${acc.id},null,'shugo',1)">+</button>
+                                </div>
+                            </div>
 
-            </div>
+                            <div class="resource-item">
+                                <span class="char-name">차원 침공</span>
 
-        </div>
+                                <div class="counter-controls">
+                                    <button class="btn btn-xs"
+                                        onclick="changeVal(${acc.id},null,'dimension',-1)">-</button>
 
-    </div>
-                    <div class="char-grid">`;
+                                    <span class="counter-progress">
+                                        ${acc.dimension} <span class="max">/7</span>
+                                    </span>
 
-            if (acc.characters && acc.characters.length > 0) {
-                acc.characters.forEach(char => {
-                    const ticket = char.nightmareTicket !== undefined ? char.nightmareTicket : 2;
-                    const isHidden = char.hidden || false;
-                    html += `<div class="char-card ${isHidden ? 'is-hidden-char' : ''}">
-                        <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
-                            <div style="display:flex; flex-direction:column; max-width:130px;"><span class="char-name">${char.name}</span><span class="char-sub-info">${char.job} | <span class="char-power">${Number(char.power).toLocaleString()}</span></span></div>
-                            <button class="btn-char-hide" onclick="toggleHideCharacter(${acc.id}, ${char.id}, event)">${isHidden ? '🙉 포함' : '🙈 숨김'}</button>
+                                    <button class="btn btn-xs"
+                                        onclick="changeVal(${acc.id},null,'dimension',1)">+</button>
+                                </div>
+                            </div>
+
+                            <div class="resource-item">
+                                <span class="char-name">원정</span>
+                                
+                                <div class="counter-controls">
+                                    <button class="btn btn-xs"
+                                        onclick="changeVal(${acc.id},null,'expedition',-1)">
+                                        -
+                                    </button>
+                                
+                                    <span class="counter-progress">
+                                        <input
+                                            type="number"
+                                            class="counter-input"
+                                            value="${acc.expedition || 0}"
+                                            min="0"
+                                            max="84"
+                                            onchange="setDirectVal(${acc.id},null,'expedition',this.value)"
+                                        >
+                                        <span class="max">/84</span>
+                                    </span>
+                                
+                                    <button class="btn btn-xs"
+                                        onclick="changeVal(${acc.id},null,'expedition',1)">
+                                        +
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="resource-item">
+                                <span class="char-name">초월</span>
+                                
+                                <div class="counter-controls">
+                                    <button class="btn btn-xs"
+                                        onclick="changeVal(${acc.id},null,'transcend',-1)">
+                                        -
+                                    </button>
+                                
+                                    <span class="counter-progress">
+                                        <input
+                                            type="number"
+                                            class="counter-input"
+                                            value="${acc.transcend || 0}"
+                                            min="0"
+                                            max="56"
+                                            onchange="setDirectVal(${acc.id},null,'transcend',this.value)"
+                                        >
+                                        <span class="max">/56</span>
+                                    </span>
+                                
+                                    <button class="btn btn-xs"
+                                        onclick="changeVal(${acc.id},null,'transcend',1)">
+                                        +
+                                    </button>
+                                </div>
+                            </div>
+
                         </div>
-                        <div class="resource-group">
-                            <div style="display:flex; justify-content:space-between; align-items:center;"><strong>오드에너지</strong><span class="ode-timer" id="timer-${char.id}">[로딩중...]</span></div>
-                            <div class="ode-row"><span>기본오드</span><span>[ <input type="number" class="counter-input" value="${char.ode || 0}" onchange="setDirectVal(${acc.id}, ${char.id}, 'ode', this.value)"> ] / 840</span></div>
-                            <div class="ode-row"><span>추가오드</span><span>[ <input type="number" class="counter-input" value="${char.extraOde || 0}" onchange="setDirectVal(${acc.id}, ${char.id}, 'extraOde', this.value)"> ] / 2000</span></div>
-                        </div>
-                        <div class="resource-group" style="display:flex; justify-content:space-between; align-items:center;">
-                            <div><span>악몽 티켓</span><span style="font-size:10px; color:var(--text-muted); display:block;">(최대 14)</span></div>
-                            <div class="counter-controls"><button class="btn btn-xs" onclick="changeVal(${acc.id}, ${char.id}, 'nightmareTicket', -1)">-</button><input type="number" class="counter-input" value="${ticket}" onchange="setDirectVal(${acc.id}, ${char.id}, 'nightmareTicket', this.value)"><button class="btn btn-xs" onclick="changeVal(${acc.id}, ${char.id}, 'nightmareTicket', 1)">+</button></div>
-                        </div>
-                        <div class="homework-group">
-                            <strong style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">📌 고정 숙제</strong>
-                            <div class="hw-item"><label class="hw-label"><input type="checkbox" ${char.charBuyChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'charBuyChecked')"><span class="hw-text ${char.charBuyChecked ? 'checked-text' : ''}">오드구매,제작 (4)</span></label></div>
-                            <div class="hw-item"><label class="hw-label"><input type="checkbox" ${char.awakeningChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'awakeningChecked')"><span class="hw-text ${char.awakeningChecked ? 'checked-text' : ''}">각성전</span></label></div>
-                        </div>
-                        <div class="homework-group" style="border:none; padding:0;">
-                            <strong style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">📝 커스텀 숙제</strong>`;
 
-                    // 원래 배열 구조와 인덱스를 유지하면서 정렬하여 HTML 출력
-                    const typeOrder = { 'weekly': 1, 'daily': 2, 'once': 3 };
-                    const mappedHomeworks = char.homeworks.map((hw, index) => ({ hw, index }));
-                    
-                    mappedHomeworks.sort((a, b) => typeOrder[a.hw.type] - typeOrder[b.hw.type]);
+                        <!-- 체크리스트 -->
+                        <div class="common-card">
+                            <div class="resource-item">
+                                <label class="hw-label">
+                                    <input type="checkbox"
+                                        ${acc.odeBuyChecked?'checked':''}
+                                        onchange="toggleCheckbox(${acc.id},null,'odeBuyChecked')">
 
-                    let currentType = "";
+                                    <span class="${acc.odeBuyChecked?'checked-text':''}" style="font-size:13px;">
+                                        🍀 오드구매·제작(16)
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="resource-item">
+                                <label class="hw-label">
+                                    <input type="checkbox"
+                                        ${acc.villageOrderChecked?'checked':''}
+                                        onchange="toggleCheckbox(${acc.id},null,'villageOrderChecked')">
+
+                                    <span class="${acc.villageOrderChecked?'checked-text':''}" style="font-size:13px;">
+                                        📜 지령서 (마을)
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="resource-item">
+                                <label class="hw-label">
+                                    <input type="checkbox"
+                                        ${acc.abyssOrderChecked?'checked':''}
+                                        onchange="toggleCheckbox(${acc.id},null,'abyssOrderChecked')">
+
+                                    <span class="${acc.abyssOrderChecked?'checked-text':''}" style="font-size:13px;">
+                                        🌀 지령서 (어비스)
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="resource-item">
+                                <label class="hw-label">
+                                    <input type="checkbox"
+                                        ${acc.dailyDungeonChecked?'checked':''}
+                                        onchange="toggleCheckbox(${acc.id},null,'dailyDungeonChecked')">
+
+                                    <span class="${acc.dailyDungeonChecked?'checked-text':''}" style="font-size:13px;">
+                                        🏦 일일던전
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="resource-item">
+                                <label class="hw-label">
+                                    <input type="checkbox"
+                                        ${acc.dailyMissionChecked?'checked':''}
+                                        onchange="toggleCheckbox(${acc.id},null,'dailyMissionChecked')">
+
+                                    <span class="${acc.dailyMissionChecked?'checked-text':''}" style="font-size:13px;">
+                                        📅 일일사명퀘
+                                    </span>
+                                </label>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+                
+                <div class="char-grid">`;
+
+        if (acc.characters && acc.characters.length > 0) {
+            acc.characters.forEach(char => {
+                const ticket = char.nightmareTicket !== undefined ? char.nightmareTicket : 2;
+                const isHidden = char.hidden || false;
+                
+                html += `<div class="char-card ${isHidden ? 'is-hidden-char' : ''}">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+                        <div style="display:flex; flex-direction:column; max-width:130px;"><span class="char-name">${char.name}</span><span class="char-sub-info">${char.job} | <span class="char-power">${Number(char.power).toLocaleString()}</span></span></div>
+                        <button class="btn-char-hide" onclick="toggleHideCharacter(${acc.id}, ${char.id}, event)">${isHidden ? '🙉 포함' : '🙈 숨김'}</button>
+                    </div>
+                    <div class="resource-group">
+                        <div style="display:flex; justify-content:space-between; align-items:center;"><strong>오드에너지</strong><span class="ode-timer" id="timer-${char.id}">[로딩중...]</span></div>
+                        <div class="ode-row"><span>기본오드</span><span>[ <input type="number" class="counter-input" value="${char.ode || 0}" onchange="setDirectVal(${acc.id}, ${char.id}, 'ode', this.value)"> ] / 840</span></div>
+                        <div class="ode-row"><span>추가오드</span><span>[ <input type="number" class="counter-input" value="${char.extraOde || 0}" onchange="setDirectVal(${acc.id}, ${char.id}, 'extraOde', this.value)"> ] / 2000</span></div>
+                    </div>
+                    <div class="resource-group" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div><span>악몽 티켓</span><span style="font-size:10px; color:var(--text-muted); display:block;">(최대 14)</span></div>
+                        <div class="counter-controls"><button class="btn btn-xs" onclick="changeVal(${acc.id}, ${char.id}, 'nightmareTicket', -1)">-</button><input type="number" class="counter-input" value="${ticket}" onchange="setDirectVal(${acc.id}, ${char.id}, 'nightmareTicket', this.value)"><button class="btn btn-xs" onclick="changeVal(${acc.id}, ${char.id}, 'nightmareTicket', 1)">+</button></div>
+                    </div>
+                    <div class="homework-group">
+                        <strong style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">📌 고정 숙제</strong>
+                        <div class="hw-item"><label class="hw-label"><input type="checkbox" ${char.charBuyChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'charBuyChecked')"><span class="hw-text ${char.charBuyChecked ? 'checked-text' : ''}">오드구매,제작 (4)</span></label></div>
+                        <div class="hw-item"><label class="hw-label"><input type="checkbox" ${char.awakeningChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'awakeningChecked')"><span class="hw-text ${char.awakeningChecked ? 'checked-text' : ''}">각성전</span></label></div>
+                    </div>
+                    <div class="homework-group" style="border:none; padding:0;">
+                        <strong style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">📝 커스텀 숙제</strong>`;
+
+                // 원래 배열 구조와 인덱스를 유지하면서 정렬하여 HTML 출력
+                const typeOrder = { 'weekly': 1, 'daily': 2, 'once': 3 };
+                const mappedHomeworks = char.homeworks.map((hw, index) => ({ hw, index }));
+                
+                mappedHomeworks.sort((a, b) => typeOrder[a.hw.type] - typeOrder[b.hw.type]);
+
+                let currentType = "";
 
                 mappedHomeworks.forEach(({ hw, index }) => {
-                
                     if (currentType !== hw.type) {
-                
                         currentType = hw.type;
-                
                         html += `
                             <div class="custom-homework-category ${hw.type}">
                                 ${
@@ -810,52 +1038,69 @@ function toggleFloatingMenu() {
                                     type="checkbox"
                                     ${hw.checked ? 'checked' : ''}
                                     onchange="toggleCheckbox(${acc.id}, ${char.id}, null, ${index})">
-                
+                                
                                 <span class="hw-text ${hw.checked ? 'checked-text' : ''}">
                                     ${hw.name}
                                 </span>
                             </label>
-                
+                        
                             <button
                                 class="btn-danger2"
                                 style="padding:1px 4px;font-size:10px;filter:contrast(.1);border:none;"
                                 onclick="deleteCustomHomework(${acc.id}, ${char.id}, ${index})">
-                
                                 ❌
-                
                             </button>
                         </div>
                     `;
                 });
 
-                    html += `</div>
-                        <form class="add-form" onsubmit="createCustomHomework(event, ${acc.id}, ${char.id})">
-                            <input type="text" name="hwName" placeholder="숙제 명" required>
-                            <select name="hwType"><option value="weekly">주간</option><option value="daily">일일</option><option value="once">일회성</option></select>
-                            <button type="submit" class="btn btn-xs">+</button>
-                        </form>
-                        <div class="char-control-footer">
-                            <div style="position:relative;"><button class="btn btn-xs btn-char-edit" onclick="openMemoModal(${acc.id}, ${char.id}, event)">메모</button>${char.memo?'<span class="memo-red-dot"></span>':''}</div>
-                            <button class="btn btn-xs btn-char-edit" onclick="openEditCharModal(${acc.id}, ${char.id}, event)">설정</button>
-                            <button class="btn btn-xs btn-char-del" onclick="removeCharacter(${acc.id}, ${char.id}, event)">삭제</button>
-                        </div>
-                    </div>`;
-                });
-            } else {
-                html += `<div style="grid-column:1/-1; text-align:center; color:var(--text-muted); font-size:13px; padding:20px 0;">💡 캐릭터를 추가해 주세요!</div>`;
-            }
+                html += `</div>
+                    <form class="add-form" onsubmit="createCustomHomework(event, ${acc.id}, ${char.id})">
+                        <input type="text" name="hwName" placeholder="숙제 명" required>
+                        <select name="hwType"><option value="weekly">주간</option><option value="daily">일일</option><option value="once">일회성</option></select>
+                        <button type="submit" class="btn btn-xs">+</button>
+                    </form>
+                    <div class="char-control-footer">
+                        <div style="position:relative;"><button class="btn btn-xs btn-char-edit" onclick="openMemoModal(${acc.id}, ${char.id}, event)">메모</button>${char.memo?'<span class="memo-red-dot"></span>':''}</div>
+                        <button class="btn btn-xs btn-char-edit" onclick="openEditCharModal(${acc.id}, ${char.id}, event)">설정</button>
+                        <button class="btn btn-xs btn-char-del" onclick="removeCharacter(${acc.id}, ${char.id}, event)">삭제</button>
+                    </div>
+                </div>`;
+            });
+        } else {
+            html += `<div style="grid-column:1/-1; text-align:center; color:var(--text-muted); font-size:13px; padding:20px 0;">💡 캐릭터를 추가해 주세요!</div>`;
+        }
 
-            html += `</div></div></div>`;
-        });
+        html += `</div></div></div>`;
+    });
 
-        app.innerHTML = html; updateTimerDisplay();
-        if (isHideCompleted) document.body.classList.add('hide-completed-mode'); else document.body.classList.remove('hide-completed-mode');
-        if (isShowHiddenChars) document.body.classList.add('show-hidden-chars-mode'); else document.body.classList.remove('show-hidden-chars-mode');
-    }
+    app.innerHTML = html; 
+    updateTimerDisplay();
 
-    checkAndReduceMembershipTime(); updateOdeAutomatically(); checkAbyssReset(); checkDailyReset(); checkWeeklyReset(); render(); initAlarmToggles();
-    setInterval(updateTimerDisplay, 1000);
-    setInterval(() => { checkAndReduceMembershipTime(); updateOdeAutomatically(); checkAbyssReset(); checkDailyReset(); checkWeeklyReset(); }, 60000);
+    if (isHideCompleted) document.body.classList.add('hide-completed-mode'); 
+    else document.body.classList.remove('hide-completed-mode');
+
+    if (isShowHiddenChars) document.body.classList.add('show-hidden-chars-mode'); 
+    else document.body.classList.remove('show-hidden-chars-mode');
+}
+
+// 최초 실행 및 타이머 설정
+checkAndReduceMembershipTime(); 
+updateOdeAutomatically(); 
+checkAbyssReset(); 
+checkDailyReset(); 
+checkWeeklyReset(); 
+render(); 
+initAlarmToggles();
+
+setInterval(updateTimerDisplay, 1000);
+setInterval(() => { 
+    checkAndReduceMembershipTime(); 
+    updateOdeAutomatically(); 
+    checkAbyssReset(); 
+    checkDailyReset(); 
+    checkWeeklyReset(); 
+}, 60000);
 
 function updateExpedition(input, accountId) {
     let value = parseInt(input.value) || 0;
