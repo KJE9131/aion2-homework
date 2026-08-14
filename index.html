@@ -173,6 +173,24 @@
     </div>
 </div>
 
+    <!-- 팝업: 추천 숙제 일괄 추가 모달 -->
+<div id="recHomeworkModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 420px;">
+        <h3 id="recModalTitle" style="margin-top:0; margin-bottom:15px; font-size:16px; color:#fff;">추천 숙제 추가</h3>
+        
+        <form onsubmit="submitRecHomeworkForm(event)">
+            <div id="recHomeworkListContainer" class="rec-hw-container">
+                <!-- 스크립트를 통해 추천 숙제 리스트가 동적으로 삽입됩니다. -->
+            </div>
+            
+            <div class="modal-actions" style="margin-top: 20px; display:flex; justify-content:flex-end; gap:8px;">
+                <button type="button" class="btn btn-b" onclick="closeRecModal()">취소</button>
+                <button type="submit" class="btn btn-success">선택 항목 일괄 추가</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div id="accountModal" class="modal">
     <div class="modal-content">
         <h3 id="accountModalTitle" style="margin-top: 0;">새 계정 추가</h3>
