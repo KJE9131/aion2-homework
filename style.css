@@ -1504,6 +1504,16 @@ color:var(--primary);
     min-width: 36px;
     text-align: center;
 }
+/* 추천 숙제 전체 선택 영역 스타일 */
+.rec-hw-select-all {
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    margin-bottom: 8px;
+    background: #27272a;
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+}
 
 .rec-badge.fixed  { background: #a855f7; } /* 고정: 보라색 */
 .rec-badge.weekly { background: #ff6868; } /* 주간: 빨간색 */
