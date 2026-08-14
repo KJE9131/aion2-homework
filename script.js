@@ -528,6 +528,7 @@ function toggleFloatingMenu() {
         let html = `<div class="global-action-bar">
             <button id="btnToggleHide" class="btn-toggle-action" onclick="toggleHideCompleted()">${isHideCompleted ? '👀 모든 숙제 보기' : '✅ 완료 숙제 제외'}</button>
             <button id="btnToggleHiddenChars" class="btn-toggle-action" onclick="toggleShowHiddenChars()">${isShowHiddenChars ? '🙈 제외 캐릭터 감추기' : '🙉 제외 캐릭터 관리'}</button>
+            <button id="btnHomeworkFilter" class="btn-toggle-action" onclick="toggleFilterDrawer()">📋 숙제 필터</button>
         </div>`;
 
         gameData.forEach(acc => {
