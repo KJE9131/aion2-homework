@@ -1003,7 +1003,7 @@ function render() {
             <div class="account-header" onclick="toggleAccordion(${acc.id})">
                 <div style="display: flex; align-items: center;">
                     <span class="accordion-icon" id="acc-icon-${acc.id}">${isCollapsed ? '▼' : '▲'}</span>
-                    <h2 style="margin:0; font-size:16px;">${acc.name} <span style="font-size:12px; background:rgba(255,255,255,0.06); color:var(--text-muted); padding:2px 6px; border-radius:4px; margin-left:8px; font-weight:normal;">${mText}</span></h2>
+                    <h2 style="margin:0; font-size:14px; margin-left:6px;">${acc.name} <span style="font-size:12px; background:rgba(255,255,255,0.06); color:var(--text-muted); padding:2px 6px; border-radius:4px; margin-left:8px; font-weight:normal;">${mText}</span></h2>
                 </div>
                 <div onclick="event.stopPropagation();">
                     <button class="btn btn-sm" onclick="openCharModal(${acc.id}, event)">+ 캐릭터 추가</button>
