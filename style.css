@@ -1259,3 +1259,206 @@ color:var(--primary);
 .counter-input[type=number]{
     -moz-appearance:textfield;
 }
+
+
+
+/* ==========================================
+   숙제 필터 슬라이드 패널 (Drawer) 스타일
+   ========================================== */
+
+/* 배경 어둡게 */
+.filter-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
+    z-index: 10000;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.filter-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+/* 좌측 슬라이드 드로어 */
+.filter-drawer {
+    position: fixed;
+    top: 0; left: -360px;
+    width: 320px;
+    height: 100vh;
+    background: #18181b;
+    border-right: 1px solid var(--card-border);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.5);
+    z-index: 10001;
+    display: flex;
+    flex-direction: column;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-sizing: border-box;
+}
+.filter-drawer.open {
+    left: 0;
+}
+
+/* 드로어 헤더 */
+.filter-drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: #23232a;
+    border-bottom: 1px solid var(--card-border);
+}
+.filter-drawer-header h2 {
+    margin: 0;
+    font-size: 16px;
+    color: #fff;
+    font-weight: 700;
+}
+.filter-close-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px;
+}
+.filter-close-btn:hover { color: #fff; }
+
+/* 섹션 공통 */
+.filter-section {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.filter-section-title {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 8px;
+}
+
+/* 완료 숙제 옵션 라디오 */
+.filter-radio-group {
+    display: flex;
+    gap: 12px;
+}
+.filter-radio-label {
+    font-size: 13px;
+    color: #e3e3e6;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* 검색 입력 박스 */
+.filter-search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.filter-search-box input {
+    width: 100%;
+    padding: 8px 30px 8px 10px;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    color: #fff;
+    font-size: 13px;
+    box-sizing: border-box;
+}
+.filter-search-box input:focus {
+    outline: 1px solid var(--primary);
+}
+.filter-search-clear {
+    position: absolute;
+    right: 8px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 12px;
+}
+
+/* 리스트 헤더 */
+.filter-list-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.filter-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+.btn-text-link {
+    background: none;
+    border: none;
+    color: #60a5fa;
+    font-size: 11px;
+    cursor: pointer;
+    padding: 0;
+}
+
+/* 숙제 체크박스 목록 */
+.filter-hw-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-right: 4px;
+}
+.filter-hw-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    background: #22222a;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.filter-hw-item:hover {
+    background: #2a2a35;
+}
+.filter-hw-item input[type="checkbox"] {
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+.filter-hw-badge {
+    font-size: 10px;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-weight: bold;
+    margin-left: auto;
+}
+
+/* 하단 버튼 바 */
+.filter-drawer-footer {
+    padding: 16px 20px;
+    background: #18181b;
+    border-top: 1px solid var(--card-border);
+    display: flex;
+    gap: 10px;
+}
+
+/* 필터에 의해 숨겨지는 캐릭터 카드 (1-5) */
+.char-card.is-filter-hidden {
+    display: none !important;
+}
+
+/* "숙제 필터 취소" 버튼 활성화 스타일 (1-6) */
+.btn-toggle-action.filter-active {
+    background-color: #854d0e !important;
+    border-color: #eab308 !important;
+    color: #fff !important;
+}
