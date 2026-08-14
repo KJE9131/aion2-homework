@@ -147,7 +147,7 @@ function toggleFloatingMenu() {
         } else {
             const newId = Date.now();
             gameData.push({ 
-                id: newId, name: name, membership: membership, membershipDays: days, membershipHours: hours, membershipUpdatedAt: Date.now(), dailyMissionChecked: false,
+                id: newId, name: name, membership: membership, membershipDays: days, membershipHours: hours, membershipUpdatedAt: Date.now(), dailyMissionChecked: false, membershipPassChecked: false,
                 shugo: 2, dimension: 1, expedition: 0, transcend: 0, odeBuyChecked: false, villageOrderChecked: false, abyssOrderChecked: false, dailyDungeonChecked: false, characters: [] 
             });
             accordionStatus[newId] = true;
@@ -1015,7 +1015,7 @@ function render() {
                 <div class="account-contents">
 
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; ">
-                              <span class="account-contents-title">계정 공통 콘텐츠 <button type="button" class="btn btn-xs btn-b3" style="margin-left:8px;" onclick="openRecModal(${acc.id}, event)">⭐ 추천숙제 추가</button></span>
+                              <span class="account-contents-title">계정 공통 콘텐츠 <button type="button" class="btn btn-xs btn-b3" style="margin-left:8px;" onclick="openRecModal(${acc.id}, event)">⭐ 추천 숙제 추가</button></span>
                                
                               <div style="display:flex; align-items:center; gap:6px;">
                                   
@@ -1138,7 +1138,7 @@ function render() {
 
                         <!-- 체크리스트 -->
                         <div class="common-card">
-                            <div class="resource-item" style="padding:16px 14px 0 14px;">
+                            <div class="resource-item">
                                 <label class="hw-label">
                                     <input type="checkbox"
                                         ${acc.odeBuyChecked?'checked':''}
@@ -1198,6 +1198,19 @@ function render() {
                                 </label>
                             </div>
 
+                            <div class="resource-item">
+                                <label class="hw-label">
+                                    <input type="checkbox"
+                                        ${acc.membershipPassChecked?'checked':''}
+                                        onchange="toggleCheckbox(${acc.id},null,'membershipPassChecked')">
+
+                                    <span class="${acc.membershipPassChecked?'checked-text':''}" style="font-size:13px;">
+                                        🪙 멤버십 패스
+                                    </span>
+                                </label>
+                            </div>
+
+
                         </div>
 
                     </div>
@@ -1239,7 +1252,7 @@ function render() {
                 <div class="hw-item"><label class="hw-label"><input type="checkbox" ${char.awakeningChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'awakeningChecked')"><span class="hw-text ${char.awakeningChecked ? 'checked-text' : ''}">각성전</span></label></div>
             </div>
             <div class="homework-group" style="border:none; padding:0;">
-                <strong style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">📝 커스텀 숙제</strong>`;
+                <strong style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">📝 숙제 리스트</strong>`;
 
         // 원래 배열 구조와 인덱스를 유지하면서 정렬하여 HTML 출력
         const typeOrder = { 'weekly': 1, 'daily': 2, 'once': 3 };
