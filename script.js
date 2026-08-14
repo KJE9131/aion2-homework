@@ -827,19 +827,24 @@ const recommendedHomeworkList = [
 
 let recModalAccId = null;
 
-// 추천 숙제 모달 열기 (기존 캐릭터 메모 모달과 동일 방식)
+// 추천 숙제 모달 열기
 function openRecModal(accId, event) {
     if (event) event.stopPropagation();
     recModalAccId = accId;
     
     const acc = gameData.find(a => a.id === accId);
     const container = document.getElementById('recHomeworkListContainer');
+    const checkAllBox = document.getElementById('selectAllRecHw');
     
+    // 모달이 열릴 때 전체 선택 체크박스 초기화
+    if (checkAllBox) {
+        checkAllBox.checked = false;
+    }
+
     if (container) {
         container.innerHTML = '';
         
         recommendedHomeworkList.forEach((hw, idx) => {
-            // 타입별 배지 레이블 및 클래스
             let typeLabel = "기타";
             let typeClass = "once";
             
@@ -851,8 +856,8 @@ function openRecModal(accId, event) {
             const itemDiv = document.createElement('div');
             itemDiv.className = 'rec-hw-item';
             itemDiv.innerHTML = `
-                <label class="hw-label" style="cursor:pointer; display:flex; align-items:center; gap:8px;">
-                    <input type="checkbox" class="rec-hw-checkbox" value="${idx}">
+                <label class="hw-label" style="cursor:pointer; display:flex; align-items:center; gap:8px; width:100%;">
+                    <input type="checkbox" class="rec-hw-checkbox" value="${idx}" onchange="syncSelectAllCheckbox()">
                     <span class="rec-badge ${typeClass}">${typeLabel}</span>
                     <span style="font-size:13px; color:#fff;">${hw.name}</span>
                 </label>
@@ -866,6 +871,26 @@ function openRecModal(accId, event) {
     
     const modal = document.getElementById('recHomeworkModal');
     if (modal) modal.style.display = 'flex';
+}
+
+// '전체 선택' 체크박스 토글 함수
+function toggleAllRecHomework(masterCheckbox) {
+    const checkboxes = document.querySelectorAll('.rec-hw-checkbox');
+    checkboxes.forEach(cb => {
+        cb.checked = masterCheckbox.checked;
+    });
+}
+
+// 개별 체크박스 변경 시 '전체 선택' 체크박스 상태 동기화
+function syncSelectAllCheckbox() {
+    const totalBoxes = document.querySelectorAll('.rec-hw-checkbox');
+    const checkedBoxes = document.querySelectorAll('.rec-hw-checkbox:checked');
+    const checkAllBox = document.getElementById('selectAllRecHw');
+    
+    if (checkAllBox) {
+        // 모든 체크박스가 선택되었을 때만 전체 선택 활성화
+        checkAllBox.checked = (totalBoxes.length > 0 && totalBoxes.length === checkedBoxes.length);
+    }
 }
 
 // 추천 숙제 모달 닫기
