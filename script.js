@@ -813,7 +813,6 @@ function checkCharacterHasHomework(char, config) {
 
 
     function render() {
-            updateFilterBadge();
     const app = document.getElementById('app'); 
     if (!app) return;
 
@@ -1151,6 +1150,7 @@ function checkCharacterHasHomework(char, config) {
 
     app.innerHTML = html; 
     updateTimerDisplay();
+    updateFilterBadge();
 
     if (isHideCompleted) document.body.classList.add('hide-completed-mode'); 
     else document.body.classList.remove('hide-completed-mode');
