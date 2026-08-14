@@ -813,16 +813,27 @@ function checkCharacterHasHomework(char, config) {
 
 // ==========================================
 // 추천 숙제 데이터 프리셋 (여기서 자유롭게 추가/삭제 가능)
+// type: "fixed" 고정숙제
+// type: "weekly" 주간숙제
+// type: "daily" 일일숙제
+// type: "once" 일회성숙제
 // ==========================================
 const recommendedHomeworkList = [
-    { name: "오드구매,제작 (4)", type: "fixed" },
-    { name: "각성전", type: "fixed" },
-    { name: "시즌주간미션", type: "weekly" },
+    { name: "시즌미션 주간보상", type: "weekly" },
+    { name: "주간 보급의뢰", type: "weekly" },
+    { name: "패스 경험치", type: "weekly" },
     { name: "투기장", type: "weekly" },
+    { name: "악몽 10회", type: "weekly" },
+    { name: "어비스 몬스터잡기", type: "weekly" },
+    { name: "회랑(수)", type: "weekly" },
+    { name: "회랑(토)", type: "weekly" },
     { name: "루드라", type: "weekly" },
-    { name: "일일 던전 순회", type: "daily" },
-    { name: "필드 보스 처치", type: "daily" },
-    { name: "신규 에피소드 퀘스트", type: "once" }
+    { name: "침식", type: "weekly" },
+    { name: "무스펠", type: "weekly" },
+    { name: "원정(시련)", type: "weekly" },
+    { name: "이벤트 퀘스트, 구매", type: "weekly" },
+    { name: "보급의뢰", type: "daily" },
+    { name: "신규대륙 스토리", type: "once" },
 ];
 
 let recModalAccId = null;
@@ -836,10 +847,7 @@ function openRecModal(accId, event) {
     const container = document.getElementById('recHomeworkListContainer');
     const checkAllBox = document.getElementById('selectAllRecHw');
     
-    // 모달이 열릴 때 전체 선택 체크박스 초기화
-    if (checkAllBox) {
-        checkAllBox.checked = false;
-    }
+    if (checkAllBox) checkAllBox.checked = false;
 
     if (container) {
         container.innerHTML = '';
@@ -857,7 +865,7 @@ function openRecModal(accId, event) {
             itemDiv.className = 'rec-hw-item';
             itemDiv.innerHTML = `
                 <label class="hw-label" style="cursor:pointer; display:flex; align-items:center; gap:8px; width:100%;">
-                    <input type="checkbox" class="rec-hw-checkbox" value="${idx}" onchange="syncSelectAllCheckbox()">
+                    <input type="checkbox" class="rec-hw-checkbox" data-type="${hw.type}" value="${idx}" onchange="syncSelectAllCheckbox()">
                     <span class="rec-badge ${typeClass}">${typeLabel}</span>
                     <span style="font-size:13px; color:#fff;">${hw.name}</span>
                 </label>
@@ -873,7 +881,7 @@ function openRecModal(accId, event) {
     if (modal) modal.style.display = 'flex';
 }
 
-// '전체 선택' 체크박스 토글 함수
+// 전체 선택/해제
 function toggleAllRecHomework(masterCheckbox) {
     const checkboxes = document.querySelectorAll('.rec-hw-checkbox');
     checkboxes.forEach(cb => {
@@ -881,14 +889,28 @@ function toggleAllRecHomework(masterCheckbox) {
     });
 }
 
-// 개별 체크박스 변경 시 '전체 선택' 체크박스 상태 동기화
+// 특정 타입(fixed, weekly, daily, once) 전체 선택/해제 토글
+function toggleRecHomeworkByType(type) {
+    const targetBoxes = document.querySelectorAll(`.rec-hw-checkbox[data-type="${type}"]`);
+    if (targetBoxes.length === 0) return;
+
+    // 해당 타입 항목들이 모두 체크되어 있다면 해제, 아니라면 모두 체크
+    const isAllChecked = Array.from(targetBoxes).every(cb => cb.checked);
+    targetBoxes.forEach(cb => {
+        cb.checked = !isAllChecked;
+    });
+
+    // 전체 선택 체크박스 상태 업데이트
+    syncSelectAllCheckbox();
+}
+
+// 개별 체크박스 변경 시 상단 '전체 선택' 상태 동기화
 function syncSelectAllCheckbox() {
     const totalBoxes = document.querySelectorAll('.rec-hw-checkbox');
     const checkedBoxes = document.querySelectorAll('.rec-hw-checkbox:checked');
     const checkAllBox = document.getElementById('selectAllRecHw');
     
     if (checkAllBox) {
-        // 모든 체크박스가 선택되었을 때만 전체 선택 활성화
         checkAllBox.checked = (totalBoxes.length > 0 && totalBoxes.length === checkedBoxes.length);
     }
 }
@@ -993,7 +1015,7 @@ function render() {
                 <div class="account-contents">
 
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
-                              <span class="account-contents-title">계정 공통 콘텐츠<br> <button type="button" class="btn btn-xs btn-b3" style="margin-left:8px;" onclick="openRecModal(${acc.id}, event)">⭐ 추천숙제 추가</button></span>
+                              <span class="account-contents-title">계정 공통 콘텐츠 <button type="button" class="btn btn-xs btn-b3" style="margin-left:8px;" onclick="openRecModal(${acc.id}, event)">⭐ 추천숙제 추가</button></span>
                                
                               <div style="display:flex; align-items:center; gap:6px;">
                                   
