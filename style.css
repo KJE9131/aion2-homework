@@ -1462,3 +1462,50 @@ color:var(--primary);
     border-color: #eab308 !important;
     color: #fff !important;
 }
+
+
+
+/* ==========================================
+   추천 숙제 모달 & 배지 전용 스타일
+   ========================================== */
+.rec-hw-container {
+    max-height: 280px;
+    overflow-y: auto;
+    background: #18181b;
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.rec-hw-item {
+    display: flex;
+    align-items: center;
+    padding: 6px 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.2s;
+}
+
+.rec-hw-item:hover {
+    background: rgba(255, 255, 255, 0.07);
+}
+
+/* 추천 숙제 [고정, 주간, 일일, 일회성] 타입 배지 */
+.rec-badge {
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #fff;
+    min-width: 36px;
+    text-align: center;
+}
+
+.rec-badge.fixed  { background: #a855f7; } /* 고정: 보라색 */
+.rec-badge.weekly { background: #ff6868; } /* 주간: 빨간색 */
+.rec-badge.daily  { background: #58a6ff; } /* 일일: 파란색 */
+.rec-badge.once   { background: #6fc399; } /* 일회성: 초록색 */
