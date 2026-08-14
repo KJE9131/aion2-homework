@@ -623,20 +623,19 @@ function updateFilterBadge() {
     const filterBtn = document.getElementById('filterToggleBtn');
     if (!filterBtn) return;
 
-    // 필터 활성화 여부 재확인
+    // 필터 활성화 여부 재판별
     const hasActiveFilter = filterConfig.includeCompleted || 
                             (filterConfig.selectedHomeworks && filterConfig.selectedHomeworks.length > 0) || 
                             (filterConfig.searchKeyword && filterConfig.searchKeyword.trim() !== '');
 
     filterConfig.isActive = hasActiveFilter;
 
+    // 💡 innerHTML로 텍스트와 배지를 강제 즉시 변경
     if (hasActiveFilter) {
-        // 필터가 켜진 상태 -> "📋 숙제 필터 초기화" 로 변경
         const countStr = filterConfig.selectedHomeworks.length > 0 ? ` (${filterConfig.selectedHomeworks.length})` : '';
         filterBtn.innerHTML = `📋 숙제 필터 초기화 <span class="badge" style="background:#e74c3c; color:#fff; padding:2px 6px; border-radius:10px; font-size:11px; margin-left:4px;">ON${countStr}</span>`;
         filterBtn.classList.add('btn-filter-active');
     } else {
-        // 필터가 꺼진 상태 -> "📋 숙제 필터" 로 원복
         filterBtn.innerHTML = `📋 숙제 필터`;
         filterBtn.classList.remove('btn-filter-active');
     }
@@ -747,10 +746,19 @@ function onHomeworkFilterCheckChange(checkbox) {
 // ==========================================
 
 function applyHomeworkFilter() {
+    // 1. 상태 및 localStorage 저장
     localStorage.setItem('filterConfig_v1', JSON.stringify(filterConfig));
+    
+    // 2. 버튼 텍스트/배지 즉시 최신화 (순서 중요)
     updateFilterBadge();
+    
+    // 3. 드로어 닫기
     toggleFilterDrawer(false);
-    if (typeof render === 'function') render(); // 메인 화면 재렌더링
+    
+    // 4. 메인 화면 재렌더링
+    if (typeof render === 'function') {
+        render();
+    }
 }
 
 function resetHomeworkFilter() {
