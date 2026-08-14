@@ -220,6 +220,53 @@
     본 사이트는 아이온2 공식과 무관하며, 모든 데이터는 서버 전송 없이 브라우저에 로컬 저장됩니다.<br>
     문의사항 : aksen5577@gmail.com
 </footer>
+    <!-- 숙제 필터 슬라이드 패널 & 배경 오버레이 추가 -->
+<div id="filterOverlay" class="filter-overlay" onclick="closeFilterDrawer()"></div>
+
+<div id="filterDrawer" class="filter-drawer">
+    <div class="filter-drawer-header">
+        <h2>숙제 필터</h2>
+        <button class="filter-close-btn" onclick="closeFilterDrawer()">✕</button>
+    </div>
+
+    <!-- 1-3 완료숙제 포함 여부 선택 영역 -->
+    <div class="filter-section">
+        <label class="filter-section-title">완료 숙제 포함 여부</label>
+        <div class="filter-radio-group">
+            <label class="filter-radio-label">
+                <input type="radio" name="filterCompleted" value="exclude" checked onchange="onFilterConfigChange()"> 완료숙제 미포함
+            </label>
+            <label class="filter-radio-label">
+                <input type="radio" name="filterCompleted" value="include" onchange="onFilterConfigChange()"> 완료숙제 포함
+            </label>
+        </div>
+    </div>
+
+    <!-- 1-4 실시간 검색 박스 -->
+    <div class="filter-section">
+        <label class="filter-section-title">숙제 검색</label>
+        <div class="filter-search-box">
+            <input type="text" id="filterSearchInput" placeholder="숙제명을 입력하세요 (ex. 루드라)" oninput="onFilterSearchInput(this.value)">
+            <button class="filter-search-clear" onclick="clearFilterSearch()">✕</button>
+        </div>
+    </div>
+
+    <!-- 1-4 기존 숙제 체크박스 리스트 영역 -->
+    <div class="filter-section filter-list-section">
+        <div class="filter-list-header">
+            <span>숙제 목록</span>
+            <button class="btn-text-link" onclick="clearAllFilterCheckboxes()">전체 해제</button>
+        </div>
+        <div id="filterHomeworkList" class="filter-hw-list">
+            <!-- JS dynamic render -->
+        </div>
+    </div>
+
+    <div class="filter-drawer-footer">
+        <button class="btn btn-danger" style="flex:1;" onclick="resetHomeworkFilter()">필터 초기화</button>
+        <button class="btn btn-success" style="flex:2;" onclick="applyHomeworkFilter()">필터 적용</button>
+    </div>
+</div>
     <script src="script.js"></script>
 </body>
 </html>
