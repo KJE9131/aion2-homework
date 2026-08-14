@@ -173,12 +173,20 @@
     </div>
 </div>
 
-    <!-- 팝업: 추천 숙제 일괄 추가 모달 -->
+   <!-- 팝업: 추천 숙제 일괄 추가 모달 -->
 <div id="recHomeworkModal" class="modal-overlay">
     <div class="modal-content" style="max-width: 420px;">
         <h3 id="recModalTitle" style="margin-top:0; margin-bottom:15px; font-size:16px; color:#fff;">추천 숙제 추가</h3>
         
         <form onsubmit="submitRecHomeworkForm(event)">
+            <!-- 상단 전체 선택 바 추가 -->
+            <div class="rec-hw-select-all">
+                <label style="cursor:pointer; display:flex; align-items:center; gap:8px; font-size:13px; color:#e4e4e7; font-weight:bold;">
+                    <input type="checkbox" id="selectAllRecHw" onchange="toggleAllRecHomework(this)">
+                    전체 선택
+                </label>
+            </div>
+
             <div id="recHomeworkListContainer" class="rec-hw-container">
                 <!-- 스크립트를 통해 추천 숙제 리스트가 동적으로 삽입됩니다. -->
             </div>
