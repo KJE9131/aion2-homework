@@ -1014,7 +1014,7 @@ function render() {
             <div class="account-body ${isCollapsed ? 'collapsed' : ''}" id="acc-body-${acc.id}">
                 <div class="account-contents">
 
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; ">
                               <span class="account-contents-title">계정 공통 콘텐츠 <button type="button" class="btn btn-xs btn-b3" style="margin-left:8px;" onclick="openRecModal(${acc.id}, event)">⭐ 추천숙제 추가</button></span>
                                
                               <div style="display:flex; align-items:center; gap:6px;">
@@ -1046,7 +1046,7 @@ function render() {
 
                         <!-- 자원 -->
                         <div class="common-card">
-                            <div class="resource-item">
+                            <div class="resource-item" style="padding:0 14px 0 0;">
                                 <span class="char-name">슈고 페스타</span>
 
                                 <div class="counter-controls">
@@ -1138,7 +1138,7 @@ function render() {
 
                         <!-- 체크리스트 -->
                         <div class="common-card">
-                            <div class="resource-item">
+                            <div class="resource-item" style="padding:0 14px 0 0;">
                                 <label class="hw-label">
                                     <input type="checkbox"
                                         ${acc.odeBuyChecked?'checked':''}
