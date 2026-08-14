@@ -522,12 +522,11 @@ function toggleFloatingMenu() {
     function toggleShowHiddenChars() { isShowHiddenChars = !isShowHiddenChars; localStorage.setItem('isShowHiddenChars_v15', JSON.stringify(isShowHiddenChars)); render(); }
     function toggleHideCharacter(accId, charId, event) { event.stopPropagation(); const char = gameData.find(a => a.id === accId).characters.find(c => c.id === charId); char.hidden = !char.hidden; saveData(); }
 
-
 // ==========================================
-// 0. 전역 상태 정의 (filterConfig 안전 선언)
+// 0. 전역 상태 정의
 // ==========================================
 let filterConfig = JSON.parse(localStorage.getItem('filterConfig_v1')) || {
-    includeCompleted: false, // 완료숙제 포함 여부 (false: 미포함, true: 포함)
+    includeCompleted: false, // 완료숙제 포함 여부
     selectedHomeworks: [],   // 선택된 숙제명 배열
     searchKeyword: '',       // 실시간 검색어
     isActive: false          // 필터 적용 활성화 여부
@@ -535,109 +534,118 @@ let filterConfig = JSON.parse(localStorage.getItem('filterConfig_v1')) || {
 
 
 // ==========================================
-// 1. 드로어 / UI 토글 및 동기화
+// 1. 단일 버튼 이중 기능 & 드로어 제어
 // ==========================================
 
-// 드로어 열기/닫기 (인자 유무에 상관없이 자동 토글)
+// 상단 [숙제 필터 / 필터 초기화] 단일 버튼 클릭 핸들러
+function handleFilterBtnClick() {
+    if (filterConfig.isActive) {
+        // 필터가 적용된 상태라면 -> 필터 즉시 초기화
+        resetHomeworkFilter();
+    } else {
+        // 필터가 적용되지 않은 상태라면 -> 필터 드로어 열기
+        toggleFilterDrawer(true);
+    }
+}
+
+// 드로어 열기/닫기
 function toggleFilterDrawer(isOpen) {
     const drawer = document.getElementById('filterDrawer');
     const overlay = document.getElementById('filterOverlay');
     if (!drawer || !overlay) return;
 
-    // 인자가 전달되지 않은 경우 현재 상태의 반대로 토글
     if (typeof isOpen !== 'boolean') {
-        isOpen = !drawer.classList.contains('open') && !drawer.classList.contains('active');
+        isOpen = !drawer.classList.contains('active');
     }
 
     if (isOpen) {
-        drawer.classList.add('open', 'active');
-        overlay.classList.add('open', 'active');
+        drawer.classList.add('active', 'open');
+        overlay.classList.add('active', 'open');
         syncFilterUI();             // 열릴 때 UI 동기화
         renderFilterHomeworkList(); // 항목 리스트 렌더링
     } else {
-        drawer.classList.remove('open', 'active');
-        overlay.classList.remove('open', 'active');
+        drawer.classList.remove('active', 'open');
+        overlay.classList.remove('active', 'open');
     }
 }
 
-// 드로어 닫기 전용 함수 (HTML에서 closeFilterDrawer() 호출 대응)
 function closeFilterDrawer() {
     toggleFilterDrawer(false);
 }
 
 // UI 상태 동기화 (filterConfig -> DOM)
 function syncFilterUI() {
-    // 1) 라디오 버튼 (완료숙제 포함 여부)
+    // 1) 라디오 버튼 동기화
     const radioVal = filterConfig.includeCompleted ? 'include' : 'exclude';
     const radioElem = document.querySelector(`input[name="filterCompleted"][value="${radioVal}"]`);
     if (radioElem) radioElem.checked = true;
 
-    // 2) 검색어 입력창
-    const searchInput = document.getElementById('filterSearchInput') || document.getElementById('filterHomeworkSearch');
+    // 2) 검색창 동기화
+    const searchInput = document.getElementById('filterSearchInput');
     if (searchInput) {
         searchInput.value = filterConfig.searchKeyword || '';
     }
 
-    // 3) 배지 상태 업데이트
+    // 3) 상단 버튼 텍스트 및 배지 상태 업데이트
     updateFilterBadge();
 }
 
-// 완료 숙제 포함 여부 라디오 변경 핸들러
+// 라디오 버튼 변경 이벤트
 function onFilterConfigChange() {
     const selectedRadio = document.querySelector('input[name="filterCompleted"]:checked');
     if (selectedRadio) {
         filterConfig.includeCompleted = (selectedRadio.value === 'include');
     }
-    updateFilterBadge();
 }
 
-// 검색어 입력 핸들러
+// 실시간 검색어 입력 이벤트
 function onFilterSearchInput(val) {
-    const keyword = (typeof val === 'string') ? val : (val && val.target ? val.target.value : '');
-    filterConfig.searchKeyword = keyword;
+    filterConfig.searchKeyword = val || '';
     renderFilterHomeworkList();
 }
 
-// 검색어 초기화 (HTML clearFilterSearch 버튼 대응)
+// 검색어 초기화
 function clearFilterSearch() {
     filterConfig.searchKeyword = '';
-    const searchInput = document.getElementById('filterSearchInput') || document.getElementById('filterHomeworkSearch');
+    const searchInput = document.getElementById('filterSearchInput');
     if (searchInput) searchInput.value = '';
     renderFilterHomeworkList();
 }
 
-// 선택된 체크박스 전체 해제 (HTML clearAllFilterCheckboxes 버튼 대응)
+// 체크박스 전체 해제
 function clearAllFilterCheckboxes() {
     filterConfig.selectedHomeworks = [];
-    updateFilterBadge();
     renderFilterHomeworkList();
 }
 
-// 필터 배지 표시 업데이트
+// 상단 필터 버튼 텍스트 및 배지 업데이트 (3번 요구사항 핵심)
 function updateFilterBadge() {
-    const badge = document.getElementById('filterActiveBadge');
+    const filterBtn = document.getElementById('filterToggleBtn');
     
+    // 필터 활성화 여부 판단 (완료포함 선택, 특정 숙제 선택, 또는 검색어 존재 시)
     const hasActiveFilter = filterConfig.includeCompleted || 
-                            filterConfig.selectedHomeworks.length > 0 || 
+                            (filterConfig.selectedHomeworks && filterConfig.selectedHomeworks.length > 0) || 
                             (filterConfig.searchKeyword && filterConfig.searchKeyword.trim() !== '');
 
     filterConfig.isActive = hasActiveFilter;
 
-    if (!badge) return;
-
-    if (hasActiveFilter) {
-        badge.classList.remove('hidden');
-        badge.textContent = filterConfig.selectedHomeworks.length > 0 
-            ? `${filterConfig.selectedHomeworks.length}` 
-            : 'ON';
-    } else {
-        badge.classList.add('hidden');
+    if (filterBtn) {
+        if (hasActiveFilter) {
+            // 필터 적용 중: 버튼 명칭 변경 + ON 표시
+            const countStr = filterConfig.selectedHomeworks.length > 0 ? ` (${filterConfig.selectedHomeworks.length})` : '';
+            filterBtn.innerHTML = `📋 숙제 필터 초기화 <span class="badge" style="background:#e74c3c; color:#fff; padding:2px 6px; border-radius:10px; font-size:11px; margin-left:4px;">ON${countStr}</span>`;
+            filterBtn.classList.add('btn-filter-active');
+        } else {
+            // 필터 미적용: 기본 버튼 명칭
+            filterBtn.innerHTML = `📋 숙제 필터`;
+            filterBtn.classList.remove('btn-filter-active');
+        }
     }
 }
 
 
 // ==========================================
-// 2. 숙제 항목 렌더링 및 검색 (gameData 기반 동적 수집)
+// 2. 캐릭터 전용 숙제 목록 추출 및 렌더링 (1번 요구사항 반영)
 // ==========================================
 
 function renderFilterHomeworkList() {
@@ -647,29 +655,18 @@ function renderFilterHomeworkList() {
     container.innerHTML = '';
     const keyword = (filterConfig.searchKeyword || '').trim().toLowerCase();
 
-    // 앱 데이터(gameData)에서 모든 숙제 항목 추출
-    let homeworkItems = [];
+    // 캐릭터 숙제만 중복 없이 수집 (계정 공통 제외)
+    const charHwMap = new Map();
 
-    // 1) 고정 숙제 등록
-    homeworkItems.push({ id: 'odeBuyChecked', name: '🍀 오드구매·제작', type: '고정' });
-    homeworkItems.push({ id: 'villageOrderChecked', name: '📜 지령서 (마을)', type: '고정' });
-    homeworkItems.push({ id: 'abyssOrderChecked', name: '🌀 지령서 (어비스)', type: '고정' });
-    homeworkItems.push({ id: 'dailyDungeonChecked', name: '🏦 일일던전', type: '고정' });
-    homeworkItems.push({ id: 'dailyMissionChecked', name: '📅 일일사명퀘', type: '고정' });
-    homeworkItems.push({ id: 'charBuyChecked', name: '오드구매,제작 (4)', type: '고정' });
-    homeworkItems.push({ id: 'awakeningChecked', name: '각성전', type: '고정' });
-
-    // 2) gameData 캐릭터 커스텀 숙제 수집
-    const customHwMap = new Map();
     if (typeof gameData !== 'undefined' && Array.isArray(gameData)) {
         gameData.forEach(acc => {
-            if (acc.characters) {
+            if (acc.characters && Array.isArray(acc.characters)) {
                 acc.characters.forEach(char => {
                     if (char.homeworks && Array.isArray(char.homeworks)) {
                         char.homeworks.forEach(hw => {
-                            if (hw.name && !customHwMap.has(hw.name)) {
-                                const typeLabel = hw.type === 'weekly' ? '주간' : (hw.type === 'daily' ? '일일' : '일회성');
-                                customHwMap.set(hw.name, typeLabel);
+                            if (hw.name && !charHwMap.has(hw.name)) {
+                                const typeLabel = hw.type === 'weekly' ? '주간' : (hw.type === 'daily' ? '일일' : '기타');
+                                charHwMap.set(hw.name, typeLabel);
                             }
                         });
                     }
@@ -678,22 +675,23 @@ function renderFilterHomeworkList() {
         });
     }
 
-    customHwMap.forEach((typeLabel, hwName) => {
+    const homeworkItems = [];
+    charHwMap.forEach((typeLabel, hwName) => {
         homeworkItems.push({ id: hwName, name: hwName, type: typeLabel });
     });
 
-    // 검색어 키워드 필터링
+    // 검색 키워드 필터링
     const filteredItems = homeworkItems.filter(item => {
         if (!keyword) return true;
         return item.name.toLowerCase().includes(keyword);
     });
 
     if (filteredItems.length === 0) {
-        container.innerHTML = '<div class="empty-msg" style="text-align:center; color:var(--text-muted); padding:15px; font-size:13px;">검색 결과가 없습니다.</div>';
+        container.innerHTML = '<div class="empty-msg" style="text-align:center; color:#888; padding:20px; font-size:13px;">등록된 캐릭터 숙제가 없습니다.</div>';
         return;
     }
 
-    // 타입별 그룹 렌더링
+    // 주간/일일/기타 분류별 렌더링
     const groups = {};
     filteredItems.forEach(item => {
         if (!groups[item.type]) groups[item.type] = [];
@@ -707,8 +705,8 @@ function renderFilterHomeworkList() {
 
         const catTitle = document.createElement('div');
         catTitle.className = 'filter-group-title';
-        catTitle.style.cssText = 'font-size:12px; font-weight:bold; color:var(--accent); margin-bottom:6px;';
-        catTitle.textContent = `[${groupType}]`;
+        catTitle.style.cssText = 'font-size:12px; font-weight:bold; color:#4a90e2; margin-bottom:6px;';
+        catTitle.textContent = `[${groupType} 숙제]`;
         catGroup.appendChild(catTitle);
 
         const itemList = document.createElement('div');
@@ -719,8 +717,7 @@ function renderFilterHomeworkList() {
             const isChecked = filterConfig.selectedHomeworks.includes(item.id);
 
             const label = document.createElement('label');
-            label.className = `filter-item-chip ${isChecked ? 'selected' : ''}`;
-            label.style.cssText = `display:inline-flex; align-items:center; gap:4px; padding:4px 8px; border-radius:4px; background:${isChecked ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.05)'}; font-size:12px; cursor:pointer;`;
+            label.style.cssText = `display:inline-flex; align-items:center; gap:5px; padding:5px 9px; border-radius:4px; background:${isChecked ? 'rgba(74, 144, 226, 0.25)' : 'rgba(255,255,255,0.06)'}; border:1px solid ${isChecked ? '#4a90e2' : 'transparent'}; font-size:12px; cursor:pointer; color:#fff;`;
             label.innerHTML = `
                 <input type="checkbox" value="${item.id}" ${isChecked ? 'checked' : ''} onchange="onHomeworkFilterCheckChange(this)">
                 <span>${item.name}</span>
@@ -733,28 +730,26 @@ function renderFilterHomeworkList() {
     });
 }
 
-// 체크박스 변경 핸들러
+// 체크박스 클릭 핸들러
 function onHomeworkFilterCheckChange(checkbox) {
     const val = checkbox.value;
     if (checkbox.checked) {
         if (!filterConfig.selectedHomeworks.includes(val)) {
             filterConfig.selectedHomeworks.push(val);
         }
-        checkbox.parentElement.classList.add('selected');
     } else {
         filterConfig.selectedHomeworks = filterConfig.selectedHomeworks.filter(id => id !== val);
-        checkbox.parentElement.classList.remove('selected');
     }
-    updateFilterBadge();
 }
 
 
 // ==========================================
-// 3. 필터 적용 / 초기화 / 저장
+// 3. 필터 적용 및 초기화
 // ==========================================
 
 function applyHomeworkFilter() {
     localStorage.setItem('filterConfig_v1', JSON.stringify(filterConfig));
+    updateFilterBadge();
     toggleFilterDrawer(false);
     if (typeof render === 'function') render(); // 메인 화면 재렌더링
 }
@@ -768,42 +763,41 @@ function resetHomeworkFilter() {
     };
     localStorage.removeItem('filterConfig_v1');
     syncFilterUI();
-    renderFilterHomeworkList();
+    toggleFilterDrawer(false);
     if (typeof render === 'function') render(); // 메인 화면 재렌더링
 }
 
 
 // ==========================================
-// 4. 캐릭터 필터링 판별 로직
+// 4. 캐릭터 필터링 판별 로직 (2번 요구사항 반영)
 // ==========================================
 
 function checkCharacterHasHomework(char, config) {
+    // 필터가 꺼져 있으면 모든 캐릭터 표시
     if (!config || !config.isActive) return true;
 
-    // 1. 선택된 특정 숙제가 있는 경우
+    const homeworks = char.homeworks || [];
+
+    // 1) 특정 숙제가 선택된 경우 (예: 루드라 선택)
     if (config.selectedHomeworks && config.selectedHomeworks.length > 0) {
-        const hasMatchingHomework = config.selectedHomeworks.some(hwId => {
-            // 커스텀 숙제 검색
-            if (char.homeworks && Array.isArray(char.homeworks)) {
-                const foundHw = char.homeworks.find(hw => hw.name === hwId);
-                if (foundHw) {
-                    return config.includeCompleted ? true : !foundHw.checked;
-                }
+        const hasMatchingHw = config.selectedHomeworks.some(selectedName => {
+            const hw = homeworks.find(h => h.name === selectedName || h.id === selectedName);
+            if (!hw) return false;
+
+            const isDone = hw.checked || hw.isDone;
+
+            // 완료 숙제 미포함 조건 시 -> 미완료된 숙제일 때만 true
+            if (!config.includeCompleted) {
+                return !isDone;
             }
-            // 캐릭터 고정 숙제 검색
-            if (hwId in char) {
-                return config.includeCompleted ? true : !char[hwId];
-            }
-            return false;
+            return true; // 완료 숙제 포함 조건 시 -> 존재만 하면 true
         });
 
-        if (!hasMatchingHomework) return false;
-    }
-
-    // 2. 미완료 숙제 제외 모드 적용 시
-    if (!config.includeCompleted && (!config.selectedHomeworks || config.selectedHomeworks.length === 0)) {
-        if (!char.homeworks) return false;
-        const hasUnfinished = char.homeworks.some(hw => !hw.checked);
+        if (!hasMatchingHw) return false;
+    } 
+    // 2) 특정 숙제 선택 없이 '완료숙제 미포함' 옵션만 켜져 있는 경우
+    else if (!config.includeCompleted) {
+        const hasUnfinished = homeworks.some(hw => !(hw.checked || hw.isDone));
         if (!hasUnfinished) return false;
     }
 
@@ -823,7 +817,7 @@ function checkCharacterHasHomework(char, config) {
     let html = `<div class="global-action-bar">
         <button id="btnToggleHide" class="btn-toggle-action" onclick="toggleHideCompleted()">${isHideCompleted ? '👀 모든 숙제 보기' : '✅ 완료 숙제 제외'}</button>
         <button id="btnToggleHiddenChars" class="btn-toggle-action" onclick="toggleShowHiddenChars()">${isShowHiddenChars ? '🙈 제외 캐릭터 감추기' : '🙉 제외 캐릭터 관리'}</button>
-        <button id="btnHomeworkFilter" class="btn-toggle-action" onclick="toggleFilterDrawer()">📋 숙제 필터</button>
+        <button id="filterToggleBtn" class="btn" onclick="handleFilterBtnClick()">📋 숙제 필터</button>
     </div>`;
 
     gameData.forEach(acc => {
@@ -1046,95 +1040,103 @@ function checkCharacterHasHomework(char, config) {
                 <div class="char-grid">`;
 
         if (acc.characters && acc.characters.length > 0) {
-            acc.characters.forEach(char => {
-                const ticket = char.nightmareTicket !== undefined ? char.nightmareTicket : 2;
-                const isHidden = char.hidden || false;
-                
-                html += `<div class="char-card ${isHidden ? 'is-hidden-char' : ''}">
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
-                        <div style="display:flex; flex-direction:column; max-width:130px;"><span class="char-name">${char.name}</span><span class="char-sub-info">${char.job} | <span class="char-power">${Number(char.power).toLocaleString()}</span></span></div>
-                        <button class="btn-char-hide" onclick="toggleHideCharacter(${acc.id}, ${char.id}, event)">${isHidden ? '🙉 포함' : '🙈 숨김'}</button>
-                    </div>
-                    <div class="resource-group">
-                        <div style="display:flex; justify-content:space-between; align-items:center;"><strong>오드에너지</strong><span class="ode-timer" id="timer-${char.id}">[로딩중...]</span></div>
-                        <div class="ode-row"><span>기본오드</span><span>[ <input type="number" class="counter-input" value="${char.ode || 0}" onchange="setDirectVal(${acc.id}, ${char.id}, 'ode', this.value)"> ] / 840</span></div>
-                        <div class="ode-row"><span>추가오드</span><span>[ <input type="number" class="counter-input" value="${char.extraOde || 0}" onchange="setDirectVal(${acc.id}, ${char.id}, 'extraOde', this.value)"> ] / 2000</span></div>
-                    </div>
-                    <div class="resource-group" style="display:flex; justify-content:space-between; align-items:center;">
-                        <div><span>악몽 티켓</span><span style="font-size:10px; color:var(--text-muted); display:block;">(최대 14)</span></div>
-                        <div class="counter-controls"><button class="btn btn-xs" onclick="changeVal(${acc.id}, ${char.id}, 'nightmareTicket', -1)">-</button><input type="number" class="counter-input" value="${ticket}" onchange="setDirectVal(${acc.id}, ${char.id}, 'nightmareTicket', this.value)"><button class="btn btn-xs" onclick="changeVal(${acc.id}, ${char.id}, 'nightmareTicket', 1)">+</button></div>
-                    </div>
-                    <div class="homework-group">
-                        <strong style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">📌 고정 숙제</strong>
-                        <div class="hw-item"><label class="hw-label"><input type="checkbox" ${char.charBuyChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'charBuyChecked')"><span class="hw-text ${char.charBuyChecked ? 'checked-text' : ''}">오드구매,제작 (4)</span></label></div>
-                        <div class="hw-item"><label class="hw-label"><input type="checkbox" ${char.awakeningChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'awakeningChecked')"><span class="hw-text ${char.awakeningChecked ? 'checked-text' : ''}">각성전</span></label></div>
-                    </div>
-                    <div class="homework-group" style="border:none; padding:0;">
-                        <strong style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">📝 커스텀 숙제</strong>`;
-
-                // 원래 배열 구조와 인덱스를 유지하면서 정렬하여 HTML 출력
-                const typeOrder = { 'weekly': 1, 'daily': 2, 'once': 3 };
-                const mappedHomeworks = char.homeworks.map((hw, index) => ({ hw, index }));
-                
-                mappedHomeworks.sort((a, b) => typeOrder[a.hw.type] - typeOrder[b.hw.type]);
-
-                let currentType = "";
-
-                mappedHomeworks.forEach(({ hw, index }) => {
-                    if (currentType !== hw.type) {
-                        currentType = hw.type;
-                        html += `
-                            <div class="custom-homework-category ${hw.type}">
-                                ${
-                                    hw.type === "weekly"
-                                        ? "[주간]"
-                                        : hw.type === "daily"
-                                        ? "[일일]"
-                                        : "[일회성]"
-                                }
-                            </div>
-                        `;
-                    }
-                
-                    html += `
-                        <div class="hw-item">
-                            <label class="hw-label">
-                                <input
-                                    type="checkbox"
-                                    ${hw.checked ? 'checked' : ''}
-                                    onchange="toggleCheckbox(${acc.id}, ${char.id}, null, ${index})">
-                                
-                                <span class="hw-text ${hw.checked ? 'checked-text' : ''}">
-                                    ${hw.name}
-                                </span>
-                            </label>
-                        
-                            <button
-                                class="btn-danger2"
-                                style="padding:1px 4px;font-size:10px;filter:contrast(.1);border:none;"
-                                onclick="deleteCustomHomework(${acc.id}, ${char.id}, ${index})">
-                                ❌
-                            </button>
-                        </div>
-                    `;
-                });
-
-                html += `</div>
-                    <form class="add-form" onsubmit="createCustomHomework(event, ${acc.id}, ${char.id})">
-                        <input type="text" name="hwName" placeholder="숙제 명" required>
-                        <select name="hwType"><option value="weekly">주간</option><option value="daily">일일</option><option value="once">일회성</option></select>
-                        <button type="submit" class="btn btn-xs">+</button>
-                    </form>
-                    <div class="char-control-footer">
-                        <div style="position:relative;"><button class="btn btn-xs btn-char-edit" onclick="openMemoModal(${acc.id}, ${char.id}, event)">메모</button>${char.memo?'<span class="memo-red-dot"></span>':''}</div>
-                        <button class="btn btn-xs btn-char-edit" onclick="openEditCharModal(${acc.id}, ${char.id}, event)">설정</button>
-                        <button class="btn btn-xs btn-char-del" onclick="removeCharacter(${acc.id}, ${char.id}, event)">삭제</button>
-                    </div>
-                </div>`;
-            });
-        } else {
-            html += `<div style="grid-column:1/-1; text-align:center; color:var(--text-muted); font-size:13px; padding:20px 0;">💡 캐릭터를 추가해 주세요!</div>`;
+    acc.characters.forEach(char => {
+        // ==========================================
+        // 💡 [숙제 필터 검사] 조건에 맞지 않는 캐릭터 스킵
+        // ==========================================
+        if (typeof checkCharacterHasHomework === 'function') {
+            const isVisible = checkCharacterHasHomework(char, filterConfig);
+            if (!isVisible) return; // 조건 미충족 시 해당 캐릭터 카드 생성 안 함
         }
+
+        const ticket = char.nightmareTicket !== undefined ? char.nightmareTicket : 2;
+        const isHidden = char.hidden || false;
+        
+        html += `<div class="char-card ${isHidden ? 'is-hidden-char' : ''}">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+                <div style="display:flex; flex-direction:column; max-width:130px;"><span class="char-name">${char.name}</span><span class="char-sub-info">${char.job} | <span class="char-power">${Number(char.power).toLocaleString()}</span></span></div>
+                <button class="btn-char-hide" onclick="toggleHideCharacter(${acc.id}, ${char.id}, event)">${isHidden ? '🙉 포함' : '🙈 숨김'}</button>
+            </div>
+            <div class="resource-group">
+                <div style="display:flex; justify-content:space-between; align-items:center;"><strong>오드에너지</strong><span class="ode-timer" id="timer-${char.id}">[로딩중...]</span></div>
+                <div class="ode-row"><span>기본오드</span><span>[ <input type="number" class="counter-input" value="${char.ode || 0}" onchange="setDirectVal(${acc.id}, ${char.id}, 'ode', this.value)"> ] / 840</span></div>
+                <div class="ode-row"><span>추가오드</span><span>[ <input type="number" class="counter-input" value="${char.extraOde || 0}" onchange="setDirectVal(${acc.id}, ${char.id}, 'extraOde', this.value)"> ] / 2000</span></div>
+            </div>
+            <div class="resource-group" style="display:flex; justify-content:space-between; align-items:center;">
+                <div><span>악몽 티켓</span><span style="font-size:10px; color:var(--text-muted); display:block;">(최대 14)</span></div>
+                <div class="counter-controls"><button class="btn btn-xs" onclick="changeVal(${acc.id}, ${char.id}, 'nightmareTicket', -1)">-</button><input type="number" class="counter-input" value="${ticket}" onchange="setDirectVal(${acc.id}, ${char.id}, 'nightmareTicket', this.value)"><button class="btn btn-xs" onclick="changeVal(${acc.id}, ${char.id}, 'nightmareTicket', 1)">+</button></div>
+            </div>
+            <div class="homework-group">
+                <strong style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">📌 고정 숙제</strong>
+                <div class="hw-item"><label class="hw-label"><input type="checkbox" ${char.charBuyChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'charBuyChecked')"><span class="hw-text ${char.charBuyChecked ? 'checked-text' : ''}">오드구매,제작 (4)</span></label></div>
+                <div class="hw-item"><label class="hw-label"><input type="checkbox" ${char.awakeningChecked ? 'checked' : ''} onchange="toggleCheckbox(${acc.id}, ${char.id}, 'awakeningChecked')"><span class="hw-text ${char.awakeningChecked ? 'checked-text' : ''}">각성전</span></label></div>
+            </div>
+            <div class="homework-group" style="border:none; padding:0;">
+                <strong style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">📝 커스텀 숙제</strong>`;
+
+        // 원래 배열 구조와 인덱스를 유지하면서 정렬하여 HTML 출력
+        const typeOrder = { 'weekly': 1, 'daily': 2, 'once': 3 };
+        const mappedHomeworks = (char.homeworks || []).map((hw, index) => ({ hw, index }));
+        
+        mappedHomeworks.sort((a, b) => (typeOrder[a.hw.type] || 99) - (typeOrder[b.hw.type] || 99));
+
+        let currentType = "";
+
+        mappedHomeworks.forEach(({ hw, index }) => {
+            if (currentType !== hw.type) {
+                currentType = hw.type;
+                html += `
+                    <div class="custom-homework-category ${hw.type}">
+                        ${
+                            hw.type === "weekly"
+                                ? "[주간]"
+                                : hw.type === "daily"
+                                ? "[일일]"
+                                : "[일회성]"
+                        }
+                    </div>
+                `;
+            }
+        
+            html += `
+                <div class="hw-item">
+                    <label class="hw-label">
+                        <input
+                            type="checkbox"
+                            ${hw.checked ? 'checked' : ''}
+                            onchange="toggleCheckbox(${acc.id}, ${char.id}, null, ${index})">
+                        
+                        <span class="hw-text ${hw.checked ? 'checked-text' : ''}">
+                            ${hw.name}
+                        </span>
+                    </label>
+                
+                    <button
+                        class="btn-danger2"
+                        style="padding:1px 4px;font-size:10px;filter:contrast(.1);border:none;"
+                        onclick="deleteCustomHomework(${acc.id}, ${char.id}, ${index})">
+                        ❌
+                    </button>
+                </div>
+            `;
+        });
+
+        html += `</div>
+            <form class="add-form" onsubmit="createCustomHomework(event, ${acc.id}, ${char.id})">
+                <input type="text" name="hwName" placeholder="숙제 명" required>
+                <select name="hwType"><option value="weekly">주간</option><option value="daily">일일</option><option value="once">일회성</option></select>
+                <button type="submit" class="btn btn-xs">+</button>
+            </form>
+            <div class="char-control-footer">
+                <div style="position:relative;"><button class="btn btn-xs btn-char-edit" onclick="openMemoModal(${acc.id}, ${char.id}, event)">메모</button>${char.memo?'<span class="memo-red-dot"></span>':''}</div>
+                <button class="btn btn-xs btn-char-edit" onclick="openEditCharModal(${acc.id}, ${char.id}, event)">설정</button>
+                <button class="btn btn-xs btn-char-del" onclick="removeCharacter(${acc.id}, ${char.id}, event)">삭제</button>
+            </div>
+        </div>`;
+    });
+} else {
+    html += `<div style="grid-column:1/-1; text-align:center; color:var(--text-muted); font-size:13px; padding:20px 0;">💡 캐릭터를 추가해 주세요!</div>`;
+}
 
         html += `</div></div></div>`;
     });
