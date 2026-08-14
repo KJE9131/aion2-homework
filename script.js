@@ -1138,7 +1138,7 @@ function render() {
 
                         <!-- 체크리스트 -->
                         <div class="common-card">
-                            <div class="resource-item">
+                            <div class="resource-item" style="padding:16px 14px 0 14px;">
                                 <label class="hw-label">
                                     <input type="checkbox"
                                         ${acc.odeBuyChecked?'checked':''}
