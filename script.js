@@ -1046,7 +1046,7 @@ function render() {
 
                         <!-- 자원 -->
                         <div class="common-card">
-                            <div class="resource-item" style="padding:0 14px 0 0;">
+                            <div class="resource-item">
                                 <span class="char-name">슈고 페스타</span>
 
                                 <div class="counter-controls">
@@ -1138,7 +1138,7 @@ function render() {
 
                         <!-- 체크리스트 -->
                         <div class="common-card">
-                            <div class="resource-item" style="padding:0 14px 0 0;">
+                            <div class="resource-item">
                                 <label class="hw-label">
                                     <input type="checkbox"
                                         ${acc.odeBuyChecked?'checked':''}
