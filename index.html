@@ -179,7 +179,7 @@
         <h3 id="recModalTitle" style="margin-top:0; margin-bottom:15px; font-size:16px; color:#fff;">추천 숙제 추가</h3>
         
         <form onsubmit="submitRecHomeworkForm(event)">
-            <!-- 상단 전체 선택 바 추가 -->
+            <!-- 상단 전체 선택 바 -->
             <div class="rec-hw-select-all">
                 <label style="cursor:pointer; display:flex; align-items:center; gap:8px; font-size:13px; color:#e4e4e7; font-weight:bold;">
                     <input type="checkbox" id="selectAllRecHw" onchange="toggleAllRecHomework(this)">
@@ -187,8 +187,17 @@
                 </label>
             </div>
 
+            <!-- 타입별 전체 선택 필터 버튼 -->
+            <div class="rec-type-btn-group">
+                <button type="button" class="btn-type-filter fixed" onclick="toggleRecHomeworkByType('fixed')">고정 전체</button>
+                <button type="button" class="btn-type-filter weekly" onclick="toggleRecHomeworkByType('weekly')">주간 전체</button>
+                <button type="button" class="btn-type-filter daily" onclick="toggleRecHomeworkByType('daily')">일일 전체</button>
+                <button type="button" class="btn-type-filter once" onclick="toggleRecHomeworkByType('once')">일회성 전체</button>
+            </div>
+
+            <!-- 추천 숙제 목록 스크롤 영역 -->
             <div id="recHomeworkListContainer" class="rec-hw-container">
-                <!-- 스크립트를 통해 추천 숙제 리스트가 동적으로 삽입됩니다. -->
+                <!-- 스크립트로 내용이 들어갑니다 -->
             </div>
             
             <div class="modal-actions" style="margin-top: 20px; display:flex; justify-content:flex-end; gap:8px;">
