@@ -993,8 +993,8 @@ function render() {
                 <div class="account-contents">
 
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
-                              <span class="account-contents-title">계정 공통 콘텐츠</span>
-                                <button type="button" class="btn btn-xs btn-b3" style="margin-left:8px;" onclick="openRecModal(${acc.id}, event)">⭐ 추천숙제추가</button>
+                              <span class="account-contents-title">계정 공통 콘텐츠<br> <button type="button" class="btn btn-xs btn-b3" style="margin-left:8px;" onclick="openRecModal(${acc.id}, event)">⭐ 추천숙제 추가</button></span>
+                               
                               <div style="display:flex; align-items:center; gap:6px;">
                                   
                         
