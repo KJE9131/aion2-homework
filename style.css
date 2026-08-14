@@ -180,7 +180,7 @@
         /* 계정 섹션 및 아코디언 스타일 */
         .account-section { 
             background: var(--card-bg); 
-            border-radius: 12px; 
+            border-radius: 8px; 
             margin-bottom: 20px; 
             border: 1px solid var(--card-border);
             box-shadow: 0 4px 12px rgba(0,0,0,0.3); 
@@ -190,7 +190,7 @@
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            padding: 12px 20px;
+            padding: 10px 12px;
             background: #25252e;
             cursor: pointer;
             user-select: none;
@@ -201,15 +201,15 @@
         .account-header h2 { margin: 0; font-size: 16px; color: #ffffff; }
         .accordion-icon { font-size: 14px; color: var(--text-muted); transition: transform 0.2s; }
         
-        .account-body { padding: 14px; display: block; }
+        .account-body { padding: 8px; display: block; }
         .account-body.collapsed { display: none; }
         
         .account-contents {
             background: #1E1E1E;
             border: 1px solid var(--card-border);
-            border-radius: 8px;
+            border-radius: 4px;
             padding: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
         .account-contents-title {
             font-weight: bold;
@@ -241,9 +241,9 @@
             align-items: center;
             gap: 6px;
             background: #25252e;
-            padding: 4px 10px;
-            border-radius: 6px;
-            border: 1px solid var(--card-border);
+            padding: 4px 6px;
+            border-radius: 4px;
+            /* border: 1px solid var(--card-border); */
         }
         .batch-add-form input, .batch-add-form select {
             padding: 5px;
@@ -256,6 +256,7 @@
         .batch-add-form input { width: 120px; }
 
         /* 캐릭터 그리드 (최대 8개 가로 정렬 최적화) */
+        
         .char-grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); 
@@ -263,7 +264,7 @@
         }
         .char-card { 
             border: 1px solid var(--card-border); 
-            border-radius: 8px; 
+            border-radius:4px; 
             padding: 10px; 
             background: #1E1E1E; 
             box-sizing: border-box;
@@ -272,6 +273,9 @@
             justify-content:flex-start;
             font-size: 12px;
             box-shadow:4px 4px 2px rgba(0,0,0,0.1);
+        }
+         .char-grid6 { 
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
         }
         .char-header { 
             display: flex; 
