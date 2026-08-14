@@ -1243,7 +1243,7 @@ function render() {
                 <div class="ode-row"><span>추가오드</span><span>[ <input type="number" class="counter-input" value="${char.extraOde || 0}" onchange="setDirectVal(${acc.id}, ${char.id}, 'extraOde', this.value)"> ] / 2000</span></div>
             </div>
             <div class="resource-group" style="display:flex; justify-content:space-between; align-items:center; padding-top:0;">
-    <span class="char-name">악몽 티켓</span>
+    <span >악몽 티켓</span>
 
     <div class="counter-controls">
         <button class="btn btn-xs" 
