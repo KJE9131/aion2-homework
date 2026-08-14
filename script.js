@@ -523,227 +523,292 @@ function toggleFloatingMenu() {
     function toggleHideCharacter(accId, charId, event) { event.stopPropagation(); const char = gameData.find(a => a.id === accId).characters.find(c => c.id === charId); char.hidden = !char.hidden; saveData(); }
 
 
+// ==========================================
+// 0. 전역 상태 정의 (filterConfig 안전 선언)
+// ==========================================
+let filterConfig = JSON.parse(localStorage.getItem('filterConfig_v1')) || {
+    includeCompleted: false, // 완료숙제 포함 여부 (false: 미포함, true: 포함)
+    selectedHomeworks: [],   // 선택된 숙제명 배열
+    searchKeyword: '',       // 실시간 검색어
+    isActive: false          // 필터 적용 활성화 여부
+};
 
-        // ==========================================
-        // 0. 전역 상태 정의 (filterConfig 안전 선언)
-        // ==========================================
-        let filterConfig = JSON.parse(localStorage.getItem('filterConfig_v1')) || {
-            includeCompleted: false, // 완료숙제 포함 여부 (false: 미포함, true: 포함)
-            selectedHomeworks: [], // 선택된 숙제명 배열
-            searchKeyword: '', // 실시간 검색어
-            isActive: false // 필터 적용 활성화 여부
-        };
-        
-        
-        // ==========================================
-        // 1. 드로어 / UI 토글 및 동기화
-        // ==========================================
-        
-        // 드로어 열기/닫기
-        function toggleFilterDrawer(isOpen) {
-            const drawer = document.getElementById('filterDrawer');
-            const overlay = document.getElementById('filterOverlay');
-            if (!drawer || !overlay) return;
-        
-            if (isOpen) {
-                drawer.classList.add('open');
-                overlay.classList.add('open');
-                syncFilterUI(); // 열릴 때 UI 동기화
-                renderFilterHomeworkList(); // 항목 리스트 렌더링
-            } else {
-                drawer.classList.remove('open');
-                overlay.classList.remove('open');
-            }
-        }
-        
-        // UI 상태 동기화 (filterConfig -> DOM)
-        function syncFilterUI() {
-            const incCompCheckbox = document.getElementById('filterIncludeCompleted');
-            const searchInput = document.getElementById('filterHomeworkSearch');
-        
-            if (incCompCheckbox) {
-                incCompCheckbox.checked = filterConfig.includeCompleted;
-            }
-            if (searchInput) {
-                searchInput.value = filterConfig.searchKeyword || '';
-            }
-        
-            // 배지 상태 업데이트 (필터 적용 여부)
-            updateFilterBadge();
-        }
-        
-        // 필터 배지 표시 업데이트
-        function updateFilterBadge() {
-            const badge = document.getElementById('filterActiveBadge');
-            if (!badge) return;
-        
-            const hasActiveFilter = filterConfig.includeCompleted || 
-                                    filterConfig.selectedHomeworks.length > 0 || 
-                                    (filterConfig.searchKeyword && filterConfig.searchKeyword.trim() !== '');
-        
-            filterConfig.isActive = hasActiveFilter;
-        
-            if (hasActiveFilter) {
-                badge.classList.remove('hidden');
-                badge.textContent = filterConfig.selectedHomeworks.length > 0 
-                    ? `${filterConfig.selectedHomeworks.length}` 
-                    : 'ON';
-            } else {
-                badge.classList.add('hidden');
-            }
-        }
-        
-        // ==========================================
-        // 2. 숙제 항목 렌더링 및 검색 (부분 문자열 일치)
-        // ==========================================
-        
-        function renderFilterHomeworkList() {
-            const container = document.getElementById('filterHomeworkList');
-            if (!container) return;
-        
-            // 숙제 목록이 없는 경우 예외 처리
-            if (typeof HOMEWORK_DATA === 'undefined' || !HOMEWORK_DATA) {
-                container.innerHTML = '<div class="empty-msg">숙제 데이터가 없습니다.</div>';
-                return;
-            }
-        
-            const keyword = (filterConfig.searchKeyword || '').trim().toLowerCase();
-            container.innerHTML = '';
-        
-            let renderedCount = 0;
-        
-            // HOMEWORK_DATA 순회
-            Object.keys(HOMEWORK_DATA).forEach(categoryKey => {
-                const category = HOMEWORK_DATA[categoryKey];
-                if (!category || !category.items) return;
-        
-                // Keyword 필터링 (일반 텍스트 부분 일치)
-                const filteredItems = category.items.filter(item => {
-                    if (!keyword) return true;
-                    return item.name.toLowerCase().includes(keyword);
-                });
-        
-                if (filteredItems.length === 0) return;
-        
-                // 카테고리 헤더 생성
-                const catGroup = document.createElement('div');
-                catGroup.className = 'filter-homework-group';
-                
-                const catTitle = document.createElement('div');
-                catTitle.className = 'filter-group-title';
-                catTitle.textContent = category.title || categoryKey;
-                catGroup.appendChild(catTitle);
-        
-                // 아이템 아이템 체크박스 생성
-                const itemList = document.createElement('div');
-                itemList.className = 'filter-item-list';
-        
-                filteredItems.forEach(item => {
-                    renderedCount++;
-                    const isChecked = filterConfig.selectedHomeworks.includes(item.id);
-        
-                    const label = document.createElement('label');
-                    label.className = `filter-item-chip ${isChecked ? 'selected' : ''}`;
-                    label.innerHTML = `
-                        <input type="checkbox" value="${item.id}" ${isChecked ? 'checked' : ''} onchange="onHomeworkFilterCheckChange(this)">
-                        <span>${item.name}</span>
-                    `;
-                    itemList.appendChild(label);
-                });
-        
-                catGroup.appendChild(itemList);
-                container.appendChild(catGroup);
-            });
-        
-            if (renderedCount === 0) {
-                container.innerHTML = '<div class="empty-msg">검색 결과가 없습니다.</div>';
-            }
-        }
-        
-        // 검색어 입력 이벤트 핸들러
-        function onFilterSearchInput(e) {
-            filterConfig.searchKeyword = e.target.value;
-            renderFilterHomeworkList();
-        }
-        
-        // 체크박스 변경 핸들러
-        function onHomeworkFilterCheckChange(checkbox) {
-            const val = checkbox.value;
-            if (checkbox.checked) {
-                if (!filterConfig.selectedHomeworks.includes(val)) {
-                    filterConfig.selectedHomeworks.push(val);
-                }
-                checkbox.parentElement.classList.add('selected');
-            } else {
-                filterConfig.selectedHomeworks = filterConfig.selectedHomeworks.filter(id => id !== val);
-                checkbox.parentElement.classList.remove('selected');
-            }
-            updateFilterBadge();
-        }
-        
-        // '완료된 숙제 포함' 체크박스 변경
-        function onIncludeCompletedChange(checkbox) {
-            filterConfig.includeCompleted = checkbox.checked;
-            updateFilterBadge();
-        }
-        
-        // ==========================================
-        // 3. 필터 적용 / 초기화 / 저장
-        // ==========================================
-        
-        function applyHomeworkFilter() {
-            localStorage.setItem('filterConfig_v1', JSON.stringify(filterConfig));
-            toggleFilterDrawer(false);
-            render(); // 메인 화면 재렌더링
-        }
-        
-        function resetHomeworkFilter() {
-            filterConfig = {
-                includeCompleted: false,
-                selectedHomeworks: [],
-                searchKeyword: '',
-                isActive: false
-            };
-            localStorage.removeItem('filterConfig_v1');
-            syncFilterUI();
-            renderFilterHomeworkList();
-            render(); // 메인 화면 재렌더링
-        }
-        
-        // ==========================================
-        // 4. 캐릭터 필터링 판별 로직
-        // ==========================================
-        
-        function checkCharacterHasHomework(char, config) {
-            if (!config || !config.isActive) return true;
-        
-            // 1. 선택된 특정 숙제가 있는 경우
-            if (config.selectedHomeworks && config.selectedHomeworks.length > 0) {
-                const hasMatchingHomework = config.selectedHomeworks.some(hwId => {
-                    const hwStatus = char.homeworks ? char.homeworks[hwId] : null;
-                    if (!hwStatus) return false;
-        
-                    // 완료된 숙제 포함 여부 체크
-                    if (config.includeCompleted) {
-                        return true; // 진행 중이든 완료든 해당 숙제가 존재하면 표시
-                    } else {
-                        return !hwStatus.isDone; // 미완료된 숙제만 판별
+
+// ==========================================
+// 1. 드로어 / UI 토글 및 동기화
+// ==========================================
+
+// 드로어 열기/닫기 (인자 유무에 상관없이 자동 토글)
+function toggleFilterDrawer(isOpen) {
+    const drawer = document.getElementById('filterDrawer');
+    const overlay = document.getElementById('filterOverlay');
+    if (!drawer || !overlay) return;
+
+    // 인자가 전달되지 않은 경우 현재 상태의 반대로 토글
+    if (typeof isOpen !== 'boolean') {
+        isOpen = !drawer.classList.contains('open') && !drawer.classList.contains('active');
+    }
+
+    if (isOpen) {
+        drawer.classList.add('open', 'active');
+        overlay.classList.add('open', 'active');
+        syncFilterUI();             // 열릴 때 UI 동기화
+        renderFilterHomeworkList(); // 항목 리스트 렌더링
+    } else {
+        drawer.classList.remove('open', 'active');
+        overlay.classList.remove('open', 'active');
+    }
+}
+
+// 드로어 닫기 전용 함수 (HTML에서 closeFilterDrawer() 호출 대응)
+function closeFilterDrawer() {
+    toggleFilterDrawer(false);
+}
+
+// UI 상태 동기화 (filterConfig -> DOM)
+function syncFilterUI() {
+    // 1) 라디오 버튼 (완료숙제 포함 여부)
+    const radioVal = filterConfig.includeCompleted ? 'include' : 'exclude';
+    const radioElem = document.querySelector(`input[name="filterCompleted"][value="${radioVal}"]`);
+    if (radioElem) radioElem.checked = true;
+
+    // 2) 검색어 입력창
+    const searchInput = document.getElementById('filterSearchInput') || document.getElementById('filterHomeworkSearch');
+    if (searchInput) {
+        searchInput.value = filterConfig.searchKeyword || '';
+    }
+
+    // 3) 배지 상태 업데이트
+    updateFilterBadge();
+}
+
+// 완료 숙제 포함 여부 라디오 변경 핸들러
+function onFilterConfigChange() {
+    const selectedRadio = document.querySelector('input[name="filterCompleted"]:checked');
+    if (selectedRadio) {
+        filterConfig.includeCompleted = (selectedRadio.value === 'include');
+    }
+    updateFilterBadge();
+}
+
+// 검색어 입력 핸들러
+function onFilterSearchInput(val) {
+    const keyword = (typeof val === 'string') ? val : (val && val.target ? val.target.value : '');
+    filterConfig.searchKeyword = keyword;
+    renderFilterHomeworkList();
+}
+
+// 검색어 초기화 (HTML clearFilterSearch 버튼 대응)
+function clearFilterSearch() {
+    filterConfig.searchKeyword = '';
+    const searchInput = document.getElementById('filterSearchInput') || document.getElementById('filterHomeworkSearch');
+    if (searchInput) searchInput.value = '';
+    renderFilterHomeworkList();
+}
+
+// 선택된 체크박스 전체 해제 (HTML clearAllFilterCheckboxes 버튼 대응)
+function clearAllFilterCheckboxes() {
+    filterConfig.selectedHomeworks = [];
+    updateFilterBadge();
+    renderFilterHomeworkList();
+}
+
+// 필터 배지 표시 업데이트
+function updateFilterBadge() {
+    const badge = document.getElementById('filterActiveBadge');
+    
+    const hasActiveFilter = filterConfig.includeCompleted || 
+                            filterConfig.selectedHomeworks.length > 0 || 
+                            (filterConfig.searchKeyword && filterConfig.searchKeyword.trim() !== '');
+
+    filterConfig.isActive = hasActiveFilter;
+
+    if (!badge) return;
+
+    if (hasActiveFilter) {
+        badge.classList.remove('hidden');
+        badge.textContent = filterConfig.selectedHomeworks.length > 0 
+            ? `${filterConfig.selectedHomeworks.length}` 
+            : 'ON';
+    } else {
+        badge.classList.add('hidden');
+    }
+}
+
+
+// ==========================================
+// 2. 숙제 항목 렌더링 및 검색 (gameData 기반 동적 수집)
+// ==========================================
+
+function renderFilterHomeworkList() {
+    const container = document.getElementById('filterHomeworkList');
+    if (!container) return;
+
+    container.innerHTML = '';
+    const keyword = (filterConfig.searchKeyword || '').trim().toLowerCase();
+
+    // 앱 데이터(gameData)에서 모든 숙제 항목 추출
+    let homeworkItems = [];
+
+    // 1) 고정 숙제 등록
+    homeworkItems.push({ id: 'odeBuyChecked', name: '🍀 오드구매·제작', type: '고정' });
+    homeworkItems.push({ id: 'villageOrderChecked', name: '📜 지령서 (마을)', type: '고정' });
+    homeworkItems.push({ id: 'abyssOrderChecked', name: '🌀 지령서 (어비스)', type: '고정' });
+    homeworkItems.push({ id: 'dailyDungeonChecked', name: '🏦 일일던전', type: '고정' });
+    homeworkItems.push({ id: 'dailyMissionChecked', name: '📅 일일사명퀘', type: '고정' });
+    homeworkItems.push({ id: 'charBuyChecked', name: '오드구매,제작 (4)', type: '고정' });
+    homeworkItems.push({ id: 'awakeningChecked', name: '각성전', type: '고정' });
+
+    // 2) gameData 캐릭터 커스텀 숙제 수집
+    const customHwMap = new Map();
+    if (typeof gameData !== 'undefined' && Array.isArray(gameData)) {
+        gameData.forEach(acc => {
+            if (acc.characters) {
+                acc.characters.forEach(char => {
+                    if (char.homeworks && Array.isArray(char.homeworks)) {
+                        char.homeworks.forEach(hw => {
+                            if (hw.name && !customHwMap.has(hw.name)) {
+                                const typeLabel = hw.type === 'weekly' ? '주간' : (hw.type === 'daily' ? '일일' : '일회성');
+                                customHwMap.set(hw.name, typeLabel);
+                            }
+                        });
                     }
                 });
-        
-                if (!hasMatchingHomework) return false;
             }
-        
-            // 2. 특정 숙제 선택 없이 '완료 포함 여부'만 켜져 있거나 기본 필터링일 때
-            if (!config.includeCompleted && (!config.selectedHomeworks || config.selectedHomeworks.length === 0)) {
-                // 미완료 숙제가 하나라도 있는지 확인
-                if (!char.homeworks) return false;
-                const hasUnfinished = Object.values(char.homeworks).some(hw => !hw.isDone);
-                if (!hasUnfinished) return false;
-            }
-        
-            return true;
+        });
+    }
+
+    customHwMap.forEach((typeLabel, hwName) => {
+        homeworkItems.push({ id: hwName, name: hwName, type: typeLabel });
+    });
+
+    // 검색어 키워드 필터링
+    const filteredItems = homeworkItems.filter(item => {
+        if (!keyword) return true;
+        return item.name.toLowerCase().includes(keyword);
+    });
+
+    if (filteredItems.length === 0) {
+        container.innerHTML = '<div class="empty-msg" style="text-align:center; color:var(--text-muted); padding:15px; font-size:13px;">검색 결과가 없습니다.</div>';
+        return;
+    }
+
+    // 타입별 그룹 렌더링
+    const groups = {};
+    filteredItems.forEach(item => {
+        if (!groups[item.type]) groups[item.type] = [];
+        groups[item.type].push(item);
+    });
+
+    Object.keys(groups).forEach(groupType => {
+        const catGroup = document.createElement('div');
+        catGroup.className = 'filter-homework-group';
+        catGroup.style.marginBottom = '12px';
+
+        const catTitle = document.createElement('div');
+        catTitle.className = 'filter-group-title';
+        catTitle.style.cssText = 'font-size:12px; font-weight:bold; color:var(--accent); margin-bottom:6px;';
+        catTitle.textContent = `[${groupType}]`;
+        catGroup.appendChild(catTitle);
+
+        const itemList = document.createElement('div');
+        itemList.className = 'filter-item-list';
+        itemList.style.cssText = 'display:flex; flex-wrap:wrap; gap:6px;';
+
+        groups[groupType].forEach(item => {
+            const isChecked = filterConfig.selectedHomeworks.includes(item.id);
+
+            const label = document.createElement('label');
+            label.className = `filter-item-chip ${isChecked ? 'selected' : ''}`;
+            label.style.cssText = `display:inline-flex; align-items:center; gap:4px; padding:4px 8px; border-radius:4px; background:${isChecked ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.05)'}; font-size:12px; cursor:pointer;`;
+            label.innerHTML = `
+                <input type="checkbox" value="${item.id}" ${isChecked ? 'checked' : ''} onchange="onHomeworkFilterCheckChange(this)">
+                <span>${item.name}</span>
+            `;
+            itemList.appendChild(label);
+        });
+
+        catGroup.appendChild(itemList);
+        container.appendChild(catGroup);
+    });
+}
+
+// 체크박스 변경 핸들러
+function onHomeworkFilterCheckChange(checkbox) {
+    const val = checkbox.value;
+    if (checkbox.checked) {
+        if (!filterConfig.selectedHomeworks.includes(val)) {
+            filterConfig.selectedHomeworks.push(val);
         }
+        checkbox.parentElement.classList.add('selected');
+    } else {
+        filterConfig.selectedHomeworks = filterConfig.selectedHomeworks.filter(id => id !== val);
+        checkbox.parentElement.classList.remove('selected');
+    }
+    updateFilterBadge();
+}
+
+
+// ==========================================
+// 3. 필터 적용 / 초기화 / 저장
+// ==========================================
+
+function applyHomeworkFilter() {
+    localStorage.setItem('filterConfig_v1', JSON.stringify(filterConfig));
+    toggleFilterDrawer(false);
+    if (typeof render === 'function') render(); // 메인 화면 재렌더링
+}
+
+function resetHomeworkFilter() {
+    filterConfig = {
+        includeCompleted: false,
+        selectedHomeworks: [],
+        searchKeyword: '',
+        isActive: false
+    };
+    localStorage.removeItem('filterConfig_v1');
+    syncFilterUI();
+    renderFilterHomeworkList();
+    if (typeof render === 'function') render(); // 메인 화면 재렌더링
+}
+
+
+// ==========================================
+// 4. 캐릭터 필터링 판별 로직
+// ==========================================
+
+function checkCharacterHasHomework(char, config) {
+    if (!config || !config.isActive) return true;
+
+    // 1. 선택된 특정 숙제가 있는 경우
+    if (config.selectedHomeworks && config.selectedHomeworks.length > 0) {
+        const hasMatchingHomework = config.selectedHomeworks.some(hwId => {
+            // 커스텀 숙제 검색
+            if (char.homeworks && Array.isArray(char.homeworks)) {
+                const foundHw = char.homeworks.find(hw => hw.name === hwId);
+                if (foundHw) {
+                    return config.includeCompleted ? true : !foundHw.checked;
+                }
+            }
+            // 캐릭터 고정 숙제 검색
+            if (hwId in char) {
+                return config.includeCompleted ? true : !char[hwId];
+            }
+            return false;
+        });
+
+        if (!hasMatchingHomework) return false;
+    }
+
+    // 2. 미완료 숙제 제외 모드 적용 시
+    if (!config.includeCompleted && (!config.selectedHomeworks || config.selectedHomeworks.length === 0)) {
+        if (!char.homeworks) return false;
+        const hasUnfinished = char.homeworks.some(hw => !hw.checked);
+        if (!hasUnfinished) return false;
+    }
+
+    return true;
+}
 
 
     function render() {
