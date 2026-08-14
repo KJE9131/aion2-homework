@@ -1188,7 +1188,6 @@ color:var(--primary);
 .account-common-wrap{ 
     display:flex;
         flex-wrap:wrap;
-        gap:20px 0;
         align-items:flex-start;
         flex-direction:column;
 }
@@ -1196,7 +1195,7 @@ color:var(--primary);
 .common-card{
     display:flex;
 }
-
+.common-card:last-child{margin-top:16px;}
 .common-card-title{
     font-size:13px;
     font-weight:700;
