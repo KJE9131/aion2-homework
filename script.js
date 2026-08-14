@@ -621,25 +621,24 @@ function clearAllFilterCheckboxes() {
 // 상단 필터 버튼 텍스트 및 배지 업데이트 (3번 요구사항 핵심)
 function updateFilterBadge() {
     const filterBtn = document.getElementById('filterToggleBtn');
-    
-    // 필터 활성화 여부 판단 (완료포함 선택, 특정 숙제 선택, 또는 검색어 존재 시)
+    if (!filterBtn) return;
+
+    // 필터 활성화 여부 재확인
     const hasActiveFilter = filterConfig.includeCompleted || 
                             (filterConfig.selectedHomeworks && filterConfig.selectedHomeworks.length > 0) || 
                             (filterConfig.searchKeyword && filterConfig.searchKeyword.trim() !== '');
 
     filterConfig.isActive = hasActiveFilter;
 
-    if (filterBtn) {
-        if (hasActiveFilter) {
-            // 필터 적용 중: 버튼 명칭 변경 + ON 표시
-            const countStr = filterConfig.selectedHomeworks.length > 0 ? ` (${filterConfig.selectedHomeworks.length})` : '';
-            filterBtn.innerHTML = `📋 숙제 필터 초기화 <span class="badge" style="background:#e74c3c; color:#fff; padding:2px 6px; border-radius:10px; font-size:11px; margin-left:4px;">ON${countStr}</span>`;
-            filterBtn.classList.add('btn-filter-active');
-        } else {
-            // 필터 미적용: 기본 버튼 명칭
-            filterBtn.innerHTML = `📋 숙제 필터`;
-            filterBtn.classList.remove('btn-filter-active');
-        }
+    if (hasActiveFilter) {
+        // 필터가 켜진 상태 -> "📋 숙제 필터 초기화" 로 변경
+        const countStr = filterConfig.selectedHomeworks.length > 0 ? ` (${filterConfig.selectedHomeworks.length})` : '';
+        filterBtn.innerHTML = `📋 숙제 필터 초기화 <span class="badge" style="background:#e74c3c; color:#fff; padding:2px 6px; border-radius:10px; font-size:11px; margin-left:4px;">ON${countStr}</span>`;
+        filterBtn.classList.add('btn-filter-active');
+    } else {
+        // 필터가 꺼진 상태 -> "📋 숙제 필터" 로 원복
+        filterBtn.innerHTML = `📋 숙제 필터`;
+        filterBtn.classList.remove('btn-filter-active');
     }
 }
 
@@ -806,6 +805,7 @@ function checkCharacterHasHomework(char, config) {
 
 
     function render() {
+            updateFilterBadge();
     const app = document.getElementById('app'); 
     if (!app) return;
 
