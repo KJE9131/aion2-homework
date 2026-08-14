@@ -811,8 +811,118 @@ function checkCharacterHasHomework(char, config) {
     return true;
 }
 
+// ==========================================
+// 추천 숙제 데이터 프리셋 (여기서 자유롭게 추가/삭제 가능)
+// ==========================================
+const recommendedHomeworkList = [
+    { name: "오드구매,제작 (4)", type: "fixed" },
+    { name: "각성전", type: "fixed" },
+    { name: "시즌주간미션", type: "weekly" },
+    { name: "투기장", type: "weekly" },
+    { name: "루드라", type: "weekly" },
+    { name: "일일 던전 순회", type: "daily" },
+    { name: "필드 보스 처치", type: "daily" },
+    { name: "신규 에피소드 퀘스트", type: "once" }
+];
 
-    function render() {
+let recModalAccId = null;
+
+// 추천 숙제 모달 열기 (기존 캐릭터 메모 모달과 동일 방식)
+function openRecModal(accId, event) {
+    if (event) event.stopPropagation();
+    recModalAccId = accId;
+    
+    const acc = gameData.find(a => a.id === accId);
+    const container = document.getElementById('recHomeworkListContainer');
+    
+    if (container) {
+        container.innerHTML = '';
+        
+        recommendedHomeworkList.forEach((hw, idx) => {
+            // 타입별 배지 레이블 및 클래스
+            let typeLabel = "기타";
+            let typeClass = "once";
+            
+            if (hw.type === 'fixed') { typeLabel = "고정"; typeClass = "fixed"; }
+            else if (hw.type === 'weekly') { typeLabel = "주간"; typeClass = "weekly"; }
+            else if (hw.type === 'daily') { typeLabel = "일일"; typeClass = "daily"; }
+            else if (hw.type === 'once') { typeLabel = "일회성"; typeClass = "once"; }
+
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'rec-hw-item';
+            itemDiv.innerHTML = `
+                <label class="hw-label" style="cursor:pointer; display:flex; align-items:center; gap:8px;">
+                    <input type="checkbox" class="rec-hw-checkbox" value="${idx}">
+                    <span class="rec-badge ${typeClass}">${typeLabel}</span>
+                    <span style="font-size:13px; color:#fff;">${hw.name}</span>
+                </label>
+            `;
+            container.appendChild(itemDiv);
+        });
+    }
+
+    const titleEl = document.getElementById('recModalTitle');
+    if (titleEl && acc) titleEl.innerText = `[${acc.name}] 추천 숙제 일괄 추가`;
+    
+    const modal = document.getElementById('recHomeworkModal');
+    if (modal) modal.style.display = 'flex';
+}
+
+// 추천 숙제 모달 닫기
+function closeRecModal() {
+    const modal = document.getElementById('recHomeworkModal');
+    if (modal) modal.style.display = 'none';
+    recModalAccId = null;
+}
+
+// 체크된 추천 숙제를 계정의 모든 캐릭터에 일괄 추가
+function submitRecHomeworkForm(e) {
+    e.preventDefault();
+    if (!recModalAccId) return;
+
+    const acc = gameData.find(a => a.id === recModalAccId);
+    if (!acc || !acc.characters || acc.characters.length === 0) {
+        alert("숙제를 추가할 캐릭터가 없습니다.");
+        closeRecModal();
+        return;
+    }
+
+    const checkboxes = document.querySelectorAll('.rec-hw-checkbox:checked');
+    if (checkboxes.length === 0) {
+        alert("추가할 추천 숙제를 선택해 주세요.");
+        return;
+    }
+
+    checkboxes.forEach(cb => {
+        const hwIndex = parseInt(cb.value);
+        const selectedHw = recommendedHomeworkList[hwIndex];
+
+        acc.characters.forEach(char => {
+            if (selectedHw.type === 'fixed') {
+                // 고정 숙제의 경우 기존 속성 활성화
+                if (selectedHw.name.includes("오드")) char.charBuyChecked = false;
+                if (selectedHw.name.includes("각성")) char.awakeningChecked = false;
+            } else {
+                // 커스텀 숙제 리스트에 추가 (중복 방지 체크)
+                if (!char.homeworks) char.homeworks = [];
+                const isExist = char.homeworks.some(h => h.name === selectedHw.name && h.type === selectedHw.type);
+                if (!isExist) {
+                    char.homeworks.push({
+                        name: selectedHw.name,
+                        type: selectedHw.type,
+                        checked: false
+                    });
+                }
+            }
+        });
+    });
+
+    closeRecModal();
+    saveData();
+}
+
+
+function render() {
     const app = document.getElementById('app'); 
     if (!app) return;
 
@@ -858,29 +968,34 @@ function checkCharacterHasHomework(char, config) {
                 <div class="account-contents">
 
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
-                        <span class="account-contents-title">계정 공통 콘텐츠</span>
-
-                        <form class="batch-add-form"
-                            onclick="event.stopPropagation();"
-                            onsubmit="createBatchHomework(event, ${acc.id})">
-
-                            <input type="text"
-                                name="batchHwName"
-                                placeholder="일괄 추가할 숙제 명"
-                                required>
-
-                            <select name="batchHwType">
-                                <option value="daily">일일</option>
-                                <option value="weekly">주간</option>
-                                <option value="once">일회성</option>
-                            </select>
-
-                            <button type="submit" class="btn btn-xs">
-                                일괄 추가
-                            </button>
-
-                        </form>
-                    </div>
+                              <span class="account-contents-title">계정 공통 콘텐츠</span>
+                        
+                              <div style="display:flex; align-items:center; gap:6px;">
+                                  <button type="button" class="btn btn-xs btn-b2" onclick="openRecModal(${acc.id}, event)">
+                                      ⭐ 추천숙제추가
+                                  </button>
+                        
+                                  <form class="batch-add-form"
+                                      onclick="event.stopPropagation();"
+                                      onsubmit="createBatchHomework(event, ${acc.id})">
+                        
+                                      <input type="text"
+                                          name="batchHwName"
+                                          placeholder="일괄 추가할 숙제 명"
+                                          required>
+                        
+                                      <select name="batchHwType">
+                                          <option value="daily">일일</option>
+                                          <option value="weekly">주간</option>
+                                          <option value="once">일회성</option>
+                                      </select>
+                        
+                                      <button type="submit" class="btn btn-xs">
+                                          일괄 추가
+                                      </button>
+                                  </form>
+                              </div>
+                          </div>
 
                     <div class="account-common-wrap">
 
